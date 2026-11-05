@@ -18,6 +18,7 @@ const painted = () => new Promise(resolve => requestAnimationFrame(() => setTime
 export const useOpenChannel = () => {
   const [step, setStep] = useState<OpenStep>();
   const [error, setError] = useState<string>();
+  const [restored, setRestored] = useState<number>();
   const { signMessageAsync } = useSignMessage();
   const publicClient = usePublicClient();
   const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
@@ -79,5 +80,22 @@ export const useOpenChannel = () => {
     }
   };
 
-  return { step, error, open };
+  /** Finds every Channel you opened from your signature alone (ADR-0002), and caches each Channel Key. */
+  const restore = async (me: Address) => {
+    const crypto = await loadCrypto();
+    const key = await senderKey(me);
+    const { data: users } = await getUsers({ throwOnError: true });
+    const { data: channels } = await getChannels({ throwOnError: true });
+    const hashes = new Set(channels!.map((channel: { channelKeyHash: bigint }) => channel.channelKeyHash));
+    let found = 0;
+    users!.forEach((user: Address, j: number) => {
+      const channelKey = crypto.channelKey(key, j);
+      if (!hashes.has(BigInt(crypto.channelKeyHash(channelKey)))) return;
+      saveChannelKey(me, user, channelKey);
+      found++;
+    });
+    setRestored(found);
+  };
+
+  return { step, error, open, restored, restore };
 };
