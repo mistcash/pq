@@ -89,6 +89,46 @@
   opacity: 80%;
 }
 
+.confetti {
+  position: absolute;
+  inset: 50%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.confetti i {
+  position: absolute;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin: -0.4375rem;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  animation: burst 1.1s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+.confetti i:nth-child(3n) {
+  background: var(--color-warning);
+  border-radius: 0.2rem;
+}
+
+.confetti i:nth-child(3n + 1) {
+  background: var(--color-neutral);
+  height: 0.4rem;
+}
+
+@keyframes burst {
+  from {
+    transform: rotate(var(--turn)) translateY(0) rotate(0) scale(1);
+  }
+  70% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(var(--turn)) translateY(calc(-1 * var(--far))) rotate(1turn) scale(0.6);
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

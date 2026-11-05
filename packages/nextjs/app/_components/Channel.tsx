@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { Messages } from "./Messages";
 import { short } from "./People";
 import type { Address } from "viem";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Avatar } from "~~/components/Avatar";
+import { Confetti } from "~~/components/Confetti";
 import { useCopyToClipboard } from "~~/hooks/scaffold-eth";
 import type { OpenStep, useOpenChannel } from "~~/hooks/useOpenChannel";
 import { joinLink, loadChannelKey } from "~~/utils/channels";
@@ -24,6 +26,8 @@ type Props = { me: Address; other: Address; onBack: () => void } & ReturnType<ty
 export const Channel = ({ me, other, onBack, step, error, open }: Props) => {
   const { copyToClipboard, isCopiedToClipboard } = useCopyToClipboard();
   const canShare = "share" in navigator;
+  // Celebrate a Channel that's new to this browser, not every visit.
+  const [isNew] = useState(() => !loadChannelKey(me, other));
 
   const share = () => {
     const url = joinLink(me, loadChannelKey(me, other)!);
@@ -37,7 +41,8 @@ export const Channel = ({ me, other, onBack, step, error, open }: Props) => {
         <ArrowLeftIcon className="h-4 w-4" /> People
       </button>
       <div className="flex flex-col items-center text-center gap-3">
-        <div className={step === "open" || error ? "" : "animate-bounce"}>
+        <div className={`relative isolate ${step === "open" || error ? "" : "animate-bounce"}`}>
+          {step === "open" && isNew && <Confetti />}
           <Avatar address={other} size={128} />
         </div>
         <h1 className="text-3xl font-bold m-0">{short(other)}</h1>
