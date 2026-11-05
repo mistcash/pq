@@ -31,4 +31,10 @@ contract PqMsgTest is Test {
         assertEq(pqmsg.users(0), alice);
         assertEq(pqmsg.users(1), bob);
     }
+
+    function testRegisterRejectsZeroKey() public {
+        vm.expectRevert(PqMsg.ZeroKey.selector);
+        vm.prank(alice);
+        pqmsg.register(0);
+    }
 }
