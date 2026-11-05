@@ -24,7 +24,7 @@ export const People = ({ me }: { me: string }) => {
         </h2>
         {users ? (
           <ul className="divide-y divide-base-300">
-            {users.map(user => (
+            {users.map((user: string) => (
               <li key={user} className="flex items-center gap-4 px-5 py-3">
                 <Avatar address={user} size={48} />
                 <span className="font-medium truncate">{short(user)}</span>
