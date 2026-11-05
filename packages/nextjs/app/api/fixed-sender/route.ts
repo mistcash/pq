@@ -28,7 +28,9 @@ export async function POST(request: Request) {
   const call = callFor(await request.json());
   if (!call) return NextResponse.json({ error: "Expected an open-Channel or post request" }, { status: 400 });
   const pqMsg = contracts?.[chain.id]?.PqMsg;
-  if (!key || !pqMsg) return NextResponse.json({ error: "Sending isn't set up on this server yet." }, { status: 500 });
+  const unset = (reason: string) => NextResponse.json({ error: `Sending isn't set up: ${reason}.` }, { status: 500 });
+  if (!key) return unset("this server has no FIXED_SENDER_PRIVATE_KEY");
+  if (!pqMsg) return unset(`PqMsg isn't deployed on ${chain.name}`);
 
   const client = createWalletClient({
     account: privateKeyToAccount(key as Hex),
