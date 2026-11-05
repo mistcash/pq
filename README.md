@@ -32,7 +32,7 @@ See `DESIGN.md`.
 
 Locally, `yarn chain`, `yarn deploy` and `yarn start` run everything on anvil, with an anvil account as the Fixed Sender. To ship to Sepolia:
 
-1. **Deployer.** Create a keystore with `yarn generate`, or import a key with `yarn account:import`. Fund its address with Sepolia ETH; `yarn account` shows the address and balance. The deploy uses about 12M gas.
+1. **Deployer.** Create a keystore with `yarn generate`, or import a key with `yarn account:import`. Fund its address with Sepolia ETH; `yarn account` shows the address and balance. The deploy uses about 12M gas, several times more than on local anvil, because Sepolia's Amsterdam fork charges far more for new contract code and storage.
 2. **Deploy.** Run `yarn deploy --network sepolia --keystore <name>`. It reaches Sepolia through Alchemy with `ALCHEMY_API_KEY` from `packages/foundry/.env`; the template's shared key works, and your own avoids rate limits. It writes the address into `packages/nextjs/contracts/deployedContracts.ts`. Commit that file with `packages/foundry/broadcast/Deploy.s.sol/11155111/` and `packages/foundry/deployments/11155111.json`, so later deploys keep the Sepolia address.
 3. **Fixed Sender.** Create a separate account with `cast wallet new` and send it Sepolia ETH. It pays the gas for every Channel opening (about 430k gas) and message (about 240k gas), so keep it topped up.
 4. **Frontend env.** Set these in `packages/nextjs/.env.local`, or in your host's environment settings, such as Vercel's:
