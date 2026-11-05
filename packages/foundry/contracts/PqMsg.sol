@@ -10,11 +10,19 @@ contract PqMsg is Verifier {
         bytes encryptedChannelKey;
     }
 
+    /// A message's two Ciphertext Elements.
+    struct Message {
+        uint256 ciphertext1;
+        uint256 ciphertext2;
+    }
+
     /// Users in registration order; a User's position is their User Index.
     address[] public users;
     /// User Key of each User; zero means not registered.
     mapping(address => uint256) public keys;
     Channel[] public channels;
+    /// Messages by Message ID; all zeros means no message.
+    mapping(uint256 => Message) public messages;
 
     error ZeroKey();
 
@@ -37,5 +45,10 @@ contract PqMsg is Verifier {
     /// Every Channel, so the app can find one by its Channel Key Hash.
     function getChannels() external view returns (Channel[] memory) {
         return channels;
+    }
+
+    /// Stores a message's Ciphertext Elements under its Message ID. Anyone can post.
+    function post(uint256 messageId, uint256 ciphertext1, uint256 ciphertext2) external {
+        messages[messageId] = Message(ciphertext1, ciphertext2);
     }
 }
