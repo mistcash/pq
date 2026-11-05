@@ -39,6 +39,11 @@ export const useOpenChannel = () => {
     return signature;
   };
 
+  const senderKey = async (me: Address) => {
+    if (!senderKeys.has(me)) senderKeys.set(me, (await loadCrypto()).senderKey(await signTwiceFirstTime(me)));
+    return senderKeys.get(me)!;
+  };
+
   const open = async (me: Address, other: Address) => {
     setStep("start");
     setError(undefined);
@@ -46,9 +51,8 @@ export const useOpenChannel = () => {
       const crypto = loadCrypto();
       let channelKey = loadChannelKey(me, other);
       if (!channelKey) {
-        if (!senderKeys.has(me)) senderKeys.set(me, (await crypto).senderKey(await signTwiceFirstTime(me)));
         const { data: users } = await getUsers();
-        channelKey = (await crypto).channelKey(senderKeys.get(me)!, users!.indexOf(other));
+        channelKey = (await crypto).channelKey(await senderKey(me), users!.indexOf(other));
       }
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
       const { data: channels } = await getChannels();
