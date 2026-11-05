@@ -82,4 +82,11 @@ contract PqMsgTest is Test {
         assertEq(ciphertext1, 1);
         assertEq(ciphertext2, 2);
     }
+
+    function testPostRevertsOnUsedMessageId() public {
+        pqMsg.post(7, 1, 2);
+
+        vm.expectRevert(PqMsg.MessageIdUsed.selector);
+        pqMsg.post(7, 3, 4);
+    }
 }

@@ -25,6 +25,7 @@ contract PqMsg is Verifier {
     mapping(uint256 => Message) public messages;
 
     error ZeroKey();
+    error MessageIdUsed();
 
     function register(uint256 key) external {
         if (key == 0) revert ZeroKey();
@@ -47,8 +48,10 @@ contract PqMsg is Verifier {
         return channels;
     }
 
-    /// Stores a message's Ciphertext Elements under its Message ID. Anyone can post.
+    /// Stores a message's Ciphertext Elements under its Message ID, which must be unused. Anyone can post.
     function post(uint256 messageId, uint256 ciphertext1, uint256 ciphertext2) external {
+        Message storage message = messages[messageId];
+        if (message.ciphertext1 != 0 || message.ciphertext2 != 0) revert MessageIdUsed();
         messages[messageId] = Message(ciphertext1, ciphertext2);
     }
 }
