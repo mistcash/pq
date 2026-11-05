@@ -1,0 +1,3 @@
+# All hashing uses gnark's standard Poseidon2, also in the browser
+
+Every hash (the Master Key Hash, Message Key, Message ID and the encryption pads) uses gnark's standard Poseidon2 hasher on BN254: `std/hash/poseidon2` in-circuit and gnark-crypto's `bn254/fr/poseidon2` Merkle-Damgård hasher natively. The browser runs that same Go code through our WASM build instead of a JavaScript Poseidon2 library. We haven't verified that gnark's parameters match other libraries (circom, Noir, JS ports). Switching hashes later would make every stored message unreadable, so don't "simplify" this by using a JS library.
