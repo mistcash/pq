@@ -15,3 +15,8 @@ The flow is,
 4. To send a message user takes the master key, encrypts it with message index (unconstrained private input) to obtain message key msgk. then use the hash of message key and 0 as message id,
 then two 31 byte messages in two elements with hash message key and 1 and 2 respectively, the classic hash and add with 0th element used for identification.
 5. The contract stores the two message elements on a publicly readable hashmap with the two message elements as u256 values.
+
+Contract stores:
+1. List of registered users with their u256 key (dummy for now, will be used later for encryption.
+2. Sessions array: array of open sessions, just hash of the message for now, will later include encryptions.
+3. Messages array: hashmap of message ID and messages.
