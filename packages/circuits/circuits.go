@@ -39,6 +39,17 @@ func hash(elements ...fr.Element) fr.Element {
 	return sum
 }
 
+// SenderKey returns H of a 65-byte wallet signature, zero-padded and split into three 31-byte big-endian chunks.
+func SenderKey(signature []byte) (fr.Element, error) {
+	var padded [93]byte
+	copy(padded[:], signature)
+	var chunks [3]fr.Element
+	for i := range chunks {
+		chunks[i].SetBytes(padded[i*31 : (i+1)*31])
+	}
+	return hash(chunks[:]...), nil
+}
+
 // ChannelKey returns H(senderKey, userIndex), the Channel Key from a sender to the User at userIndex.
 func ChannelKey(senderKey fr.Element, userIndex uint64) fr.Element {
 	var i fr.Element

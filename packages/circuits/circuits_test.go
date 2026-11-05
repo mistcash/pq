@@ -1,6 +1,7 @@
 package circuits_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/consensys/gnark-crypto/ecc"
@@ -74,4 +75,20 @@ func TestChannelKey(t *testing.T) {
 	var senderKey fr.Element
 	senderKey.SetUint64(42)
 	assertHash(t, circuits.ChannelKey(senderKey, 7), 42, 7)
+}
+
+func TestSenderKeyFromFixedSignature(t *testing.T) {
+	signature := make([]byte, 65)
+	for i := range signature {
+		signature[i] = byte(i + 1)
+	}
+	senderKey, err := circuits.SenderKey(signature)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// The signature, zero-padded and split into three 31-byte big-endian chunks.
+	assertHash(t, senderKey,
+		"0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+		"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e",
+		"0x3f4041"+strings.Repeat("00", 28))
 }
