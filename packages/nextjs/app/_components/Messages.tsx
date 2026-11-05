@@ -47,9 +47,12 @@ export const Messages = ({ channelKey, mine, children }: Props) => {
           </div>
         ))
       ) : (
-        <p className="text-base-content/70 text-center">
-          {mine ? "Nothing yet. Say hi!" : "Nothing yet. Check back soon!"}
-        </p>
+        // A dashed bubble where the first message will land.
+        <div className={`chat ${mine ? "chat-end" : "chat-start"}`}>
+          <div className="chat-bubble bg-transparent border-2 border-dashed border-base-300 text-base-content/70">
+            {mine ? "Nothing yet. Say hi!" : "Nothing yet. Check back soon!"}
+          </div>
+        </div>
       )}
       <div className="sticky bottom-0 bg-base-100 py-3">{mine ? <Composer send={send} /> : children}</div>
     </div>
