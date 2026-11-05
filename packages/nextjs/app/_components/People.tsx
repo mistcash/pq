@@ -33,7 +33,7 @@ export const People = ({ me, onPick }: { me: Address; onPick: (user: Address) =>
             {users.map((user: Address) => (
               <li key={user}>
                 <button
-                  className="flex items-center gap-4 px-5 py-3 w-full text-left enabled:hover:bg-base-200 enabled:cursor-pointer"
+                  className="flex items-center gap-4 px-5 py-3 w-full text-left transition-colors enabled:hover:bg-base-200 enabled:active:bg-base-300/50 enabled:cursor-pointer"
                   disabled={user === me}
                   onClick={() => onPick(user)}
                 >
