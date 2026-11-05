@@ -118,3 +118,20 @@ func TestMessageIDIsDeterministic(t *testing.T) {
 		t.Fatal("a different Channel Key or Message Index gave the same Message ID")
 	}
 }
+
+func TestEncryptThenDecrypt(t *testing.T) {
+	var channelKey fr.Element
+	channelKey.SetUint64(42)
+	for _, message := range []string{"gm 🌞", strings.Repeat("62 bytes, spanning both Ciphertext Elements! ", 2)[:62]} {
+		ciphertext, err := circuits.Encrypt(channelKey, 7, []byte(message))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := string(circuits.Decrypt(channelKey, 7, ciphertext)); got != message {
+			t.Fatalf("decrypted %q, want %q", got, message)
+		}
+		if string(circuits.Decrypt(channelKey, 8, ciphertext)) == message {
+			t.Fatal("decrypted with another Message Index")
+		}
+	}
+}
