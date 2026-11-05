@@ -8,7 +8,7 @@ contract PqMsg {
     mapping(address => uint256) public keys;
 
     function register(uint256 key) external {
-        users.push(msg.sender);
+        if (keys[msg.sender] == 0) users.push(msg.sender);
         keys[msg.sender] = key;
     }
 

@@ -16,4 +16,19 @@ contract PqMsgTest is Test {
         assertEq(pqmsg.getUsers().length, 1);
         assertEq(pqmsg.users(0), alice);
     }
+
+    function testRegisterAgainReplacesKeyAndKeepsUserIndex() public {
+        address bob = makeAddr("bob");
+        vm.prank(alice);
+        pqmsg.register(1);
+        vm.prank(bob);
+        pqmsg.register(2);
+        vm.prank(alice);
+        pqmsg.register(3);
+
+        assertEq(pqmsg.keys(alice), 3);
+        assertEq(pqmsg.getUsers().length, 2);
+        assertEq(pqmsg.users(0), alice);
+        assertEq(pqmsg.users(1), bob);
+    }
 }
