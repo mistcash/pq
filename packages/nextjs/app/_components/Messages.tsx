@@ -29,7 +29,9 @@ export const Messages = ({ channelKey, mine }: { channelKey: Hex; mine?: boolean
       ) : messages.length ? (
         messages.map((message, i) => (
           <div key={i} className={`chat ${mine ? "chat-end" : "chat-start"}`}>
-            <div className={`chat-bubble break-words ${mine ? "chat-bubble-primary" : "chat-bubble-secondary"}`}>
+            <div
+              className={`chat-bubble break-words animate-pop ${mine ? "chat-bubble-primary origin-bottom-right" : "chat-bubble-secondary origin-bottom-left"}`}
+            >
               {message}
             </div>
           </div>
