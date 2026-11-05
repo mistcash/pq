@@ -1,12 +1,15 @@
 "use client";
 
+import { Messages } from "./Messages";
 import { short } from "./People";
+import type { Address } from "viem";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Avatar } from "~~/components/Avatar";
 import type { Joining } from "~~/hooks/useJoinChannel";
+import { loadChannelKey } from "~~/utils/channels";
 
-/** The Channel someone opened to you, as you join it. */
-export const JoinChannel = ({ from, joined, error, onBack }: Joining & { onBack: () => void }) => (
+/** The Channel someone opened to you, as you join it, then what they said. */
+export const JoinChannel = ({ me, from, joined, error, onBack }: Joining & { me: Address; onBack: () => void }) => (
   <div className="flex flex-col gap-6">
     <button className="btn btn-ghost btn-sm self-start" onClick={onBack}>
       <ArrowLeftIcon className="h-4 w-4" /> People
@@ -32,5 +35,6 @@ export const JoinChannel = ({ from, joined, error, onBack }: Joining & { onBack:
         </>
       )}
     </div>
+    {joined && <Messages channelKey={loadChannelKey(from, me)!} />}
   </div>
 );
