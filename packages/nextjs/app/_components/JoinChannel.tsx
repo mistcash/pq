@@ -33,7 +33,7 @@ export const JoinChannel = ({ me, from, joined, error, onBack, onReply }: Props)
       ) : joined ? (
         <>
           <h2 className="text-2xl font-bold m-0">You&apos;re in!</h2>
-          <p className="text-base-content/70 m-0">Whatever they send you will pop up right here.</p>
+          <p className="text-base-content/70 m-0">Whatever they send pops up right here.</p>
         </>
       ) : (
         <>
