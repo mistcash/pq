@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Hex } from "viem";
 import { ArrowPathIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Confetti } from "~~/components/Confetti";
@@ -10,6 +10,14 @@ import { notification } from "~~/utils/scaffold-eth";
 /** A Channel's messages in order, with a refresh button. Your own sit on the right. */
 export const Messages = ({ channelKey, mine }: { channelKey: Hex; mine?: boolean }) => {
   const { messages, refresh, refreshing, send } = useMessages(channelKey);
+  const count = messages?.length;
+  const seen = useRef(count);
+
+  // New messages land just above the pinned composer, so scroll them into view.
+  useEffect(() => {
+    if (seen.current !== undefined && count! > seen.current) scrollTo(0, document.body.scrollHeight);
+    seen.current = count;
+  }, [count]);
 
   return (
     <div className="card bg-base-100 border border-base-300 p-4 gap-1">
