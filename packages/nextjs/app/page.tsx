@@ -6,6 +6,7 @@ import { Join } from "./_components/Join";
 import { JoinChannel } from "./_components/JoinChannel";
 import { PasteKey } from "./_components/PasteKey";
 import { People } from "./_components/People";
+import { Restore } from "./_components/Restore";
 import type { NextPage } from "next";
 import type { Address } from "viem";
 import { useAccount } from "wagmi";
@@ -50,6 +51,7 @@ const Home: NextPage = () => {
             }}
           />
           <PasteKey value={pastedKey} onChange={setPastedKey} />
+          <Restore me={address} {...opening} />
         </>
       )}
     </div>
