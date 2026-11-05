@@ -26,4 +26,4 @@ Contract stores:
 
 ## Design
 
-Playful and polished, yet insanely simple, minimal and mobile friendly. It uses MIST.cash colors; fonts and other design details are free to change. Each User's profile image is generated from the hash of their address.
+See `DESIGN.md`.
