@@ -39,11 +39,12 @@ export const JoinChannel = ({ me, from, joined, error, onBack, onReply }: Props)
         </>
       )}
     </div>
-    {joined && <Messages channelKey={loadChannelKey(from, me)!} />}
     {joined && (
-      <button className="btn btn-primary btn-lg btn-block" onClick={onReply}>
-        <ArrowUturnLeftIcon className="h-5 w-5" /> Reply
-      </button>
+      <Messages channelKey={loadChannelKey(from, me)!}>
+        <button className="btn btn-primary btn-lg btn-block" onClick={onReply}>
+          <ArrowUturnLeftIcon className="h-5 w-5" /> Reply
+        </button>
+      </Messages>
     )}
   </div>
 );

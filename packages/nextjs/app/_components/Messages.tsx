@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import type { Hex } from "viem";
 import { ArrowPathIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Confetti } from "~~/components/Confetti";
 import { useMessages } from "~~/hooks/useMessages";
 import { notification } from "~~/utils/scaffold-eth";
 
-/** A Channel's messages in order, with a refresh button. Your own sit on the right. */
-export const Messages = ({ channelKey, mine }: { channelKey: Hex; mine?: boolean }) => {
+type Props = { channelKey: Hex; mine?: boolean; children?: ReactNode };
+
+/** A Channel's messages in order, with a refresh button and a pinned footer: the composer for your own, else children. */
+export const Messages = ({ channelKey, mine, children }: Props) => {
   const { messages, refresh, refreshing, send } = useMessages(channelKey);
   const count = messages?.length;
   const seen = useRef(count);
@@ -49,7 +51,7 @@ export const Messages = ({ channelKey, mine }: { channelKey: Hex; mine?: boolean
           {mine ? "Nothing yet. Say hi!" : "Nothing yet. Check back soon!"}
         </p>
       )}
-      {mine && <Composer send={send} />}
+      <div className="sticky bottom-0 bg-base-100 py-3">{mine ? <Composer send={send} /> : children}</div>
     </div>
   );
 };
@@ -75,7 +77,7 @@ const Composer = ({ send }: { send: (message: string) => Promise<void> }) => {
 
   return (
     <form
-      className="sticky bottom-0 bg-base-100 flex items-center gap-2 py-3"
+      className="flex items-center gap-2"
       onSubmit={e => {
         e.preventDefault();
         submit();
