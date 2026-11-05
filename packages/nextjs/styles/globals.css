@@ -8,64 +8,34 @@
 }
 
 @plugin "daisyui" {
-  themes:
-    light,
-    dark --prefersdark;
+  themes: light --default;
 }
 
 @plugin "daisyui/theme" {
   name: "light";
 
-  --color-primary: #93bbfb;
-  --color-primary-content: #212638;
-  --color-secondary: #dae8ff;
-  --color-secondary-content: #212638;
-  --color-accent: #93bbfb;
-  --color-accent-content: #212638;
-  --color-neutral: #212638;
+  --color-primary: #0052ff;
+  --color-primary-content: #ffffff;
+  --color-secondary: #e3edf5;
+  --color-secondary-content: #081019;
+  --color-accent: #0052ff;
+  --color-accent-content: #ffffff;
+  --color-neutral: #081019;
   --color-neutral-content: #ffffff;
   --color-base-100: #ffffff;
-  --color-base-200: #f4f8ff;
-  --color-base-300: #dae8ff;
-  --color-base-content: #212638;
-  --color-info: #93bbfb;
+  --color-base-200: #e3edf5;
+  --color-base-300: #acc4d6;
+  --color-base-content: #081019;
+  --color-info: #0052ff;
   --color-success: #34eeb6;
   --color-warning: #ffcf72;
   --color-error: #ff8863;
 
-  --radius-field: 0rem;
-  --radius-box: 0rem;
-  --radius-selector: 0rem;
+  --radius-field: 1rem;
+  --radius-box: 1.5rem;
+  --radius-selector: 2rem;
 
   --tt-tailw: 6px;
-}
-
-@plugin "daisyui/theme" {
-  name: "dark";
-
-  --color-primary: #212638;
-  --color-primary-content: #f9fbff;
-  --color-secondary: #323f61;
-  --color-secondary-content: #f9fbff;
-  --color-accent: #4969a6;
-  --color-accent-content: #f9fbff;
-  --color-neutral: #f9fbff;
-  --color-neutral-content: #385183;
-  --color-base-100: #385183;
-  --color-base-200: #2a3655;
-  --color-base-300: #212638;
-  --color-base-content: #f9fbff;
-  --color-info: #385183;
-  --color-success: #34eeb6;
-  --color-warning: #ffcf72;
-  --color-error: #ff8863;
-
-  --radius-field: 0rem;
-  --radius-box: 0rem;
-  --radius-selector: 0rem;
-
-  --tt-tailw: 6px;
-  --tt-bg: var(--color-primary);
 }
 
 /*
@@ -82,7 +52,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--color-base-300, currentColor);
   }
 
   p {
