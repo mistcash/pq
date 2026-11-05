@@ -1,13 +1,15 @@
 "use client";
 
 import type { Address } from "viem";
+import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/solid";
 import { Avatar } from "~~/components/Avatar";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { loadChannelKey } from "~~/utils/channels";
 
 export const short = (address: string) => `${address.slice(0, 6)}…${address.slice(-4)}`;
 
 /** Every registered User, with your own avatar up top. Tap someone to open a Channel to them. */
-export const People = ({ me, onPick }: { me: string; onPick: (user: Address) => void }) => {
+export const People = ({ me, onPick }: { me: Address; onPick: (user: Address) => void }) => {
   const { data: users } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
 
   return (
@@ -35,6 +37,11 @@ export const People = ({ me, onPick }: { me: string; onPick: (user: Address) => 
                   <Avatar address={user} size={48} />
                   <span className="font-medium truncate">{short(user)}</span>
                   {user === me && <span className="badge badge-primary ml-auto">you</span>}
+                  {loadChannelKey(me, user) && (
+                    <span className="badge badge-primary badge-soft ml-auto">
+                      <ChatBubbleOvalLeftEllipsisIcon className="h-4 w-4" /> chatting
+                    </span>
+                  )}
                 </button>
               </li>
             ))}
