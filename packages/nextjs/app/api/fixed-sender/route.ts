@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Expected an open-Channel request" }, { status: 400 });
   }
   const pqMsg = contracts?.[chain.id]?.PqMsg;
-  if (!key || !pqMsg) return NextResponse.json({ error: "Fixed Sender isn't set up" }, { status: 500 });
+  if (!key || !pqMsg) return NextResponse.json({ error: "Sending isn't set up on this server yet." }, { status: 500 });
 
   const client = createWalletClient({
     account: privateKeyToAccount(key as Hex),
