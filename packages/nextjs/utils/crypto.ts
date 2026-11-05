@@ -6,6 +6,10 @@ export type Crypto = {
   channelKey: (senderKey: Hex, userIndex: number) => Hex;
   channelKeyHash: (channelKey: Hex) => Hex;
   prove: (channelKey: Hex) => { proof: Hex; channelKeyHash: Hex };
+  messageId: (channelKey: Hex, messageIndex: number) => Hex;
+  /** Throws if the message is over 62 bytes. */
+  encrypt: (channelKey: Hex, messageIndex: number, message: string) => [Hex, Hex];
+  decrypt: (channelKey: Hex, messageIndex: number, ciphertext1: Hex, ciphertext2: Hex) => string;
 };
 
 let loading: Promise<Crypto> | undefined;
@@ -34,6 +38,9 @@ const load = async (): Promise<Crypto> => {
     channelKey: call("channelKey"),
     channelKeyHash: call("channelKeyHash"),
     prove: channelKey => call("prove")(ccs, pk, channelKey),
+    messageId: call("messageId"),
+    encrypt: call("encrypt"),
+    decrypt: call("decrypt"),
   };
 };
 
