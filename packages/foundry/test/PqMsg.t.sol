@@ -29,4 +29,9 @@ contract PqMsgTest is Test {
         vm.expectRevert(Verifier.ProofInvalid.selector);
         pqMsg.openChannel(channelKeyHash, "", proof);
     }
+
+    function testOpenChannelRevertsOnWrongChannelKeyHash() public {
+        vm.expectRevert(Verifier.ProofInvalid.selector);
+        pqMsg.openChannel(channelKeyHash + 1, "", proof);
+    }
 }
