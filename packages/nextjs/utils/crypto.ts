@@ -37,5 +37,9 @@ const load = async (): Promise<Crypto> => {
   };
 };
 
-/** Loads the crypto module once per page. */
-export const loadCrypto = () => (loading ??= load());
+/** Loads the crypto module once per page, trying again next time if it fails. */
+export const loadCrypto = () =>
+  (loading ??= load().catch(e => {
+    loading = undefined;
+    throw e;
+  }));
