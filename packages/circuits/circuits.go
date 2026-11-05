@@ -67,6 +67,16 @@ func ChannelKeyHash(channelKey fr.Element) fr.Element {
 	return hash(channelKey)
 }
 
+// messageKey returns H(channelKey, index), the Message Key.
+func messageKey(channelKey fr.Element, index uint64) fr.Element {
+	return hash(channelKey, fr.NewElement(index))
+}
+
+// MessageID returns H(Message Key, 0), the public ID the message at index is stored under.
+func MessageID(channelKey fr.Element, index uint64) fr.Element {
+	return hash(messageKey(channelKey, index), fr.Element{})
+}
+
 // ProveChannelKey proves knowledge of channelKey and returns the proof with its Channel Key Hash.
 func ProveChannelKey(ccs constraint.ConstraintSystem, pk groth16.ProvingKey, channelKey fr.Element) (groth16.Proof, fr.Element, error) {
 	hash := ChannelKeyHash(channelKey)

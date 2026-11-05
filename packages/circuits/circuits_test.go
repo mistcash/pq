@@ -104,3 +104,17 @@ func TestSenderKeyRejectsSignatureNot65Bytes(t *testing.T) {
 		t.Fatal("accepted a 64-byte signature")
 	}
 }
+
+func TestMessageIDIsDeterministic(t *testing.T) {
+	var channelKey, otherChannelKey fr.Element
+	channelKey.SetUint64(42)
+	otherChannelKey.SetUint64(43)
+	id := circuits.MessageID(channelKey, 7)
+
+	if id != circuits.MessageID(channelKey, 7) {
+		t.Fatal("the same Channel Key and Message Index gave different Message IDs")
+	}
+	if id == circuits.MessageID(channelKey, 8) || id == circuits.MessageID(otherChannelKey, 7) {
+		t.Fatal("a different Channel Key or Message Index gave the same Message ID")
+	}
+}
