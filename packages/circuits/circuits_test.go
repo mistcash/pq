@@ -92,3 +92,9 @@ func TestSenderKeyFromFixedSignature(t *testing.T) {
 		"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e",
 		"0x3f4041"+strings.Repeat("00", 28))
 }
+
+func TestSenderKeyRejectsSignatureNot65Bytes(t *testing.T) {
+	if _, err := circuits.SenderKey(make([]byte, 64)); err == nil {
+		t.Fatal("accepted a 64-byte signature")
+	}
+}

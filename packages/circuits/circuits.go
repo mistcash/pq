@@ -2,6 +2,8 @@
 package circuits
 
 import (
+	"errors"
+
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/poseidon2"
@@ -41,6 +43,9 @@ func hash(elements ...fr.Element) fr.Element {
 
 // SenderKey returns H of a 65-byte wallet signature, zero-padded and split into three 31-byte big-endian chunks.
 func SenderKey(signature []byte) (fr.Element, error) {
+	if len(signature) != 65 {
+		return fr.Element{}, errors.New("signature must be 65 bytes")
+	}
 	var padded [93]byte
 	copy(padded[:], signature)
 	var chunks [3]fr.Element
