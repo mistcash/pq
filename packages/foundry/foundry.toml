@@ -45,6 +45,7 @@ tab_width = 4
 quote_style = "double"
 bracket_spacing = true
 int_types = "long"
+ignore = ["contracts/Verifier.sol"]
 
 
 

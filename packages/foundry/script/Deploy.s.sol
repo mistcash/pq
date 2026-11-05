@@ -3,6 +3,7 @@ pragma solidity ^0.8.19;
 
 import "./DeployHelpers.s.sol";
 import { DeployYourContract } from "./DeployYourContract.s.sol";
+import { DeployPqMsg } from "./DeployPqMsg.s.sol";
 
 /**
  * @notice Main deployment script for all contracts
@@ -17,6 +18,8 @@ contract DeployScript is ScaffoldETHDeploy {
 
         DeployYourContract deployYourContract = new DeployYourContract();
         deployYourContract.run();
+
+        new DeployPqMsg().run();
 
         // Deploy another contract
         // DeployMyContract myContract = new DeployMyContract();
