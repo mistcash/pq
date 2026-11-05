@@ -23,4 +23,10 @@ contract PqMsgTest is Test {
         assertEq(storedHash, channelKeyHash);
         assertEq(encryptedChannelKey, hex"c0ffee");
     }
+
+    function testOpenChannelRevertsOnBadProof() public {
+        proof[0] ^= 0x01;
+        vm.expectRevert(Verifier.ProofInvalid.selector);
+        pqMsg.openChannel(channelKeyHash, "", proof);
+    }
 }
