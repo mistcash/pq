@@ -3917,7 +3917,6 @@ __metadata:
     "@types/react": "npm:~19.2.14"
     abitype: "npm:1.2.4"
     bgipfs: "npm:~0.0.18"
-    blo: "npm:~2.0.0"
     burner-connector: "npm:0.0.21"
     daisyui: "npm:5.5.19"
     eslint: "npm:~9.39.0"
@@ -7097,13 +7096,6 @@ __metadata:
   version: 1.2.0
   resolution: "blo@npm:1.2.0"
   checksum: 10/17ec61e41b201bbba8ab3c874cad94696604b6ac4029de5050c92ea5817dff6814d8642b9b2948e0d6804194437b751fa2755652201f26fa5d606913c489b757
-  languageName: node
-  linkType: hard
-
-"blo@npm:~2.0.0":
-  version: 2.0.0
-  resolution: "blo@npm:2.0.0"
-  checksum: 10/a03c33f46349ee114825f3615e45038bc165cb74fdb38959dbc84e96841b33f24bd79aa732cbfe967877dfae2c684878d57bfa8a9f28618059028072de8f5a5e
   languageName: node
   linkType: hard
 
