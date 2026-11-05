@@ -8,12 +8,43 @@ contract PqMsgTest is Test {
     PqMsg public pqMsg;
     uint256 channelKeyHash;
     bytes proof;
+    address alice = makeAddr("alice");
 
     function setUp() public {
         pqMsg = new PqMsg();
         string memory json = vm.readFile("test/openChannelProof.json");
         channelKeyHash = vm.parseJsonUint(json, ".channelKeyHash");
         proof = vm.parseJsonBytes(json, ".proof");
+    }
+
+    function testRegisterListsUserWithKey() public {
+        vm.prank(alice);
+        pqMsg.register(42);
+
+        assertEq(pqMsg.keys(alice), 42);
+        assertEq(pqMsg.getUsers().length, 1);
+        assertEq(pqMsg.users(0), alice);
+    }
+
+    function testRegisterAgainReplacesKeyAndKeepsUserIndex() public {
+        address bob = makeAddr("bob");
+        vm.prank(alice);
+        pqMsg.register(1);
+        vm.prank(bob);
+        pqMsg.register(2);
+        vm.prank(alice);
+        pqMsg.register(3);
+
+        assertEq(pqMsg.keys(alice), 3);
+        assertEq(pqMsg.getUsers().length, 2);
+        assertEq(pqMsg.users(0), alice);
+        assertEq(pqMsg.users(1), bob);
+    }
+
+    function testRegisterRejectsZeroKey() public {
+        vm.expectRevert(PqMsg.ZeroKey.selector);
+        vm.prank(alice);
+        pqMsg.register(0);
     }
 
     function testOpenChannel() public {
