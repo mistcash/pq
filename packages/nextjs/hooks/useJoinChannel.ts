@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type Address, isHex, size } from "viem";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
-import { saveChannelKey } from "~~/utils/channels";
+import { parseJoinLink, saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 
 export type Joining = { from: Address; joined?: boolean; error?: string };
@@ -29,5 +29,20 @@ export const useJoinChannel = (me?: Address) => {
     }
   };
 
-  return { ...joining, join, leave: () => setJoining(undefined) };
+  // A join link waits in the URL until you're registered. Opening one in an open tab only changes the fragment.
+  useEffect(() => {
+    if (!me) return;
+    const joinFromLink = () => {
+      const link = parseJoinLink(location.hash);
+      if (!link) return;
+      history.replaceState(null, "", location.pathname);
+      join(link.from, link.channelKey);
+    };
+    joinFromLink();
+    addEventListener("hashchange", joinFromLink);
+    return () => removeEventListener("hashchange", joinFromLink);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [me]);
+
+  return { joining, join, leave: () => setJoining(undefined) };
 };
