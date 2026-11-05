@@ -8,6 +8,7 @@ import (
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
+	"github.com/consensys/gnark/std/hash/poseidon2"
 	"github.com/consensys/gnark/test"
 	"github.com/mistcash/pqmsg/packages/circuits"
 )
@@ -43,4 +44,34 @@ func TestOpenChannelRejectsWrongChannelKeyHash(t *testing.T) {
 	if test.IsSolved(&circuits.OpenChannel{}, wrong, ecc.BN254.ScalarField()) == nil {
 		t.Fatal("solved with a wrong Channel Key Hash")
 	}
+}
+
+// hashCircuit checks Out = H(In...) with gnark's in-circuit Poseidon2, an independent check on the native hashes.
+type hashCircuit struct {
+	In  []frontend.Variable
+	Out frontend.Variable
+}
+
+func (c *hashCircuit) Define(api frontend.API) error {
+	h, err := poseidon2.New(api)
+	if err != nil {
+		return err
+	}
+	h.Write(c.In...)
+	api.AssertIsEqual(h.Sum(), c.Out)
+	return nil
+}
+
+func assertHash(t *testing.T, got fr.Element, in ...frontend.Variable) {
+	t.Helper()
+	circuit := &hashCircuit{In: make([]frontend.Variable, len(in))}
+	if err := test.IsSolved(circuit, &hashCircuit{In: in, Out: got}, ecc.BN254.ScalarField()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestChannelKey(t *testing.T) {
+	var senderKey fr.Element
+	senderKey.SetUint64(42)
+	assertHash(t, circuits.ChannelKey(senderKey, 7), 42, 7)
 }
