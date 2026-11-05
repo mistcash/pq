@@ -12,6 +12,14 @@ _Avoid_: member, account
 The public value a User registers; a placeholder until channel key encryption exists.
 _Avoid_: registration key, public key
 
+**User Index**:
+A User's permanent position in the list of registered Users.
+_Avoid_: recipient index, user id
+
+**Sender Key**:
+A User's private secret, from which every Channel Key they open is derived.
+_Avoid_: root key, master key, User Key
+
 **Channel**:
 A one-way conversation from one sender to one recipient; replies travel on the reverse Channel.
 _Avoid_: session, conversation, thread
@@ -25,7 +33,7 @@ The public hash of a Channel Key, which is all the chain stores about a Channel'
 _Avoid_: public parameter, commitment
 
 **Fixed Sender**:
-The single account that submits messages on users' behalf, standing in for a future relayer.
+The single account that submits Channel openings and messages on users' behalf, standing in for a future relayer.
 _Avoid_: relayer, burner
 
 **Message Index**:
