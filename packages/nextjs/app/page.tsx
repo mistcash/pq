@@ -30,7 +30,10 @@ const Home: NextPage = () => {
         <JoinChannel
           {...joining}
           me={address}
-          onBack={leave}
+          onBack={() => {
+            leave();
+            setOther(undefined);
+          }}
           onReply={() => {
             leave();
             setOther(joining.from);
