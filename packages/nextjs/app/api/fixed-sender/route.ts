@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   const client = createWalletClient({
     account: privateKeyToAccount(key as Hex),
     chain,
-    transport: http(getAlchemyHttpUrl(chain.id)),
+    transport: http(process.env.FIXED_SENDER_RPC_URL || getAlchemyHttpUrl(chain.id)),
   }).extend(publicActions);
   try {
     // Simulate first: a bad proof would otherwise burn all the gas it's given.
