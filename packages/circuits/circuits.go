@@ -87,6 +87,9 @@ func pads(channelKey fr.Element, index uint64) [2]fr.Element {
 // Encrypt returns the two Ciphertext Elements m_j + H(Message Key, j), where m_j is
 // the j-th 31-byte big-endian chunk of the message, zero-padded to 62 bytes.
 func Encrypt(channelKey fr.Element, index uint64, message []byte) ([2]fr.Element, error) {
+	if len(message) > 62 {
+		return [2]fr.Element{}, errors.New("message must be at most 62 bytes")
+	}
 	var padded [62]byte
 	copy(padded[:], message)
 	ciphertext := pads(channelKey, index)

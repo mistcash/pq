@@ -135,3 +135,9 @@ func TestEncryptThenDecrypt(t *testing.T) {
 		}
 	}
 }
+
+func TestEncryptRejectsMessageOver62Bytes(t *testing.T) {
+	if _, err := circuits.Encrypt(fr.Element{}, 0, make([]byte, 63)); err == nil {
+		t.Fatal("accepted a 63-byte message")
+	}
+}
