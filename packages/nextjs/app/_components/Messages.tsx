@@ -54,7 +54,10 @@ export const Messages = ({ channelKey, mine, children }: Props) => {
           </div>
         </div>
       )}
-      <div className="sticky bottom-0 bg-base-100 py-3">{mine ? <Composer send={send} /> : children}</div>
+      {/* Room above the footer, and a fade, so messages slide under it instead of being cut off. */}
+      <div className="sticky bottom-0 bg-base-100 py-3 mt-3 before:absolute before:inset-x-0 before:bottom-full before:h-4 before:bg-linear-to-t before:from-base-100">
+        {mine ? <Composer send={send} /> : children}
+      </div>
     </div>
   );
 };
