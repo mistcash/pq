@@ -25,6 +25,9 @@ export const People = ({ me, onPick }: { me: Address; onPick: (user: Address) =>
         <h2 className="text-xl font-semibold m-0 px-5 pt-5 pb-2">
           People <span className="text-base-content/70 font-normal">{users?.length}</span>
         </h2>
+        {users && users.length > 1 && !users.some((user: Address) => loadChannelKey(me, user)) && (
+          <p className="text-base-content/70 m-0 px-5 pb-2">No chats yet. Tap someone to say hi!</p>
+        )}
         {users ? (
           <ul className="divide-y divide-base-300">
             {users.map((user: Address) => (
