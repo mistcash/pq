@@ -62,7 +62,7 @@ const Composer = ({ send }: { send: (message: string) => Promise<void> }) => {
 
   return (
     <form
-      className="flex items-center gap-2 mt-3"
+      className="sticky bottom-0 bg-base-100 flex items-center gap-2 py-3"
       onSubmit={e => {
         e.preventDefault();
         submit();
