@@ -85,7 +85,7 @@ export const Avatar: AvatarComponent = ({ address, size }) => {
         )}
       </g>
       {/* A white rim, so a pale avatar still stands out on the pale page. */}
-      <circle cx="32" cy="32" r="31" fill="none" stroke={WHITE} strokeWidth="2" />
+      <circle cx="32" cy="32" r="31.5" fill="none" stroke={WHITE} strokeWidth="2" />
     </svg>
   );
 };
