@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Hex } from "viem";
 import { ArrowPathIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { Confetti } from "~~/components/Confetti";
 import { useMessages } from "~~/hooks/useMessages";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -47,6 +48,7 @@ export const Messages = ({ channelKey, mine }: { channelKey: Hex; mine?: boolean
 const Composer = ({ send }: { send: (message: string) => Promise<void> }) => {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(0);
   const left = 62 - new TextEncoder().encode(text).length;
 
   const submit = async () => {
@@ -54,6 +56,7 @@ const Composer = ({ send }: { send: (message: string) => Promise<void> }) => {
     try {
       await send(text);
       setText("");
+      setSent(sent + 1);
     } catch (e: any) {
       notification.error(e.message);
     }
@@ -79,9 +82,12 @@ const Composer = ({ send }: { send: (message: string) => Promise<void> }) => {
       <span className={`w-7 text-center font-semibold ${left < 0 ? "text-error" : "text-base-content/70"}`}>
         {left}
       </span>
-      <button className="btn btn-primary btn-lg btn-circle" aria-label="Send" disabled={sending || !text || left < 0}>
-        {sending ? <span className="loading loading-dots" /> : <PaperAirplaneIcon className="h-6 w-6" />}
-      </button>
+      <div className="relative isolate">
+        {sent > 0 && <Confetti key={sent} />}
+        <button className="btn btn-primary btn-lg btn-circle" aria-label="Send" disabled={sending || !text || left < 0}>
+          {sending ? <span className="loading loading-dots" /> : <PaperAirplaneIcon className="h-6 w-6" />}
+        </button>
+      </div>
     </form>
   );
 };
