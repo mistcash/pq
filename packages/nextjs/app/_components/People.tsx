@@ -3,7 +3,7 @@
 import { Avatar } from "~~/components/Avatar";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
-const short = (address: string) => `${address.slice(0, 6)}…${address.slice(-4)}`;
+export const short = (address: string) => `${address.slice(0, 6)}…${address.slice(-4)}`;
 
 /** Every registered User, with your own avatar up top. */
 export const People = ({ me }: { me: string }) => {
