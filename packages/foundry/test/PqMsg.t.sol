@@ -55,6 +55,14 @@ contract PqMsgTest is Test {
         assertEq(encryptedChannelKey, hex"c0ffee");
     }
 
+    function testGetChannelsListsOpenedChannels() public {
+        pqMsg.openChannel(channelKeyHash, "", proof);
+
+        PqMsg.Channel[] memory opened = pqMsg.getChannels();
+        assertEq(opened.length, 1);
+        assertEq(opened[0].channelKeyHash, channelKeyHash);
+    }
+
     function testOpenChannelRevertsOnBadProof() public {
         proof[0] ^= 0x01;
         vm.expectRevert(Verifier.ProofInvalid.selector);
