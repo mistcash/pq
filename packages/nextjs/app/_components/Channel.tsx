@@ -37,8 +37,8 @@ export const Channel = ({ me, other, onBack, step, error, open }: Props) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <button className="btn btn-ghost btn-sm self-start" onClick={onBack}>
-        <ArrowLeftIcon className="h-4 w-4" /> People
+      <button className="btn btn-ghost btn-lg self-start -ml-3 px-3" onClick={onBack}>
+        <ArrowLeftIcon className="h-5 w-5" /> People
       </button>
       <div className="flex flex-col items-center text-center gap-3">
         <div className={`relative isolate ${step === "open" || error ? "" : "animate-bounce"}`}>

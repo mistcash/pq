@@ -26,7 +26,7 @@ export const Messages = ({ channelKey, mine, children }: Props) => {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold m-0 pl-1">{mine ? "You said" : "They said"}</h2>
         <button
-          className="btn btn-ghost btn-circle"
+          className="btn btn-ghost btn-circle btn-lg -mr-2"
           aria-label="Refresh"
           disabled={refreshing}
           onClick={() => refresh()}

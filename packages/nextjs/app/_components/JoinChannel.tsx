@@ -14,8 +14,8 @@ type Props = Joining & { me: Address; onBack: () => void; onReply: () => void };
 /** The Channel someone opened to you, as you join it, then what they said. */
 export const JoinChannel = ({ me, from, joined, error, onBack, onReply }: Props) => (
   <div className="flex flex-col gap-6">
-    <button className="btn btn-ghost btn-sm self-start" onClick={onBack}>
-      <ArrowLeftIcon className="h-4 w-4" /> People
+    <button className="btn btn-ghost btn-lg self-start -ml-3 px-3" onClick={onBack}>
+      <ArrowLeftIcon className="h-5 w-5" /> People
     </button>
     <div className="flex flex-col items-center text-center gap-3">
       <div className={`relative isolate ${joined || error ? "" : "animate-bounce"}`}>
