@@ -8,6 +8,7 @@ package main
 import (
 	"bytes"
 	"encoding/hex"
+	"errors"
 	"strings"
 	"syscall/js"
 
@@ -63,6 +64,24 @@ func main() {
 				"proof":          "0x" + hex.EncodeToString(proof.(*groth16bn254.Proof).MarshalSolidity()),
 				"channelKeyHash": toHex(channelKeyHash),
 			}, nil
+		}),
+		// messageId(channelKey, messageIndex)
+		"messageId": fn(func(a []js.Value) (any, error) {
+			channelKey, err := element(a[0])
+			return toHex(circuits.MessageID(channelKey, uint64(a[1].Int()))), err
+		}),
+		// encrypt(channelKey, messageIndex, message) returns the two Ciphertext Elements.
+		"encrypt": fn(func(a []js.Value) (any, error) {
+			channelKey, err := element(a[0])
+			c, tooLong := circuits.Encrypt(channelKey, uint64(a[1].Int()), []byte(a[2].String()))
+			return []any{toHex(c[0]), toHex(c[1])}, errors.Join(err, tooLong)
+		}),
+		// decrypt(channelKey, messageIndex, ciphertext1, ciphertext2) returns the message.
+		"decrypt": fn(func(a []js.Value) (any, error) {
+			channelKey, err := element(a[0])
+			c1, err1 := element(a[2])
+			c2, err2 := element(a[3])
+			return string(circuits.Decrypt(channelKey, uint64(a[1].Int()), [2]fr.Element{c1, c2})), errors.Join(err, err1, err2)
 		}),
 	})
 	select {}
