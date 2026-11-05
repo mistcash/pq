@@ -1,0 +1,42 @@
+import { NextResponse } from "next/server";
+import { type Hex, createWalletClient, http, isHex, publicActions, size } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { hardhat } from "viem/chains";
+import scaffoldConfig from "~~/scaffold.config";
+import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
+import { contracts } from "~~/utils/scaffold-eth/contract";
+
+const chain = scaffoldConfig.targetNetworks[0];
+// Anvil's account #1, used only on the local chain; the deployer and faucet use other anvil accounts.
+const ANVIL_KEY = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
+const key = process.env.FIXED_SENDER_PRIVATE_KEY || (chain.id === hardhat.id ? ANVIL_KEY : undefined);
+
+const is = (value: unknown, bytes: number): value is Hex => isHex(value) && size(value) === bytes;
+
+/** The Fixed Sender: submits typed open-Channel requests so users pay no gas and keep their address off-chain. */
+export async function POST(request: Request) {
+  const { type, channelKeyHash, proof } = await request.json();
+  if (type !== "openChannel" || !is(channelKeyHash, 32) || !is(proof, 256)) {
+    return NextResponse.json({ error: "Expected an open-Channel request" }, { status: 400 });
+  }
+  const pqMsg = contracts?.[chain.id]?.PqMsg;
+  if (!key || !pqMsg) return NextResponse.json({ error: "Sending isn't set up on this server yet." }, { status: 500 });
+
+  const client = createWalletClient({
+    account: privateKeyToAccount(key as Hex),
+    chain,
+    transport: http(getAlchemyHttpUrl(chain.id)),
+  }).extend(publicActions);
+  try {
+    // Simulate first: a bad proof would otherwise burn all the gas it's given.
+    const { request: call } = await client.simulateContract({
+      address: pqMsg.address,
+      abi: pqMsg.abi,
+      functionName: "openChannel",
+      args: [BigInt(channelKeyHash), "0x", proof],
+    });
+    return NextResponse.json({ hash: await client.writeContract(call) });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.shortMessage ?? String(e) }, { status: 400 });
+  }
+}

@@ -33,4 +33,9 @@ contract PqMsg is Verifier {
         this.verifyProof(proof, [channelKeyHash]);
         channels.push(Channel(channelKeyHash, encryptedChannelKey));
     }
+
+    /// Every Channel, so the app can find one by its Channel Key Hash.
+    function getChannels() external view returns (Channel[] memory) {
+        return channels;
+    }
 }

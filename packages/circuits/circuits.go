@@ -2,6 +2,8 @@
 package circuits
 
 import (
+	"errors"
+
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/poseidon2"
@@ -27,14 +29,42 @@ func (c *OpenChannel) Define(api frontend.API) error {
 	return nil
 }
 
+// hash returns H(elements...) with gnark's native Poseidon2 Merkle-Damgård hasher.
+func hash(elements ...fr.Element) fr.Element {
+	h := poseidon2.NewMerkleDamgardHasher()
+	for _, e := range elements {
+		b := e.Bytes()
+		h.Write(b[:])
+	}
+	var sum fr.Element
+	sum.SetBytes(h.Sum(nil))
+	return sum
+}
+
+// SenderKey returns H of a 65-byte wallet signature, zero-padded and split into three 31-byte big-endian chunks.
+func SenderKey(signature []byte) (fr.Element, error) {
+	if len(signature) != 65 {
+		return fr.Element{}, errors.New("signature must be 65 bytes")
+	}
+	var padded [93]byte
+	copy(padded[:], signature)
+	var chunks [3]fr.Element
+	for i := range chunks {
+		chunks[i].SetBytes(padded[i*31 : (i+1)*31])
+	}
+	return hash(chunks[:]...), nil
+}
+
+// ChannelKey returns H(senderKey, userIndex), the Channel Key from a sender to the User at userIndex.
+func ChannelKey(senderKey fr.Element, userIndex uint64) fr.Element {
+	var i fr.Element
+	i.SetUint64(userIndex)
+	return hash(senderKey, i)
+}
+
 // ChannelKeyHash returns H(channelKey).
 func ChannelKeyHash(channelKey fr.Element) fr.Element {
-	h := poseidon2.NewMerkleDamgardHasher()
-	b := channelKey.Bytes()
-	h.Write(b[:])
-	var hash fr.Element
-	hash.SetBytes(h.Sum(nil))
-	return hash
+	return hash(channelKey)
 }
 
 // ProveChannelKey proves knowledge of channelKey and returns the proof with its Channel Key Hash.

@@ -1,12 +1,13 @@
 "use client";
 
+import type { Address } from "viem";
 import { Avatar } from "~~/components/Avatar";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
-const short = (address: string) => `${address.slice(0, 6)}…${address.slice(-4)}`;
+export const short = (address: string) => `${address.slice(0, 6)}…${address.slice(-4)}`;
 
-/** Every registered User, with your own avatar up top. */
-export const People = ({ me }: { me: string }) => {
+/** Every registered User, with your own avatar up top. Tap someone to open a Channel to them. */
+export const People = ({ me, onPick }: { me: string; onPick: (user: Address) => void }) => {
   const { data: users } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
 
   return (
@@ -24,11 +25,17 @@ export const People = ({ me }: { me: string }) => {
         </h2>
         {users ? (
           <ul className="divide-y divide-base-300">
-            {users.map((user: string) => (
-              <li key={user} className="flex items-center gap-4 px-5 py-3">
-                <Avatar address={user} size={48} />
-                <span className="font-medium truncate">{short(user)}</span>
-                {user === me && <span className="badge badge-primary ml-auto">you</span>}
+            {users.map((user: Address) => (
+              <li key={user}>
+                <button
+                  className="flex items-center gap-4 px-5 py-3 w-full text-left enabled:hover:bg-base-200 enabled:cursor-pointer"
+                  disabled={user === me}
+                  onClick={() => onPick(user)}
+                >
+                  <Avatar address={user} size={48} />
+                  <span className="font-medium truncate">{short(user)}</span>
+                  {user === me && <span className="badge badge-primary ml-auto">you</span>}
+                </button>
               </li>
             ))}
           </ul>
