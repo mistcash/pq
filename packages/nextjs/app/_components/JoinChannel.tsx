@@ -5,6 +5,7 @@ import { short } from "./People";
 import type { Address } from "viem";
 import { ArrowLeftIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { Avatar } from "~~/components/Avatar";
+import { Confetti } from "~~/components/Confetti";
 import type { Joining } from "~~/hooks/useJoinChannel";
 import { loadChannelKey } from "~~/utils/channels";
 
@@ -17,7 +18,8 @@ export const JoinChannel = ({ me, from, joined, error, onBack, onReply }: Props)
       <ArrowLeftIcon className="h-4 w-4" /> People
     </button>
     <div className="flex flex-col items-center text-center gap-3">
-      <div className={joined || error ? "" : "animate-bounce"}>
+      <div className={`relative isolate ${joined || error ? "" : "animate-bounce"}`}>
+        {joined && <Confetti />}
         <Avatar address={from} size={128} />
       </div>
       <h1 className="text-3xl font-bold m-0">{short(from)}</h1>
