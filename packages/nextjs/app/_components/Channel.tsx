@@ -45,7 +45,10 @@ export const Channel = ({ me, other, onBack, step, error, open }: Props) => {
           {step === "open" && isNew && <Confetti />}
           <Avatar address={other} size={128} />
         </div>
-        <h1 className="text-3xl font-bold m-0">{short(other)}</h1>
+        <div>
+          <h1 className="text-3xl font-bold m-0">{short(other)}</h1>
+          <p className="text-base-content/70 m-0">You write, they read.</p>
+        </div>
       </div>
       <div className="card bg-base-100 border border-base-300 p-6 items-center text-center gap-4">
         {error ? (
