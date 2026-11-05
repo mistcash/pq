@@ -84,6 +84,8 @@ export const Avatar: AvatarComponent = ({ address, size }) => {
           <path d="M24 46q4-4 8 0t8 0" {...line} />,
         )}
       </g>
+      {/* A white rim, so a pale avatar still stands out on the pale page. */}
+      <circle cx="32" cy="32" r="31" fill="none" stroke={WHITE} strokeWidth="2" />
     </svg>
   );
 };
