@@ -1,11 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-contract PqMsg {
+import { Verifier } from "./Verifier.sol";
+
+/// pqmsg: Channels and messages stored publicly on-chain.
+contract PqMsg is Verifier {
+    struct Channel {
+        uint256 channelKeyHash;
+        bytes encryptedChannelKey;
+    }
+
     /// Users in registration order; a User's position is their User Index.
     address[] public users;
     /// User Key of each User; zero means not registered.
     mapping(address => uint256) public keys;
+    Channel[] public channels;
 
     error ZeroKey();
 
@@ -17,5 +26,11 @@ contract PqMsg {
 
     function getUsers() external view returns (address[] memory) {
         return users;
+    }
+
+    /// Opens a Channel once `proof` shows knowledge of the Channel Key behind `channelKeyHash`.
+    function openChannel(uint256 channelKeyHash, bytes calldata encryptedChannelKey, bytes calldata proof) external {
+        this.verifyProof(proof, [channelKeyHash]);
+        channels.push(Channel(channelKeyHash, encryptedChannelKey));
     }
 }
