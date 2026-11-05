@@ -45,6 +45,12 @@ export const People = ({ me, onPick }: { me: Address; onPick: (user: Address) =>
                 </button>
               </li>
             ))}
+            {users.length < 2 && (
+              <li className="flex items-center gap-4 px-5 py-3 text-base-content/70">
+                <span className="size-12 shrink-0 rounded-full border-2 border-dashed border-base-300" />
+                Friends who join pop up here
+              </li>
+            )}
           </ul>
         ) : (
           <span className="loading loading-dots mx-auto my-6" />
