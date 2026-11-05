@@ -1,5 +1,6 @@
 "use client";
 
+import { Messages } from "./Messages";
 import { short } from "./People";
 import type { Address } from "viem";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -64,6 +65,7 @@ export const Channel = ({ me, other, onBack, step, error, open }: Props) => {
           </>
         )}
       </div>
+      {step === "open" && <Messages channelKey={loadChannelKey(me, other)!} mine />}
     </div>
   );
 };

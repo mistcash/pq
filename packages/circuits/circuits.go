@@ -2,6 +2,7 @@
 package circuits
 
 import (
+	"bytes"
 	"errors"
 
 	"github.com/consensys/gnark-crypto/ecc"
@@ -65,6 +66,51 @@ func ChannelKey(senderKey fr.Element, userIndex uint64) fr.Element {
 // ChannelKeyHash returns H(channelKey).
 func ChannelKeyHash(channelKey fr.Element) fr.Element {
 	return hash(channelKey)
+}
+
+// messageKey returns H(channelKey, index), the Message Key.
+func messageKey(channelKey fr.Element, index uint64) fr.Element {
+	return hash(channelKey, fr.NewElement(index))
+}
+
+// MessageID returns H(Message Key, 0), the public ID the message at index is stored under.
+func MessageID(channelKey fr.Element, index uint64) fr.Element {
+	return hash(messageKey(channelKey, index), fr.Element{})
+}
+
+// pads returns H(Message Key, j) for j = 1, 2.
+func pads(channelKey fr.Element, index uint64) [2]fr.Element {
+	key := messageKey(channelKey, index)
+	return [2]fr.Element{hash(key, fr.NewElement(1)), hash(key, fr.NewElement(2))}
+}
+
+// Encrypt returns the two Ciphertext Elements m_j + H(Message Key, j), where m_j is
+// the j-th 31-byte big-endian chunk of the message, zero-padded to 62 bytes.
+func Encrypt(channelKey fr.Element, index uint64, message []byte) ([2]fr.Element, error) {
+	if len(message) > 62 {
+		return [2]fr.Element{}, errors.New("message must be at most 62 bytes")
+	}
+	var padded [62]byte
+	copy(padded[:], message)
+	ciphertext := pads(channelKey, index)
+	for j := range ciphertext {
+		var m fr.Element
+		m.SetBytes(padded[j*31 : (j+1)*31])
+		ciphertext[j].Add(&ciphertext[j], &m)
+	}
+	return ciphertext, nil
+}
+
+// Decrypt returns the message in two Ciphertext Elements, without its zero padding.
+func Decrypt(channelKey fr.Element, index uint64, ciphertext [2]fr.Element) []byte {
+	pad := pads(channelKey, index)
+	var message []byte
+	for j := range ciphertext {
+		var m fr.Element
+		b := m.Sub(&ciphertext[j], &pad[j]).Bytes()
+		message = append(message, b[1:]...)
+	}
+	return bytes.TrimRight(message, "\x00")
 }
 
 // ProveChannelKey proves knowledge of channelKey and returns the proof with its Channel Key Hash.

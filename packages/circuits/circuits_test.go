@@ -104,3 +104,40 @@ func TestSenderKeyRejectsSignatureNot65Bytes(t *testing.T) {
 		t.Fatal("accepted a 64-byte signature")
 	}
 }
+
+func TestMessageIDIsDeterministic(t *testing.T) {
+	var channelKey, otherChannelKey fr.Element
+	channelKey.SetUint64(42)
+	otherChannelKey.SetUint64(43)
+	id := circuits.MessageID(channelKey, 7)
+
+	if id != circuits.MessageID(channelKey, 7) {
+		t.Fatal("the same Channel Key and Message Index gave different Message IDs")
+	}
+	if id == circuits.MessageID(channelKey, 8) || id == circuits.MessageID(otherChannelKey, 7) {
+		t.Fatal("a different Channel Key or Message Index gave the same Message ID")
+	}
+}
+
+func TestEncryptThenDecrypt(t *testing.T) {
+	var channelKey fr.Element
+	channelKey.SetUint64(42)
+	for _, message := range []string{"gm 🌞", strings.Repeat("62 bytes, spanning both Ciphertext Elements! ", 2)[:62]} {
+		ciphertext, err := circuits.Encrypt(channelKey, 7, []byte(message))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := string(circuits.Decrypt(channelKey, 7, ciphertext)); got != message {
+			t.Fatalf("decrypted %q, want %q", got, message)
+		}
+		if string(circuits.Decrypt(channelKey, 8, ciphertext)) == message {
+			t.Fatal("decrypted with another Message Index")
+		}
+	}
+}
+
+func TestEncryptRejectsMessageOver62Bytes(t *testing.T) {
+	if _, err := circuits.Encrypt(fr.Element{}, 0, make([]byte, 63)); err == nil {
+		t.Fatal("accepted a 63-byte message")
+	}
+}

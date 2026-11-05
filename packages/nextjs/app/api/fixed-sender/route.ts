@@ -13,12 +13,20 @@ const key = process.env.FIXED_SENDER_PRIVATE_KEY || (chain.id === hardhat.id ? A
 
 const is = (value: unknown, bytes: number): value is Hex => isHex(value) && size(value) === bytes;
 
-/** The Fixed Sender: submits typed open-Channel requests so users pay no gas and keep their address off-chain. */
-export async function POST(request: Request) {
-  const { type, channelKeyHash, proof } = await request.json();
-  if (type !== "openChannel" || !is(channelKeyHash, 32) || !is(proof, 256)) {
-    return NextResponse.json({ error: "Expected an open-Channel request" }, { status: 400 });
+/** Builds the contract call for a typed open-Channel or post request, and for nothing else. */
+const callFor = ({ type, channelKeyHash, proof, messageId, ciphertext1, ciphertext2 }: any) => {
+  if (type === "openChannel" && is(channelKeyHash, 32) && is(proof, 256)) {
+    return { functionName: "openChannel", args: [BigInt(channelKeyHash), "0x", proof] };
   }
+  if (type === "post" && is(messageId, 32) && is(ciphertext1, 32) && is(ciphertext2, 32)) {
+    return { functionName: "post", args: [BigInt(messageId), BigInt(ciphertext1), BigInt(ciphertext2)] };
+  }
+};
+
+/** The Fixed Sender: submits typed requests so users pay no gas and keep their address off-chain. */
+export async function POST(request: Request) {
+  const call = callFor(await request.json());
+  if (!call) return NextResponse.json({ error: "Expected an open-Channel or post request" }, { status: 400 });
   const pqMsg = contracts?.[chain.id]?.PqMsg;
   if (!key || !pqMsg) return NextResponse.json({ error: "Sending isn't set up on this server yet." }, { status: 500 });
 
@@ -29,13 +37,8 @@ export async function POST(request: Request) {
   }).extend(publicActions);
   try {
     // Simulate first: a bad proof would otherwise burn all the gas it's given.
-    const { request: call } = await client.simulateContract({
-      address: pqMsg.address,
-      abi: pqMsg.abi,
-      functionName: "openChannel",
-      args: [BigInt(channelKeyHash), "0x", proof],
-    });
-    return NextResponse.json({ hash: await client.writeContract(call) });
+    const { request: tx } = await client.simulateContract({ address: pqMsg.address, abi: pqMsg.abi, ...call });
+    return NextResponse.json({ hash: await client.writeContract(tx) });
   } catch (e: any) {
     return NextResponse.json({ error: e.shortMessage ?? String(e) }, { status: 400 });
   }

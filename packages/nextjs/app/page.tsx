@@ -26,7 +26,16 @@ const Home: NextPage = () => {
       {!address || !key ? (
         <Join />
       ) : joining ? (
-        <JoinChannel {...joining} onBack={leave} />
+        <JoinChannel
+          {...joining}
+          me={address}
+          onBack={leave}
+          onReply={() => {
+            leave();
+            setOther(joining.from);
+            opening.open(address, joining.from);
+          }}
+        />
       ) : other ? (
         <Channel me={address} other={other} onBack={() => setOther(undefined)} {...opening} />
       ) : (
