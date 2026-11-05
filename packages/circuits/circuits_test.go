@@ -71,6 +71,12 @@ func assertHash(t *testing.T, got fr.Element, in ...frontend.Variable) {
 	}
 }
 
+func TestChannelKeyHash(t *testing.T) {
+	var channelKey fr.Element
+	channelKey.SetUint64(42)
+	assertHash(t, circuits.ChannelKeyHash(channelKey), 42)
+}
+
 func TestChannelKey(t *testing.T) {
 	var senderKey fr.Element
 	senderKey.SetUint64(42)
