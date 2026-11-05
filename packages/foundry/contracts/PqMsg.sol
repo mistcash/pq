@@ -1,4 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-contract PqMsg { }
+contract PqMsg {
+    /// Users in registration order; a User's position is their User Index.
+    address[] public users;
+    /// User Key of each User; zero means not registered.
+    mapping(address => uint256) public keys;
+
+    function register(uint256 key) external {
+        users.push(msg.sender);
+        keys[msg.sender] = key;
+    }
+
+    function getUsers() external view returns (address[] memory) {
+        return users;
+    }
+}
