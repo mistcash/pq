@@ -1,6 +1,6 @@
 # Security considerations
 
-pqmsg aims to let only a Channel's two ends read its messages, and to keep who talks to whom off the chain: the recipient is a private input to the proof, the sender is encrypted, and the Fixed Sender submits both. It's a testnet prototype and hasn't been audited. This is where it falls short today.
+pq aims to let only a Channel's two ends read its messages, and to keep who talks to whom off the chain: the recipient is a private input to the proof, the sender is encrypted, and the Fixed Sender submits both. It's a testnet prototype and hasn't been audited. This is where it falls short today.
 
 ## What is post-quantum, and what isn't yet
 
@@ -17,7 +17,7 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 ## Keys, and where they live
 
 - **No ephemeral keys.** Every key comes from the Sender Key, by design (ADR-0002), so there's no forward secrecy and no re-keying. A leaked Sender Key exposes every Channel its User opened and every Channel opened to them, since their User Key comes from it too.
-- **Passkeys are tied to pqmsg's domain.** Another site can't ask yours for its PRF output. But pqmsg on a new domain would need new passkeys, and losing yours loses every Channel (ADR-0004).
+- **Passkeys are tied to pq's domain.** Another site can't ask yours for its PRF output. But pq on a new domain would need new passkeys, and losing yours loses every Channel (ADR-0004).
 - **Sender Keys stay in memory** for the page's lifetime and are never sent anywhere.
 - **Channel Keys are cached unencrypted in `localStorage`**, so anyone who can run script in this browser profile (an XSS bug, an extension) or open it can read your chats. **Find my chats** rebuilds them from one passkey tap, so they could live in memory instead. The app doesn't set a Content Security Policy yet.
 
