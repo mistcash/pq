@@ -4,7 +4,7 @@ Install matt pocock skills before starting.
 
 we are building post quantum secure messaging layer for ethereum testnet.
 
-Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`.
+Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`. What the OpenChannel proof checks, and how post-quantum pqmsg is, is in `docs/security/open-channel-proof.md`.
 
 ## PHASE 1 - registration and message sending
 
