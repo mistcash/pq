@@ -15,7 +15,7 @@ import { useOpenChannel } from "~~/hooks/useOpenChannel";
 
 const Home: NextPage = () => {
   const { address } = useAccount();
-  const { data: key } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "keys", args: [address] });
+  const { data: key } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "userKeys", args: [address] });
   const [other, setOther] = useState<Address>();
   const { step, restored, restore } = useOpenChannel();
   const { joining, join, leave } = useJoinChannel(key ? address : undefined);

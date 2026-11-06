@@ -19,19 +19,19 @@ contract PqMsg is Verifier {
     /// Users in registration order; a User's position is their User Index.
     address[] public users;
     /// User Key of each User; zero means not registered.
-    mapping(address => uint256) public keys;
+    mapping(address => uint256) public userKeys;
     Channel[] public channels;
     /// Messages by Message ID; all zeros means no message.
     mapping(uint256 => Message) public messages;
 
-    error ZeroKey();
+    error ZeroUserKey();
     error MessageIdUsed();
     error ZeroCiphertext();
 
     function register(uint256 key) external {
-        if (key == 0) revert ZeroKey();
-        if (keys[msg.sender] == 0) users.push(msg.sender);
-        keys[msg.sender] = key;
+        if (key == 0) revert ZeroUserKey();
+        if (userKeys[msg.sender] == 0) users.push(msg.sender);
+        userKeys[msg.sender] = key;
     }
 
     function getUsers() external view returns (address[] memory) {

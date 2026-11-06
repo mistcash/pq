@@ -21,7 +21,7 @@ contract PqMsgTest is Test {
         vm.prank(alice);
         pqMsg.register(42);
 
-        assertEq(pqMsg.keys(alice), 42);
+        assertEq(pqMsg.userKeys(alice), 42);
         assertEq(pqMsg.getUsers().length, 1);
         assertEq(pqMsg.users(0), alice);
     }
@@ -35,14 +35,14 @@ contract PqMsgTest is Test {
         vm.prank(alice);
         pqMsg.register(3);
 
-        assertEq(pqMsg.keys(alice), 3);
+        assertEq(pqMsg.userKeys(alice), 3);
         assertEq(pqMsg.getUsers().length, 2);
         assertEq(pqMsg.users(0), alice);
         assertEq(pqMsg.users(1), bob);
     }
 
-    function testRegisterRejectsZeroKey() public {
-        vm.expectRevert(PqMsg.ZeroKey.selector);
+    function testRegisterRejectsZeroUserKey() public {
+        vm.expectRevert(PqMsg.ZeroUserKey.selector);
         vm.prank(alice);
         pqMsg.register(0);
     }
