@@ -117,7 +117,7 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 | The opening proof's soundness | Pairings on BN254 (Groth16) | Breaks | Forged Channel openings: junk, not leaks. Groth16 is perfectly zero-knowledge, so proofs still hide the recipient. |
 | The Sender Key | The wallet's secp256k1 key | Breaks | Everything the User sent and received |
 
-**The Sender Key is the weak link.** It's a hash of a wallet signature, and the app only accepts wallets that sign deterministically. Registering sends a transaction from that wallet, which reveals its public key. A quantum attacker who recovers the private key from it can sign `pqmsg: derive Sender Key v1` again, get the same Sender Key, and from it the User's Kyber secret key and every Channel Key they opened. So harvest now, decrypt later works against registered Users today. Fixing it means a root secret that doesn't come from the wallet's ECDSA key, at the cost of ADR-0002's "nothing to back up".
+**The Sender Key is the weak link.** It's a hash of a wallet signature, and the app only accepts wallets that sign deterministically. Registering sends a transaction from that wallet, which reveals its public key. A quantum attacker who recovers the private key from it can sign `pqmsg: derive Sender Key v1` again, get the same Sender Key, and from it every Channel the User opened or was sent. So harvest now, decrypt later works against registered Users today. Fixing it means a root secret that doesn't come from the wallet's ECDSA key, at the cost of ADR-0002's "nothing to back up".
 
 ### Keys, and where they live
 
