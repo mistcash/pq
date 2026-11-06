@@ -5,13 +5,13 @@ import (
 
 	"github.com/cloudflare/circl/pke/kyber/kyber512/math"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
+	"github.com/mistcash/pqmsg/packages/circuits/circuit"
 )
 
-// CoeffsPerElement is how many 12-bit coefficients one BN254 field element holds.
-const CoeffsPerElement = 21
-
-// CiphertextElements is how many field elements hold u‖v.
-const CiphertextElements = ((math.K+1)*math.N + CoeffsPerElement - 1) / CoeffsPerElement
+const (
+	CoeffsPerElement   = circuit.CoeffsPerElement
+	CiphertextElements = circuit.CiphertextElements
+)
 
 // Ciphertext is u‖v packed: coefficient n of u‖v is bits 12·(n%21) up of element n/21.
 type Ciphertext = [CiphertextElements]fr.Element
