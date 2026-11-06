@@ -10,9 +10,7 @@ Status: Phase 1, on the Sepolia testnet. A research prototype, not audited.
 
 Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`.
 
-## PHASE 1 - registration and message sending
-
-Set up with Scaffold-ETH 2 using Foundry (`npx create-eth@latest -s foundry`), plus a gnark circuit in Go. Scripts compile the circuit, run a dev-only Groth16 setup on BN254, export the Solidity verifier, and build a WASM prover for the frontend. Every hash is gnark's standard Poseidon2 (ADR-0001). It deploys to Sepolia, with anvil for local development.
+## How it works
 
 The flow is,
 1. Users connect their wallet and register a User Key, a Kyber512 public key derived from the same wallet signature as their Sender Key (ADR-0002).
@@ -31,6 +29,10 @@ Contract stores:
 It emits `Registered(user)`, `ChannelOpened(channelKeyHash)` and `Posted(messageId)`, each indexed.
 
 Right after you open a Channel, and under each message you sent from this browser, the app links the transaction on Etherscan, which shows only the Fixed Sender calling PqMsg.
+
+## Architecture
+
+Set up with Scaffold-ETH 2 using Foundry (`npx create-eth@latest -s foundry`), plus a gnark circuit in Go. Scripts compile the circuit, run a dev-only Groth16 setup on BN254, export the Solidity verifier, and build a WASM prover for the frontend. Every hash is gnark's standard Poseidon2 (ADR-0001). It deploys to Sepolia, with anvil for local development.
 
 ## Design
 
