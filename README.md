@@ -2,7 +2,7 @@
 
 Tiny private messages on Ethereum, with a post-quantum key exchange.
 
-pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one wallet signature, so there's nothing to back up.
+pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join.
 
 **Why it matters.** Whatever goes on a public chain stays there forever. Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists. pqmsg is a working testbed for private messaging on a public chain without that expiry date, and it's explicit about the parts that aren't post-quantum yet (see [Security considerations](#security-considerations)).
 
@@ -39,17 +39,17 @@ Set up with Scaffold-ETH 2 using Foundry (`npx create-eth@latest -s foundry`), p
 | Prove the Encrypted Channel Key is well formed | Groth16 on BN254 (gnark v0.16), checked on-chain by `Verifier.sol` | `packages/circuits/circuits.go`, `circuit/` |
 | Every hash, key derivation and message pad | gnark's Poseidon2 on BN254, in Merkle-Damgård mode | `packages/circuits/circuits.go` |
 | Encrypt a message | Each 31-byte half plus a Poseidon2 pad, in BN254's scalar field | `circuits.Encrypt` |
-| Root secret | Poseidon2 of a wallet signature over `pqmsg: derive Sender Key v1` | `packages/nextjs/hooks/useSenderKey.ts` |
+| Root secret | Poseidon2 of a passkey's WebAuthn PRF output on `pqmsg: derive Sender Key v2` | `packages/nextjs/utils/passkey.ts` |
 
 The browser runs the same Go code, compiled to WASM (`packages/circuits/cmd/wasm`), so each hash and each Kyber step has one implementation, natively, in the circuit and in the browser. Kyber comes from Cloudflare's CIRCL, through the `mistcash/circl` fork (v1.6.4-e.1), which exports Kyber512's internal polynomial math as `pke/kyber/kyber512/math` for the circuit and its witness.
 
 ### Keys
 
-Every key comes from one wallet signature (ADR-0002). H is Poseidon2, and `tag` is 2⁶⁴, an input no User Index or Message Index can take.
+Every key comes from one passkey (ADR-0004). H is Poseidon2, and `tag` is 2⁶⁴, an input no User Index or Message Index can take.
 
 ```
-wallet signature over "pqmsg: derive Sender Key v1"
-└─ Sender Key = H(signature)                            kept in memory, never sent
+passkey's PRF output on "pqmsg: derive Sender Key v2"
+└─ Sender Key = H(PRF output)                           kept in memory, never sent
    ├─ User Key = Kyber512 key pair seeded by H(Sender Key, tag)
    │             its 800-byte public key is registered on-chain
    └─ Channel Key = H(Sender Key, recipient's User Index)
