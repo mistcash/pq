@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Address, Hex } from "viem";
+import { type Address, type Hex, toHex } from "viem";
 import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useChannels } from "~~/hooks/useChannels";
 import { useFixedSender } from "~~/hooks/useFixedSender";
@@ -53,7 +53,7 @@ export const useOpenChannel = () => {
     }
   };
 
-  /** Finds every Channel you opened from your signature alone (ADR-0002), and caches each Channel Key. */
+  /** Finds every Channel from or to you with one signature (ADR-0002), and caches each Channel Key. */
   const restore = async (me: Address) => {
     setStep("start");
     const crypto = await loadCrypto();
@@ -67,6 +67,18 @@ export const useOpenChannel = () => {
       const channelKeyHash = BigInt(crypto.channelKeyHash(channelKey));
       if (!channels.some(channel => channel.channelKeyHash === channelKeyHash)) return;
       saveChannelKey(me, user, channelKey);
+      found++;
+    });
+    // Your key decrypts every Channel's Encrypted Channel Key, but only one opened to you gives back its Channel Key.
+    channels.forEach(channel => {
+      const channelKey = crypto.decryptChannelKey(
+        key,
+        channel.encryptedChannelKey.map(x => toHex(x)),
+      );
+      if (BigInt(crypto.channelKeyHash(channelKey)) !== channel.channelKeyHash) return;
+      const from = users![Number(crypto.decryptSender(channelKey, toHex(channel.encryptedSender)))];
+      if (!from) return;
+      saveChannelKey(from, me, channelKey);
       found++;
     });
     setRestored(found);
