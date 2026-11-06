@@ -18,6 +18,7 @@ export const useOpenChannel = () => {
   const [step, setStep] = useState<OpenStep>();
   const [error, setError] = useState<string>();
   const [restored, setRestored] = useState<number>();
+  const [tx, setTx] = useState<Hex>();
   const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
   const { data: pqMsg } = useScaffoldContract({ contractName: "PqMsg" });
   const getChannels = useChannels();
@@ -42,9 +43,11 @@ export const useOpenChannel = () => {
         // Tells them who opened it, readable only with the Channel Key.
         const encryptedSender = (await crypto).encryptSender(channelKey, users!.indexOf(me));
         setStep("send");
-        await fixedSender({ type: "openChannel", channelKeyHash, encryptedChannelKey, encryptedSender, proof }, () =>
-          setStep("confirm"),
+        const hash = await fixedSender(
+          { type: "openChannel", channelKeyHash, encryptedChannelKey, encryptedSender, proof },
+          () => setStep("confirm"),
         );
+        setTx(hash);
       }
       saveChannelKey(me, other, channelKey);
       setStep("open");
@@ -84,5 +87,5 @@ export const useOpenChannel = () => {
     setRestored(found);
   };
 
-  return { step, error, open, restored, restore };
+  return { step, error, open, tx, restored, restore };
 };

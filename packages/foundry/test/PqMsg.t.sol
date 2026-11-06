@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.21;
 
 import "forge-std/Test.sol";
 import "../contracts/PqMsg.sol";
@@ -68,6 +68,13 @@ contract PqMsgTest is Test {
         assertEq(pqMsg.users(1), bob);
     }
 
+    function testRegisterEmitsRegistered() public {
+        vm.expectEmit(address(pqMsg));
+        emit PqMsg.Registered(alice);
+        vm.prank(alice);
+        pqMsg.register(key(42));
+    }
+
     function testRegisterRejectsUserKeyNot800Bytes() public {
         vm.expectRevert(PqMsg.BadUserKey.selector);
         vm.prank(alice);
@@ -82,6 +89,12 @@ contract PqMsgTest is Test {
         assertEq(opened[0].channelKeyHash, channelKeyHash);
         assertEq(opened[0].encryptedChannelKey[36], encryptedChannelKey[36]);
         assertEq(opened[0].encryptedSender, 7);
+    }
+
+    function testOpenChannelEmitsChannelOpened() public {
+        vm.expectEmit(address(pqMsg));
+        emit PqMsg.ChannelOpened(channelKeyHash);
+        pqMsg.openChannel(channelKeyHash, encryptedChannelKey, 7, proof);
     }
 
     function testOpenChannelRevertsOnBadProof() public {
@@ -102,6 +115,12 @@ contract PqMsgTest is Test {
         (uint256 ciphertext1, uint256 ciphertext2) = pqMsg.messages(7);
         assertEq(ciphertext1, 1);
         assertEq(ciphertext2, 2);
+    }
+
+    function testPostEmitsPosted() public {
+        vm.expectEmit(address(pqMsg));
+        emit PqMsg.Posted(7);
+        pqMsg.post(7, 1, 2);
     }
 
     function testPostRevertsOnUsedMessageId() public {

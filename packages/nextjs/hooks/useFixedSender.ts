@@ -1,7 +1,8 @@
+import type { Hex } from "viem";
 import { usePublicClient } from "wagmi";
 import { FriendlyError } from "~~/utils/friendly";
 
-/** Sends a typed request through the Fixed Sender and waits until it lands. `onSent` runs once it's on its way. */
+/** Sends a typed request through the Fixed Sender and, once it lands, gives its hash. `onSent` runs once it's on its way. */
 export const useFixedSender = () => {
   const publicClient = usePublicClient();
   return async (request: object, onSent?: () => void) => {
@@ -12,5 +13,6 @@ export const useFixedSender = () => {
     if ((await publicClient!.waitForTransactionReceipt({ hash })).status !== "success") {
       throw new FriendlyError("That didn't go through. Try again?");
     }
+    return hash as Hex;
   };
 };

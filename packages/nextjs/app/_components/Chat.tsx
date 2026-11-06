@@ -6,6 +6,7 @@ import type { Address } from "viem";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Avatar } from "~~/components/Avatar";
 import { Confetti } from "~~/components/Confetti";
+import { TxLink } from "~~/components/TxLink";
 import { type OpenStep, useOpenChannel } from "~~/hooks/useOpenChannel";
 import { loadChannelKey } from "~~/utils/channels";
 
@@ -22,7 +23,7 @@ type Props = { me: Address; other: Address; onBack: () => void };
 
 /** You and another User: what they said on their Channel to you, and what you say on yours, once you've said hi. */
 export const Chat = ({ me, other, onBack }: Props) => {
-  const { step, error, open } = useOpenChannel();
+  const { step, error, open, tx } = useOpenChannel();
   const yours = loadChannelKey(me, other);
   const theirs = loadChannelKey(other, me);
   const busy = !error && step && step !== "open" && PROGRESS[step];
@@ -55,6 +56,7 @@ export const Chat = ({ me, other, onBack }: Props) => {
                   ? "They'll find your chat when they tap “Find my chats”."
                   : "Only they can read what you write.")}
             </p>
+            <TxLink hash={tx} />
             {!yours && (
               <button className="btn btn-primary btn-lg btn-block" onClick={() => open(me, other)}>
                 Say hi 👋

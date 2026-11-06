@@ -30,6 +30,11 @@ contract PqMsg is Ownable {
     /// Messages by Message ID; all zeros means no message.
     mapping(uint256 => Message) public messages;
 
+    /// A User registered or replaced their User Key.
+    event Registered(address indexed user);
+    event ChannelOpened(uint256 indexed channelKeyHash);
+    event Posted(uint256 indexed messageId);
+
     error BadUserKey();
     error MessageIdUsed();
     error ZeroCiphertext();
@@ -46,6 +51,7 @@ contract PqMsg is Ownable {
         if (key.length != 800) revert BadUserKey();
         if (userKeys[msg.sender].length == 0) users.push(msg.sender);
         userKeys[msg.sender] = key;
+        emit Registered(msg.sender);
     }
 
     function getUsers() external view returns (address[] memory) {
@@ -66,6 +72,7 @@ contract PqMsg is Ownable {
         }
         verifier.verifyProof(proof, input);
         channels.push(Channel(channelKeyHash, encryptedChannelKey, encryptedSender));
+        emit ChannelOpened(channelKeyHash);
     }
 
     /// Every Channel, so the app can find one by its Channel Key Hash.
@@ -80,5 +87,6 @@ contract PqMsg is Ownable {
         Message storage message = messages[messageId];
         if (message.ciphertext1 != 0 || message.ciphertext2 != 0) revert MessageIdUsed();
         messages[messageId] = Message(ciphertext1, ciphertext2);
+        emit Posted(messageId);
     }
 }
