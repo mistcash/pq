@@ -6,6 +6,7 @@ import { useFixedSender } from "~~/hooks/useFixedSender";
 import { useSenderKey } from "~~/hooks/useSenderKey";
 import { recordStep, recordTx } from "~~/services/store/deepDive";
 import { anonRead, startAnonRpc } from "~~/utils/anonRpc";
+import { fetchUserKey } from "~~/utils/arkiv";
 import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
@@ -41,18 +42,23 @@ export const useOpenChannel = () => {
       const channelKey = (await crypto).channelKey(senderKey, index);
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
       if (!(await getChannels()).some(channel => channel.channelKeyHash === BigInt(channelKeyHash))) {
-        // Reading their User Key directly would tell the RPC server who you're about to message.
+        // Reading their User Key Hash directly would tell the RPC server who you're about to message.
         setStep("lookup");
         const read = (client: PublicClient) =>
           client.readContract({
             address: pqMsg!.address,
             abi: pqMsg!.abi,
-            functionName: "userKeys",
+            functionName: "userKeyHashes",
             args: [other],
           }) as Promise<Hex>;
-        const anonKey = await anonRead(read);
-        // Anything but a whole User Key means Anon-RPC misbehaved, so read it the regular way.
-        const userKey = anonKey && size(anonKey) === 800 ? anonKey : ((await pqMsg!.read.userKeys([other])) as Hex);
+        const anonHash = await anonRead(read);
+        // Anything but a whole hash means Anon-RPC misbehaved, so read it the regular way.
+        const userKeyHash =
+          anonHash && size(anonHash) === 32 ? anonHash : ((await pqMsg!.read.userKeyHashes([other])) as Hex);
+        // The key itself is on Arkiv (ADR-0005), which sees whose key this is.
+        const userKey = await fetchUserKey(pqMsg!.address, userKeyHash);
+        if (!userKey)
+          throw new FriendlyError("Their key isn't on Arkiv right now. Ask them to open pqmsg, then try again.");
         setStep("prove");
         await painted();
         const started = performance.now();
