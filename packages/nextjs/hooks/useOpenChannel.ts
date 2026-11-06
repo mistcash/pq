@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Address, Hex } from "viem";
 import { useSignMessage } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useChannelKeyHashes } from "~~/hooks/useChannelKeyHashes";
 import { useFixedSender } from "~~/hooks/useFixedSender";
 import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
@@ -23,7 +24,7 @@ export const useOpenChannel = () => {
   const [restored, setRestored] = useState<number>();
   const { signMessageAsync } = useSignMessage();
   const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
-  const { refetch: getChannels } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getChannels" });
+  const channelKeyHashes = useChannelKeyHashes();
   const fixedSender = useFixedSender();
 
   const signTwiceFirstTime = async (me: Address) => {
@@ -57,8 +58,7 @@ export const useOpenChannel = () => {
       if (index < 0) throw new FriendlyError("They haven't joined pqmsg yet. Ask them to join first!");
       const channelKey = (await crypto).channelKey(await senderKey(me), index);
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
-      const { data: channels } = await getChannels();
-      if (!channels!.some((channel: { channelKeyHash: bigint }) => channel.channelKeyHash === BigInt(channelKeyHash))) {
+      if (!(await channelKeyHashes()).has(BigInt(channelKeyHash))) {
         setStep("prove");
         await painted();
         const { proof } = (await crypto).prove(channelKey);
@@ -79,8 +79,7 @@ export const useOpenChannel = () => {
     const key = await senderKey(me);
     setStep("prove");
     const { data: users } = await getUsers({ throwOnError: true });
-    const { data: channels } = await getChannels({ throwOnError: true });
-    const hashes = new Set(channels!.map((channel: { channelKeyHash: bigint }) => channel.channelKeyHash));
+    const hashes = await channelKeyHashes();
     let found = 0;
     users!.forEach((user: Address, j: number) => {
       const channelKey = crypto.channelKey(key, j);

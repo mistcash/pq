@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { type Address, isHex, size } from "viem";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useChannelKeyHashes } from "~~/hooks/useChannelKeyHashes";
 import { parseJoinLink, saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
@@ -13,7 +14,7 @@ const NO_MATCH = "Hmm, that key doesn't open any chat. Maybe a bit got lost when
 export const useJoinChannel = (me?: Address) => {
   const [joining, setJoining] = useState<Joining>();
   const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
-  const { refetch: getChannels } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getChannels" });
+  const channelKeyHashes = useChannelKeyHashes();
 
   const join = async (from: Address, channelKey: string) => {
     setJoining({ from });
@@ -23,10 +24,7 @@ export const useJoinChannel = (me?: Address) => {
       if (!users!.includes(from))
         throw new FriendlyError("That link isn't from anyone on pqmsg. Maybe a bit got lost when copying?");
       const channelKeyHash = BigInt((await loadCrypto()).channelKeyHash(channelKey));
-      const { data: channels } = await getChannels({ throwOnError: true });
-      if (!channels!.some((channel: { channelKeyHash: bigint }) => channel.channelKeyHash === channelKeyHash)) {
-        throw new FriendlyError(NO_MATCH);
-      }
+      if (!(await channelKeyHashes()).has(channelKeyHash)) throw new FriendlyError(NO_MATCH);
       saveChannelKey(from, me!, channelKey);
       setJoining({ from, joined: true });
     } catch (e) {
