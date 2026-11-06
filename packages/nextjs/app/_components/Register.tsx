@@ -13,7 +13,7 @@ import { notification } from "~~/utils/scaffold-eth";
 
 const FRIENDS = ["0x01", "0x02", "0x05"].map(n => n.padEnd(42, "0"));
 
-/** Connect, then register with one tap, a new Password and a signature, which make your User Key. */
+/** Connect, then register with one tap and a new passkey, which makes your User Key. */
 export const Register = () => {
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();

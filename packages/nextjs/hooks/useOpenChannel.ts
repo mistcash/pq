@@ -56,7 +56,7 @@ export const useOpenChannel = () => {
     }
   };
 
-  /** Finds every Channel from or to you with your Password and a signature (ADR-0004); caches each Channel Key. */
+  /** Finds every Channel from or to you with one passkey tap (ADR-0004), and caches each Channel Key. */
   const restore = async (me: Address) => {
     setStep("start");
     const crypto = await loadCrypto();

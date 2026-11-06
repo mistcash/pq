@@ -10,7 +10,7 @@ import { notification } from "~~/utils/scaffold-eth";
 
 type Props = { me: Address } & Pick<ReturnType<typeof useOpenChannel>, "step" | "restored" | "restore">;
 
-/** Finds every chat started by you or with you, with your Password and one signature. Tap again for new ones. */
+/** Finds every chat started by you or with you, with one passkey tap. Tap again to check for new ones. */
 export const Restore = ({ me, step, restored, restore }: Props) => {
   const [restoring, setRestoring] = useState(false);
 
