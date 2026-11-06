@@ -104,6 +104,11 @@ func main() {
 				"encryptedChannelKey": encryptedChannelKey,
 			}, nil
 		}),
+		// messageKey(channelKey, messageIndex)
+		"messageKey": fn(func(a []js.Value) (any, error) {
+			channelKey, err := element(a[0])
+			return toHex(circuits.MessageKey(channelKey, uint64(a[1].Int()))), err
+		}),
 		// messageId(channelKey, messageIndex)
 		"messageId": fn(func(a []js.Value) (any, error) {
 			channelKey, err := element(a[0])
