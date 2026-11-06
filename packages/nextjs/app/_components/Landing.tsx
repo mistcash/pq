@@ -4,6 +4,7 @@ import {
   BoltIcon,
   CheckIcon,
   ChevronDownIcon,
+  ClockIcon,
   CpuChipIcon,
   EyeIcon,
   LockClosedIcon,
@@ -295,6 +296,61 @@ const BEATS: Beat[] = [
           </li>
         ))}
       </ol>
+    ),
+  },
+  {
+    kicker: "Edges",
+    title: "Honest about the edges.",
+    lines: ["Post-quantum where it counts today, and clear about where it isn't yet."],
+    tags: [
+      "Channel Keys cached in browser storage",
+      "no message authentication tag",
+      "single-party Groth16 setup, dev only",
+      "no forward secrecy",
+      "testnet prototype, not audited",
+    ],
+    dark: true,
+    visual: (
+      <div className="grid sm:grid-cols-2 gap-4 text-left">
+        {[
+          {
+            Icon: ShieldCheckIcon,
+            heading: "Post-quantum today",
+            color: "text-success border-success/40",
+            items: [
+              ["The key exchange", "Kyber512, built on lattices."],
+              ["Every hash and pad", "Poseidon2."],
+            ],
+          },
+          {
+            Icon: ClockIcon,
+            heading: "Not yet",
+            color: "text-warning border-warning/40",
+            items: [
+              [
+                "Proof soundness",
+                "A quantum attacker could forge Groth16 Channel openings. That breaks integrity only: the proof still hides the recipient.",
+              ],
+              [
+                "The Sender Key",
+                "It comes from an ECDSA wallet signature, so whoever recovers the wallet key from its public key can re-derive it.",
+              ],
+            ],
+          },
+        ].map(({ Icon, heading, color, items }) => (
+          <div key={heading} className={`flex flex-col gap-4 rounded-3xl border-2 bg-white/5 p-6 ${color}`}>
+            <h3 className="flex items-center gap-2 text-2xl font-semibold m-0">
+              <Icon className="size-7" /> {heading}
+            </h3>
+            {items.map(([name, note]) => (
+              <p key={name} className="m-0 text-neutral-content sm:text-lg">
+                <b className="block">{name}</b>
+                <span className="opacity-70">{note}</span>
+              </p>
+            ))}
+          </div>
+        ))}
+      </div>
     ),
   },
 ];
