@@ -18,15 +18,15 @@ What the `OpenChannel` proof checks, which parts of ML-KEM it covers, and how se
   Encrypted Channel Key = Pack(NTT⁻¹(Âᵀ ∘ NTT(r)) + e₁,  NTT⁻¹(t̂ᵀ ∘ NTT(r)) + e₂ + ⌈q/2⌉·bits(k))
 ```
 
-The User Key (`AT`, `Th`) is a private witness that nothing constrains: it isn't tied to a registered User Key, and Â isn't derived from ρ. So for any target (u, v), the prover can pick:
+The recipient's key (Âᵀ and t̂, the witnesses `AT` and `Th`) is private, and nothing constrains it: it isn't tied to a registered User Key, and Â isn't derived from ρ. So for any target (u, v), the prover can pick:
 
 ```text
 r = (1, 0),  e₁ = e₂ = 0
-Â[i][0] = NTT(u[i]),  Â[i][1] = 0
+Âᵀ[i][0] = NTT(u[i]),  Âᵀ[i][1] = 0
 t̂[0] = NTT(v − Decompress₁(k)),  t̂[1] = 0
 ```
 
-NTT(1) is the identity under ∘, so u = NTT⁻¹(Â[i][0]) and v = NTT⁻¹(t̂[0]) + Decompress₁(k) hit the targets.
+NTT(1) is the identity under ∘, so u[i] = NTT⁻¹(Âᵀ[i][0]) and v = NTT⁻¹(t̂[0]) + Decompress₁(k) hit the targets.
 
 We checked this with `test.IsSolved`. The forged witness satisfies `OpenChannel` for random targets and for the all-zero Encrypted Channel Key. The forged Encrypted Channel Keys decrypt to junk under real User Keys. Changing one coefficient of the public input makes the same witness fail.
 
