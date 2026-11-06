@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { Address } from "viem";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import type { Address, Hex } from "viem";
+import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useChannels } from "~~/hooks/useChannels";
 import { useFixedSender } from "~~/hooks/useFixedSender";
 import { useSenderKey } from "~~/hooks/useSenderKey";
@@ -19,6 +19,7 @@ export const useOpenChannel = () => {
   const [error, setError] = useState<string>();
   const [restored, setRestored] = useState<number>();
   const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
+  const { data: pqMsg } = useScaffoldContract({ contractName: "PqMsg" });
   const getChannels = useChannels();
   const fixedSender = useFixedSender();
   const senderKey = useSenderKey(setStep);
@@ -34,11 +35,16 @@ export const useOpenChannel = () => {
       const channelKey = (await crypto).channelKey(await senderKey(me), index);
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
       if (!(await getChannels()).some(channel => channel.channelKeyHash === BigInt(channelKeyHash))) {
+        const userKey = (await pqMsg!.read.userKeys([other])) as Hex;
         setStep("prove");
         await painted();
-        const { proof } = (await crypto).prove(channelKey);
+        const { proof, encryptedChannelKey } = (await crypto).prove(userKey, channelKey);
+        // Tells them who opened it, readable only with the Channel Key.
+        const encryptedSender = (await crypto).encryptSender(channelKey, users!.indexOf(me));
         setStep("send");
-        await fixedSender({ type: "openChannel", channelKeyHash, proof }, () => setStep("confirm"));
+        await fixedSender({ type: "openChannel", channelKeyHash, encryptedChannelKey, encryptedSender, proof }, () =>
+          setStep("confirm"),
+        );
       }
       saveChannelKey(me, other, channelKey);
       setStep("open");

@@ -7,7 +7,8 @@ export type Crypto = {
   channelKeyHash: (channelKey: Hex) => Hex;
   /** The packed Kyber512 public key to register. */
   userKey: (senderKey: Hex) => Hex;
-  prove: (channelKey: Hex) => { proof: Hex; channelKeyHash: Hex };
+  /** Encrypts `channelKey` to `userKey` as the 37-element Encrypted Channel Key, and proves it. */
+  prove: (userKey: Hex, channelKey: Hex) => { proof: Hex; channelKeyHash: Hex; encryptedChannelKey: Hex[] };
   /** Junk if the Channel isn't to you, so check its Channel Key Hash. */
   decryptChannelKey: (senderKey: Hex, encryptedChannelKey: Hex[]) => Hex;
   encryptSender: (channelKey: Hex, senderIndex: number) => Hex;
@@ -45,7 +46,7 @@ const load = async (): Promise<Crypto> => {
     channelKey: call("channelKey"),
     channelKeyHash: call("channelKeyHash"),
     userKey: call("userKey"),
-    prove: channelKey => call("prove")(ccs, pk, channelKey),
+    prove: (userKey, channelKey) => call("prove")(ccs, pk, userKey, channelKey),
     decryptChannelKey: call("decryptChannelKey"),
     encryptSender: call("encryptSender"),
     decryptSender: call("decryptSender"),
