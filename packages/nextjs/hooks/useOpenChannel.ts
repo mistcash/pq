@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Address } from "viem";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
-import { useChannelKeyHashes } from "~~/hooks/useChannelKeyHashes";
+import { useChannels } from "~~/hooks/useChannels";
 import { useFixedSender } from "~~/hooks/useFixedSender";
 import { useSenderKey } from "~~/hooks/useSenderKey";
 import { saveChannelKey } from "~~/utils/channels";
@@ -19,7 +19,7 @@ export const useOpenChannel = () => {
   const [error, setError] = useState<string>();
   const [restored, setRestored] = useState<number>();
   const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
-  const channelKeyHashes = useChannelKeyHashes();
+  const getChannels = useChannels();
   const fixedSender = useFixedSender();
   const senderKey = useSenderKey(setStep);
 
@@ -33,7 +33,7 @@ export const useOpenChannel = () => {
       if (index < 0) throw new FriendlyError("They haven't joined pqmsg yet. Ask them to join first!");
       const channelKey = (await crypto).channelKey(await senderKey(me), index);
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
-      if (!(await channelKeyHashes()).has(BigInt(channelKeyHash))) {
+      if (!(await getChannels()).some(channel => channel.channelKeyHash === BigInt(channelKeyHash))) {
         setStep("prove");
         await painted();
         const { proof } = (await crypto).prove(channelKey);
@@ -54,11 +54,12 @@ export const useOpenChannel = () => {
     const key = await senderKey(me);
     setStep("prove");
     const { data: users } = await getUsers({ throwOnError: true });
-    const hashes = await channelKeyHashes();
+    const channels = await getChannels();
     let found = 0;
     users!.forEach((user: Address, j: number) => {
       const channelKey = crypto.channelKey(key, j);
-      if (!hashes.has(BigInt(crypto.channelKeyHash(channelKey)))) return;
+      const channelKeyHash = BigInt(crypto.channelKeyHash(channelKey));
+      if (!channels.some(channel => channel.channelKeyHash === channelKeyHash)) return;
       saveChannelKey(me, user, channelKey);
       found++;
     });
