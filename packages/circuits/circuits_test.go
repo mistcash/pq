@@ -8,7 +8,9 @@ import (
 	"github.com/cloudflare/circl/pke/kyber/kyber512/math"
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
+	"github.com/consensys/gnark/backend"
 	"github.com/consensys/gnark/backend/groth16"
+	"github.com/consensys/gnark/backend/solidity"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/std/hash/poseidon2"
 	"github.com/consensys/gnark/test"
@@ -41,7 +43,7 @@ func TestProveChannelKey(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := groth16.Verify(proof, vk, public); err != nil {
+	if err := groth16.Verify(proof, vk, public, solidity.WithVerifierTargetSolidityVerifier(backend.GROTH16)); err != nil {
 		t.Fatal(err)
 	}
 }
