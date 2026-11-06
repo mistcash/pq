@@ -115,16 +115,17 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 | Carrying Channel Keys | Module-LWE (Kyber512, NIST level 1) | Holds | That Channel's messages |
 | Hashes, Message Keys and pads | Poseidon2 | Holds; Grover's speed-up on hashes is only quadratic | Messages |
 | The opening proof's soundness | Pairings on BN254 (Groth16) | Breaks | Forged Channel openings: junk, not leaks. Groth16 is perfectly zero-knowledge, so proofs still hide the recipient. |
-| The Sender Key | The wallet's secp256k1 key | Breaks | Everything the User sent and received |
+| The Sender Key | A passkey's PRF secret, through HMAC-SHA-256 | Holds | Everything the User sent and received |
+| Who can replace a User Key | The wallet's secp256k1 key, through `register` | Breaks | Channels opened to the User after the swap |
 
-**The Sender Key is the weak link.** It's a hash of a wallet signature, and the app only accepts wallets that sign deterministically. Registering sends a transaction from that wallet, which reveals its public key. A quantum attacker who recovers the private key from it can sign `pqmsg: derive Sender Key v1` again, get the same Sender Key, and from it every Channel the User opened or was sent. So harvest now, decrypt later works against registered Users today. Fixing it means a root secret that doesn't come from the wallet's ECDSA key, at the cost of ADR-0002's "nothing to back up".
+**The wallet is the weak link.** The Sender Key comes from a passkey's PRF output (ADR-0004), which no public key reveals, so harvest now, decrypt later can't recover it from chain data, and past Channels stay safe. But `register` still overwrites, and only the wallet authorizes it. Registering reveals the wallet's public key, so a quantum attacker who recovers its private key can register their own User Key and read Channels opened to that User afterwards. The User would notice, since their passkey stops unlocking. A one-shot `register` would close this, but then a lost passkey would retire the address. A synced passkey is also only as safe as its provider's sync, which we haven't seen documented as post-quantum.
 
 ### Keys, and where they live
 
 - **No ephemeral keys.** Every key comes from the Sender Key, by design (ADR-0002), so there's no forward secrecy and no re-keying. A leaked Sender Key exposes every Channel its User opened and every Channel opened to them, since their User Key comes from it too.
-- **Only sign it on pqmsg.** Any site that gets your wallet to sign `pqmsg: derive Sender Key v1` learns your Sender Key, because a plain `personal_sign` isn't tied to the site that asked.
+- **Passkeys are tied to pqmsg's domain.** Another site can't ask yours for its PRF output. But pqmsg on a new domain would need new passkeys, and losing yours loses every Channel (ADR-0004).
 - **Sender Keys stay in memory** for the page's lifetime and are never sent anywhere.
-- **Channel Keys are cached unencrypted in `localStorage`**, so anyone who can run script in this browser profile (an XSS bug, an extension) or open it can read your chats. **Find my chats** rebuilds them from one signature, so they could live in memory instead. The app doesn't set a Content Security Policy yet.
+- **Channel Keys are cached unencrypted in `localStorage`**, so anyone who can run script in this browser profile (an XSS bug, an extension) or open it can read your chats. **Find my chats** rebuilds them from one passkey tap, so they could live in memory instead. The app doesn't set a Content Security Policy yet.
 
 ### Known gaps in the protocol
 
