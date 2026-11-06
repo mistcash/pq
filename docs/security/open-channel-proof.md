@@ -4,7 +4,7 @@ What the `OpenChannel` proof checks, which parts of ML-KEM it covers, and how se
 
 - The proof shows the opener knows the Channel Key behind the Channel Key Hash. It doesn't show that the Encrypted Channel Key encrypts that Channel Key to anyone: the circuit accepts any well-formed Encrypted Channel Key.
 - The circuit covers K-PKE.Encrypt's arithmetic, but none of the key binding, sampling, compression or KEM layer.
-- Uncompressed, Kyber512 gives Encrypted Channel Keys 112 bits of core-SVP hardness, just above NIST level 1.
+- Uncompressed, Kyber512 gives Encrypted Channel Keys about 112 bits of core-SVP hardness, just above NIST level 1.
 - pqmsg isn't post-quantum end to end: every key derives from a secp256k1 wallet signature, which a quantum attacker can recompute.
 
 ## What the proof checks
@@ -64,12 +64,12 @@ The circuit mirrors round-3 Kyber512's CPAPKE.Enc, which is ML-KEM-512's K-PKE.E
 
 ### Kyber512
 
-The [round-3 Kyber spec](https://www.pq-crystals.org/kyber/data/kyber-specification-round3-20210131.pdf) (§1.5) says that without the rounding noise from compression, "the public keys are protected with 118 bits, and the ciphertexts with 112" of core-SVP hardness. Kyber512 reaches 118 everywhere only "with a weak version of the LWR assumption". pqmsg doesn't compress, so Encrypted Channel Keys sit at 112:
+The [round-3 Kyber spec](https://www.pq-crystals.org/kyber/data/kyber-specification-round3-20210131.pdf) (§1.5) says that without the rounding noise from compression, "the public keys are protected with 118 bits, and the ciphertexts with 112" of core-SVP hardness. Kyber512 reaches 118 everywhere only "with a weak version of the LWR assumption". pqmsg doesn't compress, so Encrypted Channel Keys get no rounding noise. The spec's 112 is a conservative bound for that case: it treats r as if drawn with η₂ = 2, and r's actual η₁ = 3 makes attacks a little harder (§4.4).
 
 | | Classical core-SVP | Quantum core-SVP | Refined estimate |
 | --- | --- | --- | --- |
-| Kyber512, compressed (Table 4) | 118 | 107 | 2¹⁵¹·⁵ gates |
-| pqmsg's Encrypted Channel Key | 112 | ≈ 102 | ≈ 2¹⁴⁵ gates (§4.4) |
+| Kyber512, compressed, weak LWR (Table 4) | 118 | 107 | 2¹⁵¹·⁵ gates |
+| pqmsg's Encrypted Channel Key | ≥ 112 | ≳ 102 | ≳ 2¹⁴⁵ gates (§4.4) |
 
 NIST level 1 needs 2¹⁴³ gates (§5.2), so the margin is thin. The quantum figure is our scaling of the spec's, not the spec's own. Kyber512's level-1 margin is [debated](https://groups.google.com/a/list.nist.gov/g/pqc-forum/c/NSe0wAzKJtA) even with compression.
 
