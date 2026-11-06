@@ -16,8 +16,8 @@ export const PROGRESS: Record<Exclude<OpenStep, "open">, string> = {
   sign: "Sign in your wallet to unlock your secret key.",
   check: "Once more, so we know your wallet always signs the same way.",
   prove: "Doing some secret math, right here in your browser…",
-  send: "Sending it off. The gas is on us.",
-  confirm: "Waiting for the chain to say yes…",
+  send: "Sending it off. It's free!",
+  confirm: "Almost there, making sure it landed…",
 };
 
 type Props = { me: Address; other: Address; joining?: Joining; onBack: () => void };

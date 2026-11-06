@@ -5,6 +5,7 @@ import { PROGRESS } from "./Chat";
 import type { Address } from "viem";
 import { ArrowPathIcon, CheckIcon } from "@heroicons/react/24/outline";
 import type { useOpenChannel } from "~~/hooks/useOpenChannel";
+import { friendlyMessage } from "~~/utils/friendly";
 import { notification } from "~~/utils/scaffold-eth";
 
 type Props = { me: Address } & Pick<ReturnType<typeof useOpenChannel>, "step" | "restored" | "restore">;
@@ -17,8 +18,8 @@ export const Restore = ({ me, step, restored, restore }: Props) => {
     setRestoring(true);
     try {
       await restore(me);
-    } catch (e: any) {
-      notification.error(e.shortMessage ?? e.message);
+    } catch (e) {
+      notification.error(friendlyMessage(e));
     }
     setRestoring(false);
   };

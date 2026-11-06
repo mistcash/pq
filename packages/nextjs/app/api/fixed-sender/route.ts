@@ -25,10 +25,14 @@ const callFor = ({ type, channelKeyHash, proof, messageId, ciphertext1, cipherte
 
 /** The Fixed Sender: submits typed requests so users pay no gas and keep their address off-chain. */
 export async function POST(request: Request) {
-  const call = callFor(await request.json());
-  if (!call) return NextResponse.json({ error: "Expected an open-Channel or post request" }, { status: 400 });
+  const call = callFor(await request.json().catch(() => ({})));
+  if (!call) return NextResponse.json({ error: "That isn't something we can send." }, { status: 400 });
   const pqMsg = contracts?.[chain.id]?.PqMsg;
-  const unset = (reason: string) => NextResponse.json({ error: `Sending isn't set up: ${reason}.` }, { status: 500 });
+  // Details stay in the server log; people only see plain words.
+  const unset = (reason: string) => {
+    console.error(`Fixed Sender isn't set up: ${reason}.`);
+    return NextResponse.json({ error: "Sending isn't ready yet. Try again later." }, { status: 500 });
+  };
   if (!key) return unset("this server has no FIXED_SENDER_PRIVATE_KEY");
   if (!pqMsg) return unset(`PqMsg isn't deployed on ${chain.name}`);
 
@@ -52,7 +56,8 @@ export async function POST(request: Request) {
     // Simulate first: a bad proof would otherwise burn all the gas it's given.
     const { request: tx } = await client.simulateContract({ address: pqMsg.address, abi: pqMsg.abi, ...call });
     return NextResponse.json({ hash: await client.writeContract(tx) });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.shortMessage ?? String(e) }, { status: 400 });
+  } catch (e) {
+    console.error("Fixed Sender:", e);
+    return NextResponse.json({ error: "That didn't go through. Try again?" }, { status: 400 });
   }
 }

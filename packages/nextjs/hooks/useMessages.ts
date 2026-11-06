@@ -3,6 +3,7 @@ import { type Hex, toHex } from "viem";
 import { usePublicClient } from "wagmi";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 import { loadCrypto } from "~~/utils/crypto";
+import { FriendlyError } from "~~/utils/friendly";
 
 /** A Channel's messages, decrypted in order, and sending the next one through the Fixed Sender. */
 export const useMessages = (channelKey: Hex) => {
@@ -35,9 +36,9 @@ export const useMessages = (channelKey: Hex) => {
       body: JSON.stringify({ type: "post", messageId: crypto.messageId(channelKey, index), ciphertext1, ciphertext2 }),
     });
     const { hash, error } = await response.json();
-    if (error) throw new Error(error);
+    if (error) throw new FriendlyError(error);
     if ((await publicClient!.waitForTransactionReceipt({ hash })).status !== "success") {
-      throw new Error("The chain said no. Try again?");
+      throw new FriendlyError("That didn't go through. Try again?");
     }
     await refetch();
   };

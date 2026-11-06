@@ -3,6 +3,7 @@ import { type Address, isHex, size } from "viem";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { parseJoinLink, saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
+import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
 
 export type Joining = { from: Address; joined?: boolean; error?: string };
 
@@ -17,19 +18,19 @@ export const useJoinChannel = (me?: Address) => {
   const join = async (from: Address, channelKey: string) => {
     setJoining({ from });
     try {
-      if (!isHex(channelKey) || size(channelKey) !== 32) throw new Error(NO_MATCH);
+      if (!isHex(channelKey) || size(channelKey) !== 32) throw new FriendlyError(NO_MATCH);
       const { data: users } = await getUsers({ throwOnError: true });
       if (!users!.includes(from))
-        throw new Error("That link isn't from anyone on pqmsg. Maybe a bit got lost when copying?");
+        throw new FriendlyError("That link isn't from anyone on pqmsg. Maybe a bit got lost when copying?");
       const channelKeyHash = BigInt((await loadCrypto()).channelKeyHash(channelKey));
       const { data: channels } = await getChannels({ throwOnError: true });
       if (!channels!.some((channel: { channelKeyHash: bigint }) => channel.channelKeyHash === channelKeyHash)) {
-        throw new Error(NO_MATCH);
+        throw new FriendlyError(NO_MATCH);
       }
       saveChannelKey(from, me!, channelKey);
       setJoining({ from, joined: true });
-    } catch (e: any) {
-      setJoining({ from, error: e.shortMessage ?? e.message });
+    } catch (e) {
+      setJoining({ from, error: friendlyMessage(e) });
     }
   };
 

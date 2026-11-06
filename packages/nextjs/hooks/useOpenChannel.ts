@@ -4,6 +4,7 @@ import { usePublicClient, useSignMessage } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
+import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
 
 export type OpenStep = "start" | "sign" | "check" | "prove" | "send" | "confirm" | "open";
 
@@ -31,7 +32,7 @@ export const useOpenChannel = () => {
     if (!localStorage.getItem(checked)) {
       setStep("check");
       if ((await signMessageAsync({ message: SIGN_MESSAGE })) !== signature) {
-        throw new Error(
+        throw new FriendlyError(
           "Your wallet signed the same thing two different ways, so it can't keep your chats. Try another wallet.",
         );
       }
@@ -52,7 +53,7 @@ export const useOpenChannel = () => {
       const crypto = loadCrypto();
       const { data: users } = await getUsers({ throwOnError: true });
       const index = users!.indexOf(other);
-      if (index < 0) throw new Error("They haven't joined pqmsg yet. Ask them to join first!");
+      if (index < 0) throw new FriendlyError("They haven't joined pqmsg yet. Ask them to join first!");
       const channelKey = (await crypto).channelKey(await senderKey(me), index);
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
       const { data: channels } = await getChannels();
@@ -66,16 +67,16 @@ export const useOpenChannel = () => {
           body: JSON.stringify({ type: "openChannel", channelKeyHash, proof }),
         });
         const { hash, error } = await response.json();
-        if (error) throw new Error(error);
+        if (error) throw new FriendlyError(error);
         setStep("confirm");
         if ((await publicClient!.waitForTransactionReceipt({ hash })).status !== "success") {
-          throw new Error("The chain said no. Try again?");
+          throw new FriendlyError("That didn't go through. Try again?");
         }
       }
       saveChannelKey(me, other, channelKey);
       setStep("open");
-    } catch (e: any) {
-      setError(e.shortMessage ?? e.message);
+    } catch (e) {
+      setError(friendlyMessage(e));
     }
   };
 

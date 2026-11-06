@@ -5,6 +5,7 @@ import type { Hex } from "viem";
 import { ArrowPathIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Confetti } from "~~/components/Confetti";
 import { useMessages } from "~~/hooks/useMessages";
+import { friendlyMessage } from "~~/utils/friendly";
 import { notification } from "~~/utils/scaffold-eth";
 
 /** A Channel's messages in order, with a refresh button and, on your own, a pinned composer. */
@@ -75,8 +76,8 @@ const Composer = ({ send }: { send: (message: string) => Promise<void> }) => {
       await send(text);
       setText("");
       setSent(sent + 1);
-    } catch (e: any) {
-      notification.error(e.message);
+    } catch (e) {
+      notification.error(friendlyMessage(e));
     }
     setSending(false);
   };
