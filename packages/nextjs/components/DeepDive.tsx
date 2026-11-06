@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { type Hex, keccak256 } from "viem";
 import { TxLink } from "~~/components/TxLink";
 import { type DiveStep, type DiveValues, VALUES, useDeepDive } from "~~/services/store/deepDive";
 
@@ -173,7 +174,7 @@ const Values = ({ values }: { values: DiveValues }) => (
   </dl>
 );
 
-/** One value, labelled with where it lives. Secrets show a short prefix until tapped. */
+/** One value, labelled with where it lives. Secrets show only a fingerprint until tapped. */
 const Value = ({ name, value }: { name: keyof typeof VALUES; value: string }) => {
   const [label, where] = VALUES[name];
   const secret = where === "secret";
@@ -194,7 +195,8 @@ const Value = ({ name, value }: { name: keyof typeof VALUES; value: string }) =>
             aria-label={shown ? `Hide ${label}` : `Reveal ${label}`}
             onClick={() => setShown(!shown)}
           >
-            {shown ? value : `${value.slice(0, 10)}… tap to reveal`}
+            {/* A hash, so a hidden secret shows none of its own bits. */}
+            {shown ? value : `#${keccak256(value as Hex).slice(2, 10)} · tap to reveal`}
           </button>
         ) : (
           <code className="block font-mono text-xs break-all max-h-24 overflow-y-auto">{value}</code>
