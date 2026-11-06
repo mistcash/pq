@@ -9,15 +9,19 @@ import (
 	"bytes"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"strings"
 	"syscall/js"
 
+	"github.com/cloudflare/circl/pke/kyber/kyber512/math"
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/backend/groth16"
 	groth16bn254 "github.com/consensys/gnark/backend/groth16/bn254"
+	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/logger"
 	"github.com/mistcash/pqmsg/packages/circuits"
+	"github.com/mistcash/pqmsg/packages/circuits/native"
 )
 
 func main() {
@@ -83,6 +87,72 @@ func main() {
 			c2, err2 := element(a[3])
 			return string(circuits.Decrypt(channelKey, uint64(a[1].Int()), [2]fr.Element{c1, c2})), errors.Join(err, err1, err2)
 		}),
+		// kyberKeyPair(seed) returns { pk, sk }, packed.
+		"kyberKeyPair": fn(func(a []js.Value) (any, error) {
+			seed, err := hexBytes(a[0], math.SeedSize)
+			if err != nil {
+				return nil, err
+			}
+			pk, sk := math.NewKeyPair(seed)
+			pkb, skb := make([]byte, math.PublicKeySize), make([]byte, math.PrivateKeySize)
+			pk.Pack(pkb)
+			sk.Pack(skb)
+			return map[string]any{
+				"pk": "0x" + hex.EncodeToString(pkb),
+				"sk": "0x" + hex.EncodeToString(skb),
+			}, nil
+		}),
+		// kyberEncrypt(pk, pt, seed) returns { u, v } uncompressed: u is K arrays of N coefficients, v is N.
+		"kyberEncrypt": fn(func(a []js.Value) (any, error) {
+			pk, pt, seed, err := encArgs(a)
+			if err != nil {
+				return nil, err
+			}
+			r, e1, e2 := native.Noise(seed)
+			u, v := native.EncryptUV(&pk, pt, r, e1, e2)
+			us := make([]any, math.K)
+			for i := range u {
+				us[i] = coeffs(u[i])
+			}
+			return map[string]any{"u": us, "v": coeffs(v)}, nil
+		}),
+		// kyberDecrypt(sk, u, v) returns pt, with u and v as from kyberEncrypt.
+		"kyberDecrypt": fn(func(a []js.Value) (any, error) {
+			skb, err := hexBytes(a[0], math.PrivateKeySize)
+			if err != nil {
+				return nil, err
+			}
+			if n := a[1].Length(); n != math.K {
+				return nil, fmt.Errorf("want %d polys, got %d", math.K, n)
+			}
+			var u math.Vec
+			for i := range u {
+				if u[i], err = poly(a[1].Index(i)); err != nil {
+					return nil, err
+				}
+			}
+			v, err := poly(a[2])
+			if err != nil {
+				return nil, err
+			}
+			var sk math.SK
+			sk.Unpack(skb)
+			return "0x" + hex.EncodeToString(native.DecryptUV(&sk, u, v)), nil
+		}),
+		// kyberWitness(pk, pt, seed) returns the circuit.EncCircuit witness of kyberEncrypt(pk, pt, seed), binary-marshalled.
+		"kyberWitness": fn(func(a []js.Value) (any, error) {
+			pk, pt, seed, err := encArgs(a)
+			if err != nil {
+				return nil, err
+			}
+			w := native.Witness(&pk, pt, seed)
+			wit, err := frontend.NewWitness(&w, ecc.BN254.ScalarField())
+			if err != nil {
+				return nil, err
+			}
+			b, err := wit.MarshalBinary()
+			return "0x" + hex.EncodeToString(b), err
+		}),
 	})
 	select {}
 }
@@ -112,4 +182,41 @@ func bytesOf(v js.Value) []byte {
 	b := make([]byte, v.Length())
 	js.CopyBytesToGo(b, v)
 	return b
+}
+
+func encArgs(a []js.Value) (pk math.PK, pt, seed []byte, err error) {
+	pkb, err := hexBytes(a[0], math.PublicKeySize)
+	pt, err1 := hexBytes(a[1], math.PlaintextSize)
+	seed, err2 := hexBytes(a[2], math.SeedSize)
+	if err = errors.Join(err, err1, err2); err == nil {
+		pk.Unpack(pkb)
+	}
+	return
+}
+
+func coeffs(p math.Poly) []any {
+	c := make([]any, math.N)
+	for i, x := range p {
+		c[i] = x
+	}
+	return c
+}
+
+func poly(v js.Value) (p math.Poly, err error) {
+	if n := v.Length(); n != math.N {
+		return p, fmt.Errorf("want %d coefficients, got %d", math.N, n)
+	}
+	for i := range p {
+		p[i] = int16(v.Index(i).Int())
+	}
+	return
+}
+
+// hexBytes decodes 0x-hex of exactly n bytes: circl slices unchecked, and a panic kills the module.
+func hexBytes(v js.Value, n int) ([]byte, error) {
+	b, err := hex.DecodeString(strings.TrimPrefix(v.String(), "0x"))
+	if err == nil && len(b) != n {
+		err = fmt.Errorf("want %d bytes, got %d", n, len(b))
+	}
+	return b, err
 }
