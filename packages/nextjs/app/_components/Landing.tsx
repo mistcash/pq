@@ -461,10 +461,10 @@ export const Landing = () => (
     <ArrowKeys />
     <a
       href="#beat-1"
-      className="flex flex-col items-center w-fit mx-auto pb-8 text-base-content/60 hover:text-primary transition-colors"
+      className="flex items-center gap-2 w-fit mx-auto mb-8 rounded-full bg-base-100 px-5 py-2.5 font-medium hover:text-primary transition-colors"
     >
       How it works
-      <ChevronDownIcon className="size-6 animate-bounce" />
+      <ChevronDownIcon className="size-5 animate-bounce" />
     </a>
     {BEATS.map(({ kicker, title, lines, tags, visual, dark }, i) => (
       <section
