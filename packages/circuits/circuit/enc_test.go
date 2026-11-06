@@ -21,14 +21,7 @@ func TestEncrypt(t *testing.T) {
 	rand.Read(seed)
 	rand.Read(pt)
 	pk, sk := math.NewKeyPair(ks)
-	r, e1, e2 := native.Noise(seed)
-	u, v := native.EncryptUV(pk, pt, r, e1, e2)
-	msg := native.MsgOf(pt)
-	w := circuit.EncCircuit{
-		native.MatOf(pk.AT()), native.VecOf(pk.Th(), true), [2]frontend.Variable{msg[0], msg[1]},
-		native.VecOf(r, false), native.VecOf(e1, false), native.PolyOf(e2, false),
-		native.VecOf(u, false), native.PolyOf(v, false),
-	}
+	w := native.Witness(pk, pt, seed)
 	if err := test.IsSolved(&circuit.EncCircuit{}, &w, ecc.BN254.ScalarField()); err != nil {
 		t.Fatal(err)
 	}
@@ -44,6 +37,7 @@ func TestEncrypt(t *testing.T) {
 	if got := native.DecryptUV(sk, math.Vec(uv[:math.K]), uv[math.K]); !bytes.Equal(got, pt) {
 		t.Fatalf("got %x, want %x", got, pt)
 	}
+	v := uv[math.K]
 	v[0] = (v[0] + 1) % math.Q
 	w.V = native.PolyOf(v, false)
 	if test.IsSolved(&circuit.EncCircuit{}, &w, ecc.BN254.ScalarField()) == nil {
