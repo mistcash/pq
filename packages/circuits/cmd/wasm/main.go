@@ -17,6 +17,7 @@ import (
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/backend/groth16"
 	groth16bn254 "github.com/consensys/gnark/backend/groth16/bn254"
+	"github.com/consensys/gnark/constraint"
 	"github.com/consensys/gnark/logger"
 	"github.com/mistcash/pqmsg/packages/circuits"
 	"github.com/mistcash/pqmsg/packages/circuits/native"
@@ -70,21 +71,28 @@ func main() {
 			encryptedSender, err2 := element(a[1])
 			return toHex(circuits.DecryptSender(channelKey, encryptedSender)), errors.Join(err, err2)
 		}),
-		// prove(ccs, pk, userKey, channelKey) returns { proof, channelKeyHash, encryptedChannelKey }, ready for the contract.
-		"prove": fn(func(a []js.Value) (any, error) {
-			ccs := groth16.NewCS(ecc.BN254)
-			if _, err := ccs.ReadFrom(bytes.NewReader(bytesOf(a[0]))); err != nil {
+		// loadProver(ccs, pk) reads the constraint system and proving key once, for prove.
+		"loadProver": async(func(a []js.Value) (any, error) {
+			cs, key := groth16.NewCS(ecc.BN254), groth16.NewProvingKey(ecc.BN254)
+			if _, err := cs.ReadFrom(bytes.NewReader(bytesOf(a[0]))); err != nil {
 				return nil, err
 			}
-			pk := groth16.NewProvingKey(ecc.BN254)
-			if _, err := pk.ReadFrom(bytes.NewReader(bytesOf(a[1]))); err != nil {
+			if _, err := key.ReadFrom(bytes.NewReader(bytesOf(a[1]))); err != nil {
 				return nil, err
 			}
-			userKey, err := hex.DecodeString(strings.TrimPrefix(a[2].String(), "0x"))
+			ccs, pk = cs, key
+			return nil, nil
+		}),
+		// prove(userKey, channelKey) resolves to { proof, channelKeyHash, encryptedChannelKey }, ready for the contract.
+		"prove": async(func(a []js.Value) (any, error) {
+			if pk == nil {
+				return nil, errors.New("call loadProver first")
+			}
+			userKey, err := hex.DecodeString(strings.TrimPrefix(a[0].String(), "0x"))
 			if err != nil {
 				return nil, err
 			}
-			channelKey, err := element(a[3])
+			channelKey, err := element(a[1])
 			if err != nil {
 				return nil, err
 			}
@@ -124,6 +132,29 @@ func main() {
 		}),
 	})
 	select {}
+}
+
+// The prover's constraint system and proving key, set by loadProver.
+var (
+	ccs constraint.ConstraintSystem
+	pk  groth16.ProvingKey
+)
+
+// async is fn returning a Promise, settled from a goroutine so Go can wait on JavaScript meanwhile.
+func async(f func(args []js.Value) (any, error)) js.Func {
+	return js.FuncOf(func(_ js.Value, args []js.Value) any {
+		return js.Global().Get("Promise").New(js.FuncOf(func(_ js.Value, settle []js.Value) any {
+			go func() {
+				v, err := f(args)
+				if err != nil {
+					settle[1].Invoke(js.Global().Get("Error").New(err.Error()))
+					return
+				}
+				settle[0].Invoke(v)
+			}()
+			return nil
+		}))
+	})
 }
 
 func fn(f func(args []js.Value) (any, error)) js.Func {
