@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { type Hex, toHex } from "viem";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 import { useFixedSender } from "~~/hooks/useFixedSender";
+import { recordStep, recordTx } from "~~/services/store/deepDive";
 import { loadCrypto } from "~~/utils/crypto";
 
 /** Where this browser keeps the hash of a message it sent, to link it on the block explorer. */
@@ -37,8 +38,11 @@ export const useMessages = (channelKey: Hex) => {
     const crypto = await loadCrypto();
     const [ciphertext1, ciphertext2] = crypto.encrypt(channelKey, index, message);
     const messageId = crypto.messageId(channelKey, index);
+    const messageKey = crypto.messageKey(channelKey, index);
+    recordStep("send", { messageIndex: String(index), messageKey, messageId, ciphertext1, ciphertext2 });
     const hash = await fixedSender({ type: "post", messageId, ciphertext1, ciphertext2 });
     localStorage.setItem(txStorageKey(messageId), hash);
+    recordTx("send", hash);
     await refetch();
   };
 
