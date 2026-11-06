@@ -99,6 +99,7 @@ export const useOpenChannel = () => {
       found++;
     });
     setRestored(found);
+    dive("find", { users: String(users!.length), channels: String(channels.length), found: String(found) });
   };
 
   return { step, error, open, tx, restored, restore };
