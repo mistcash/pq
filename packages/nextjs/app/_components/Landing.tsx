@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { type ReactNode, useEffect } from "react";
 import { short } from "./People";
 import {
   ArrowRightIcon,
@@ -428,9 +430,37 @@ const BEATS: Beat[] = [
   },
 ];
 
+const STEPS: Record<string, boolean> = { ArrowDown: true, ArrowRight: true, ArrowUp: false, ArrowLeft: false };
+
+const hop = (e: KeyboardEvent) => {
+  const down = STEPS[e.key];
+  const typing = (e.target as Element).matches("input:not([type=checkbox]), textarea, select, [contenteditable]");
+  if (down === undefined || typing || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  const beats = [...document.querySelectorAll("section[id^=beat-]")];
+  // Below the sticky header.
+  const top = (beat: Element) => beat.getBoundingClientRect().top - 64;
+  const to = down ? beats.find(b => top(b) > 1 && top(b) < innerHeight) : beats.findLast(b => top(b) < -1);
+  if (!to) return;
+  e.preventDefault();
+  to.scrollIntoView();
+};
+
+/**
+ * Snapping by proximity only nudges the page on arrow keys, so they hop to the next beat once it's in view, or back
+ * to the start of this beat or the last. Right and left too, as many presentation clickers send them.
+ */
+const ArrowKeys = () => {
+  useEffect(() => {
+    addEventListener("keydown", hop);
+    return () => removeEventListener("keydown", hop);
+  }, []);
+  return null;
+};
+
 /** How pqmsg works, under the app: one full-screen beat per cue of the talk. */
 export const Landing = () => (
   <div>
+    <ArrowKeys />
     <a
       href="#beat-1"
       className="flex flex-col items-center w-fit mx-auto pb-8 text-base-content/60 hover:text-primary transition-colors"
