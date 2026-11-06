@@ -374,7 +374,7 @@ const BEATS: Beat[] = [
         <span className="hidden sm:block absolute inset-x-[10%] top-10 -z-10 border-t-2 border-dashed" />
         {(
           [
-            [KeyIcon, "A post-quantum root secret", "so the Sender Key stops resting on ECDSA"],
+            [KeyIcon, "A User Key only you can replace", "so the wallet alone can't swap it"],
             [LockClosedIcon, "ML-KEM", "the standardized Kyber"],
             [UserGroupIcon, "A multi-party setup ceremony", "no single trusted party"],
             [CheckBadgeIcon, "Message authentication", "so tampering shows"],
