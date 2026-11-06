@@ -8,7 +8,7 @@ import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
   title: "pq",
-  description: "Tiny private messages, from you to anyone.",
+  description: "Scalable, post-quantum cryptographic messaging for private payments and peer coordination.",
 });
 
 const fredoka = Fredoka({ subsets: ["latin"] });

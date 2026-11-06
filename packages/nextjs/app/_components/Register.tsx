@@ -65,7 +65,7 @@ export const Register = () => {
             ? PROGRESS[step]
             : address
               ? (problem ?? "Join so people can find you and message you.")
-              : "Tiny private messages, from you to anyone."}
+              : "Scalable, post-quantum cryptographic messaging for private payments and peer coordination."}
         </p>
       </div>
       {address ? (
