@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Chat } from "./_components/Chat";
-import { Join } from "./_components/Join";
 import { PasteKey } from "./_components/PasteKey";
 import { People } from "./_components/People";
+import { Register } from "./_components/Register";
 import { Restore } from "./_components/Restore";
 import type { NextPage } from "next";
 import type { Address } from "viem";
@@ -25,7 +25,7 @@ const Home: NextPage = () => {
   return (
     <div className="w-full max-w-md mx-auto px-4 py-8">
       {!address || !key ? (
-        <Join />
+        <Register />
       ) : person ? (
         <Chat
           // A join starts Chat afresh, so it celebrates even after you said hi.

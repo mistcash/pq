@@ -12,7 +12,7 @@ const FRIENDS = ["0x01", "0x02", "0x05"].map(n => n.padEnd(42, "0"));
 const randomUserKey = () => hexToBigInt(toHex(crypto.getRandomValues(new Uint8Array(32)))) || 1n;
 
 /** Connect, then register with one tap. */
-export const Join = () => {
+export const Register = () => {
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { writeContractAsync, isMining } = useScaffoldWriteContract({ contractName: "PqMsg" });
