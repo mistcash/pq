@@ -98,6 +98,7 @@ export const useOpenChannel = () => {
       found++;
     });
     setRestored(found);
+    recordStep("find", { users: String(users!.length), channels: String(channels.length), found: String(found) });
   };
 
   return { step, error, open, tx, restored, restore };
