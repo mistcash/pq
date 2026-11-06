@@ -8,7 +8,7 @@ export type Crypto = {
   /** The packed Kyber512 public key to register. */
   userKey: (senderKey: Hex) => Hex;
   /** Encrypts `channelKey` to `userKey` as the 37-element Encrypted Channel Key, and proves it. */
-  prove: (userKey: Hex, channelKey: Hex) => { proof: Hex; channelKeyHash: Hex; encryptedChannelKey: Hex[] };
+  prove: (userKey: Hex, channelKey: Hex) => Promise<{ proof: Hex; channelKeyHash: Hex; encryptedChannelKey: Hex[] }>;
   /** Junk if the Channel isn't to you, so check its Channel Key Hash. */
   decryptChannelKey: (senderKey: Hex, encryptedChannelKey: Hex[]) => Hex;
   encryptSender: (channelKey: Hex, senderIndex: number) => Hex;
@@ -33,7 +33,6 @@ const load = async (): Promise<Crypto> => {
   const go = new (window as any).Go();
   const { instance } = await WebAssembly.instantiateStreaming(fetch("/circuits/pqmsg.wasm"), go.importObject);
   go.run(instance);
-  const [ccs, pk] = await Promise.all([bytes("/circuits/openChannel.ccs"), bytes("/circuits/openChannel.pk")]);
   const call =
     (name: string) =>
     (...args: unknown[]) => {
@@ -46,7 +45,12 @@ const load = async (): Promise<Crypto> => {
     channelKey: call("channelKey"),
     channelKeyHash: call("channelKeyHash"),
     userKey: call("userKey"),
-    prove: (userKey, channelKey) => call("prove")(ccs, pk, userKey, channelKey),
+    prove: async (userKey, channelKey) => {
+      await call("loadProver")(
+        ...(await Promise.all([bytes("/circuits/openChannel.ccs"), bytes("/circuits/openChannel.pk")])),
+      );
+      return call("prove")(userKey, channelKey);
+    },
     decryptChannelKey: call("decryptChannelKey"),
     encryptSender: call("encryptSender"),
     decryptSender: call("decryptSender"),
