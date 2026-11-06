@@ -6,7 +6,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { Avatar } from "~~/components/Avatar";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
-import { type UnlockStep, useSenderKey } from "~~/hooks/useSenderKey";
+import { useSenderKey } from "~~/hooks/useSenderKey";
 import { loadCrypto } from "~~/utils/crypto";
 import { friendlyMessage } from "~~/utils/friendly";
 import { notification } from "~~/utils/scaffold-eth";
@@ -18,13 +18,13 @@ export const Register = () => {
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { writeContractAsync, isMining } = useScaffoldWriteContract({ contractName: "PqMsg" });
-  const [step, setStep] = useState<"start" | UnlockStep>();
-  const senderKey = useSenderKey(setStep);
+  const [step, setStep] = useState<"start" | "passkey">();
+  const { join: newSenderKey } = useSenderKey(setStep);
 
   const join = async () => {
     setStep("start");
     try {
-      const userKey = (await loadCrypto()).userKey(await senderKey(address!, true));
+      const userKey = (await loadCrypto()).userKey(await newSenderKey(address!));
       setStep(undefined);
       // The transactor shows its own errors.
       await writeContractAsync({ functionName: "register", args: [userKey], account: address }).catch(() => undefined);
