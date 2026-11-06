@@ -24,7 +24,7 @@ export const Register = () => {
   const join = async () => {
     setStep("start");
     try {
-      const userKey = (await loadCrypto()).userKey(await senderKey(address!));
+      const userKey = (await loadCrypto()).userKey(await senderKey(address!, true));
       setStep(undefined);
       // The transactor shows its own errors.
       await writeContractAsync({ functionName: "register", args: [userKey] }).catch(() => undefined);

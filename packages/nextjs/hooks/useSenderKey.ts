@@ -35,15 +35,14 @@ export const useSenderKey = (onStep: (step: UnlockStep) => void) => {
     return signature;
   };
 
-  return async (me: Address) => {
+  /** Only Join passes `isNew`: a lagging read must never skip the Password check. */
+  return async (me: Address, isNew = false) => {
     if (!senderKeys.has(me)) {
-      const userKey = (await pqMsg!.read.userKeys([me])) as Hex;
-      const isNew = userKey === "0x";
       onStep("password");
       const password = await askPassword(isNew);
       const crypto = await loadCrypto();
       const senderKey = crypto.senderKey(await signTwiceFirstTime(me), password);
-      if (!isNew && crypto.userKey(senderKey) !== userKey) {
+      if (!isNew && crypto.userKey(senderKey) !== (await pqMsg!.read.userKeys([me]))) {
         throw new FriendlyError("That's not your password. Try again?");
       }
       senderKeys.set(me, senderKey);
