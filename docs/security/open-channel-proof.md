@@ -54,3 +54,50 @@ The circuit mirrors round-3 Kyber512's CPAPKE.Enc, which is ML-KEM-512's K-PKE.E
 - The KEM layer (Alg. 16–21): Encaps, Decaps, the Fujisaki–Okamoto transform, implicit rejection and H(ek). pqmsg uses K-PKE alone, so it's only CPA-secure.
 - K-PKE.Decrypt (Alg. 15): recipients decrypt natively, and nothing proves it.
 - K-PKE.KeyGen's (Alg. 13) domain separator: User Keys come from round-3 Kyber key generation, G(seed) rather than G(d‖k). `register` checks only a User Key's length, not FIPS 203 §7.2's encapsulation key check. Neither weakens security, but User Keys aren't byte-compatible with ML-KEM-512's.
+
+## Security by layer
+
+### Kyber512
+
+The [round-3 Kyber spec](https://www.pq-crystals.org/kyber/data/kyber-specification-round3-20210131.pdf) (§1.5) says that without the rounding noise from compression, "the public keys are protected with 118 bits, and the ciphertexts with 112" of core-SVP hardness. Kyber512 reaches 118 everywhere only "with a weak version of the LWR assumption". pqmsg doesn't compress, so Encrypted Channel Keys sit at 112:
+
+| | Classical core-SVP | Quantum core-SVP | Refined estimate |
+| --- | --- | --- | --- |
+| Kyber512, compressed (Table 4) | 118 | 107 | 2¹⁵¹·⁵ gates |
+| pqmsg's Encrypted Channel Key | 112 | ≈ 102 | ≈ 2¹⁴⁵ gates (§4.4) |
+
+NIST level 1 needs 2¹⁴³ gates (§5.2), so the margin is thin. The quantum figure is our scaling of the spec's, not the spec's own. Kyber512's level-1 margin is [debated](https://groups.google.com/a/list.nist.gov/g/pqc-forum/c/NSe0wAzKJtA) even with compression.
+
+Recipient anonymity also rests on MLWE: Encrypted Channel Keys look random, so they don't reveal their User Key.
+
+### Key derivation
+
+This is the biggest gap. The Sender Key is Poseidon2 of a wallet signature over a fixed message, and ADR-0002 requires the wallet to sign deterministically. `register` is sent from the User's own wallet, so their secp256k1 public key is on-chain. A quantum attacker can:
+
+1. recover the wallet's private key with Shor's algorithm,
+2. sign the fixed message again, getting the same signature,
+3. derive the Sender Key, then the User Key's secret key and every Channel Key the User opened,
+4. read every message to and from that User, all of which stay on-chain.
+
+So "harvest now, decrypt later" works against every User: confidentiality is only as post-quantum as secp256k1.
+
+### Poseidon2
+
+The Sender Key, User Key seed, Channel Keys, Message Keys, Message IDs and message pads all use Poseidon2 over BN254. Its 254-bit outputs give about 127 bits against Grover. It's newer, and less studied, than SHA-3.
+
+### Groth16 on BN254
+
+- The setup is dev-only and single-party (`groth16.Setup` in `cmd/artifacts`), so whoever ran it could forge proofs.
+- Soundness is classical only: BN254 gives about 100 bits, and Shor breaks it.
+- A forged proof adds little, given how little the circuit checks: it lets someone open a Channel under a Channel Key Hash they can't open.
+- Zero-knowledge is perfect, so it holds against quantum adversaries too.
+
+### Outside the proof
+
+- **Sender misattribution by replay.** The proof doesn't cover the Encrypted Sender, which is the sender's User Index + H(Channel Key, tag), so adding δ to it shifts the User Index it decrypts to. Anyone can resubmit an open Channel with Encrypted Sender + δ. [`restore`](../../packages/nextjs/hooks/useOpenChannel.ts#L84) then files the same Channel Key under User Index s + δ, and the recipient sees the Channel as from the wrong User.
+- **Message ID squatting.** `post` accepts any unused Message ID from anyone. Someone who sees a pending `post` can front-run it with the same Message ID and junk, and the message is lost.
+- **No CCA security.** User Keys are static and long-lived, and pqmsg uses CPA encryption without the Fujisaki–Okamoto transform. If a recipient's reaction to a Channel ever becomes observable (auto-replies, read receipts), known key-mismatch attacks on CPA Kyber can recover their secret key. Since the proof accepts any Encrypted Channel Key, crafting those queries costs only gas.
+
+## Overall
+
+The proof gives integrity and some friction against spam, not confidentiality. Confidentiality comes from Kyber512 at about 112 bits of core-SVP hardness, capped by the secp256k1-derived Sender Key. pqmsg isn't post-quantum end to end yet.
