@@ -25,13 +25,13 @@ import (
 func main() {
 	logger.Disable()
 	js.Global().Set("pqmsg", map[string]any{
-		// senderKey(signature)
+		// senderKey(signature, password)
 		"senderKey": fn(func(a []js.Value) (any, error) {
 			signature, err := hex.DecodeString(strings.TrimPrefix(a[0].String(), "0x"))
 			if err != nil {
 				return nil, err
 			}
-			senderKey, err := circuits.SenderKey(signature)
+			senderKey, err := circuits.SenderKey(signature, a[1].String())
 			return toHex(senderKey), err
 		}),
 		// channelKey(senderKey, userIndex)
