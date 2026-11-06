@@ -27,7 +27,7 @@ export const Register = () => {
       const userKey = (await loadCrypto()).userKey(await senderKey(address!, true));
       setStep(undefined);
       // The transactor shows its own errors.
-      await writeContractAsync({ functionName: "register", args: [userKey] }).catch(() => undefined);
+      await writeContractAsync({ functionName: "register", args: [userKey], account: address }).catch(() => undefined);
     } catch (e) {
       notification.error(friendlyMessage(e));
     }
