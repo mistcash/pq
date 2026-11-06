@@ -50,7 +50,7 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
       ],
       [
         "Watch out",
-        "Fetching their User Key asks the app's RPC provider for it by address, so the provider could tell who you're about to message. The Fixed Sender is our server: it can't read anything, but it sees your IP and timing, and could alter or drop what you send. Anyone can post a Channel nobody can open, and forging proofs adds little to that: whoever ran the dev-only setup, PqMsg's owner by swapping the Verifier, or a quantum computer could.",
+        "Their User Key comes over Anon-RPC, a mixnet, so the RPC server doesn't learn who you're about to message, unless Anon-RPC fails and the app reads it directly. The Fixed Sender is our server: it can't read anything, but it sees your IP and timing, and could alter or drop what you send. Anyone can post a Channel nobody can open, and forging proofs adds little to that: whoever ran the dev-only setup, PqMsg's owner by swapping the Verifier, or a quantum computer could.",
       ],
     ],
   },
