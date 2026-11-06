@@ -125,15 +125,15 @@ const BEATS: Beat[] = [
   },
   {
     kicker: "Keys",
-    title: "One signature unlocks everything.",
+    title: "One passkey unlocks everything.",
     lines: [
-      "Your wallet signs one fixed message, and every key grows from it.",
-      "Nothing to back up beyond the wallet.",
+      "You make a passkey when you join, and every key grows from it.",
+      "Nothing to back up beyond the passkey.",
     ],
     tags: ["H = Poseidon2", "User Key = Kyber512"],
     visual: (
       <div className="flex flex-col items-center max-w-2xl mx-auto">
-        <Hex>✍️ wallet signature</Hex>
+        <Hex>🔑 passkey&apos;s PRF output</Hex>
         <Edge label="H" />
         <Node
           name="Sender Key"
