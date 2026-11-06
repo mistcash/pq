@@ -6,8 +6,9 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { Avatar } from "~~/components/Avatar";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { storeUserKey } from "~~/hooks/useFixedSender";
 import { useSenderKey } from "~~/hooks/useSenderKey";
-import { recordTx } from "~~/services/store/deepDive";
+import { recordEntity, recordTx } from "~~/services/store/deepDive";
 import { loadCrypto } from "~~/utils/crypto";
 import { friendlyMessage } from "~~/utils/friendly";
 import { passkeyProblem } from "~~/utils/passkey";
@@ -38,7 +39,12 @@ export const Register = () => {
       const tx = await writeContractAsync({ functionName: "register", args: [userKey], account: address }).catch(
         () => undefined,
       );
-      if (tx) recordTx("unlock", tx);
+      if (tx) {
+        recordTx("unlock", tx);
+        // Your key goes on Arkiv once its hash is on-chain (ADR-0005).
+        const entity = await storeUserKey(address!, userKey);
+        if (entity) recordEntity("unlock", entity);
+      }
     } catch (e) {
       notification.error(friendlyMessage(e));
     }
