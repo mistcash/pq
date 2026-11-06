@@ -6,10 +6,10 @@ Ethereum storage. Since Sepolia's Glamsterdam upgrade (EIP-8037), each new byte 
 
 | Call | Data on PqMsg | Data on Arkiv, keccak256 on PqMsg | Saved |
 | --- | ---: | ---: | ---: |
-| `register` | 3,113,643 gas | 360,732 gas | 88% |
-| `openChannel` | 5,014,387 gas | 831,040 gas | 83% |
+| `register` | 3,015,735 gas | 361,138 gas | 88% |
+| `openChannel` | 5,014,423 gas | 831,299 gas | 83% |
 
-The same User Key or Channel on Arkiv costs the Fixed Sender Rabdi gas instead: about 0.53M gas, or 0.00053 tGLM at 1 gwei, for a 1.2 KB entity kept for the longest lifetime Rabdi allows (`eth_estimateGas` on Rabdi).
+The same data on Arkiv costs the Fixed Sender Rabdi gas instead, for 182 days at 1 gwei: 513,978 gas (0.00051 tGLM) for a User Key and 578,386 gas (0.00058 tGLM) for a Channel.
 
 ## If we swapped Arkiv for Postgres
 
@@ -20,7 +20,7 @@ pqmsg's promise is that nobody, us included, can read your chats or tell who tal
 - **Nobody could audit what we store.** Every pqmsg entity, its owner and its expiry are public on [Rabdi's explorer](https://rabdi.explorer.arkiv.network/address/0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C). That matters for an app that claims to store nothing that names who talks to whom: you can check.
 - **Any app could read it.** User Keys are a directory of post-quantum public keys keyed by wallet. Another app can query `arkiv.schema = str('pqmsg.userKey')` and encrypt to pqmsg's users without asking us.
 
-Arkiv's expiry also matches the data: a key whose owner hasn't opened pqmsg in six months lapses, and comes back when they return.
+Arkiv's expiry also matches the data: a key whose owner hasn't opened pqmsg in six months can lapse. Next, it'll come back when they return.
 
 ## What we kept off Arkiv, and why
 
