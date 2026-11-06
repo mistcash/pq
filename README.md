@@ -93,6 +93,18 @@ Each step falls back to the CPU, so every browser can open a Channel:
 
 The console says which it uses, `pqmsg prover on the GPU` or `on the CPU`, after `pqmsg prover: no WebGPU, <reason>`. On the GPU, the witness, including the secret Channel Key and noise, sits in GPU memory.
 
+## Demo with DevTools profiling
+
+1. Run the app locally (see [Run locally](#run-locally)) and open http://localhost:3000 in a browser with WebGPU, such as desktop Chrome or Edge.
+2. Open DevTools. Once the prover has loaded, the Console says `pqmsg prover on the GPU`, or `on the CPU` with the reason.
+3. Register two Users, one per browser profile. The local chain's Burner Wallet works; fund it with the faucet button in the header.
+4. In the Performance panel, start recording, pick the other User and tap **Say hi 👋**. Stop once it says "You're connected!".
+5. The prover's worker thread shows two measures: `pqmsg load`, from the worker's start to a loaded prover, and `pqmsg prove`, the proof itself. On the GPU path, the GPU track is busy during `pqmsg prove`.
+6. For the CPU path, use a browser without WebGPU, or turn it off (in Firefox, set `dom.webgpu.enabled` to false in `about:config`), reload and record again.
+7. The Network panel shows what each visitor downloads once: `pqmsg.wasm` (15 MB), `openChannel.pk` (22 MB) and `openChannel.ccs` (5 MB).
+
+The other User finds the Channel by tapping **Find my chats**.
+
 ## Design
 
 See `DESIGN.md`.
