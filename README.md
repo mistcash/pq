@@ -2,7 +2,7 @@
 
 Tiny private messages on Ethereum, with a post-quantum key exchange.
 
-pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join.
+pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join. User Keys and Channels live on [Arkiv](https://arkiv.network), and Ethereum keeps only their keccak256 hashes, which cut the gas to register by 88% and to open a Channel by 83% (see [Arkiv](#arkiv)).
 
 **Why it matters.** Whatever goes on a public chain stays there forever. Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists. pqmsg is a working testbed for private messaging on a public chain without that expiry date, and it's explicit about the parts that aren't post-quantum yet (see [Security considerations](#security-considerations)).
 
@@ -12,18 +12,20 @@ Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`. What the O
 
 ## How it works
 
-1. Users connect their wallet and register a User Key, a Kyber512 public key derived from their Sender Key, which comes from a passkey they make when joining (ADR-0004).
+1. Users connect their wallet and register a User Key, a Kyber512 public key derived from their Sender Key, which comes from a passkey they make when joining (ADR-0004). PqMsg keeps only its keccak256, the User Key Hash, and the Fixed Sender stores the key itself on Arkiv (ADR-0005).
 2. Registered Users are shown in a list, and the sender picks a recipient.
-3. The sender opens a Channel to them. Its Channel Key is H(Sender Key, recipient's User Index), and the Sender Key comes from the sender's passkey (ADR-0004). The sender encrypts it to the recipient's User Key (Kyber512 CPA-PKE, uncompressed), and the circuit proves that the Channel Key hashes to the Channel Key Hash and that the Encrypted Channel Key encrypts it. The User Key is a private input, so the recipient stays hidden (ADR-0003). The recipient finds the Channel by decrypting every Encrypted Channel Key and checking each result against its Channel Key Hash, and learns who opened it from the Encrypted Sender. Nothing is shared out of band.
+3. The sender opens a Channel to them. Its Channel Key is H(Sender Key, recipient's User Index), and the Sender Key comes from the sender's passkey (ADR-0004). The sender encrypts it to the recipient's User Key (Kyber512 CPA-PKE, uncompressed), and the circuit proves that the Channel Key hashes to the Channel Key Hash and that the Encrypted Channel Key encrypts it. The User Key is a private input, so the recipient stays hidden (ADR-0003). The recipient finds the Channel by decrypting every Encrypted Channel Key and checking each result against its Channel Key Hash, and learns who opened it from the Encrypted Sender. Nothing is shared out of band. The Fixed Sender stores the Channel on Arkiv, and PqMsg keeps only its keccak256, the Channel Hash (ADR-0005).
 4. To send a message, the sender derives the Message Key = H(Channel Key, Message Index) and the Message ID = H(Message Key, 0). The message's two 31-byte halves become the two Ciphertext Elements by adding H(Message Key, 1) and H(Message Key, 2) respectively (hash and add). In Phase 1 this happens outside the circuit.
 5. The contract stores the two Ciphertext Elements as u256 values in a publicly readable hashmap keyed by Message ID. The recipient finds messages by checking Message IDs from Message Index 0 upward.
 
 A Fixed Sender (a stand-in for a future relayer) submits Channel openings and messages, so they don't reveal who is talking. Registration comes from the user's own wallet.
 
 Contract stores:
-1. List of registered Users with their User Key (an 800-byte packed Kyber512 public key).
-2. Channels array: each Channel's Channel Key Hash, Encrypted Channel Key and Encrypted Sender.
+1. List of registered Users with their User Key Hash, the keccak256 of their 800-byte packed Kyber512 public key.
+2. Channels array: each Channel's Channel Hash, the keccak256 of its Channel Key Hash, Encrypted Channel Key and Encrypted Sender.
 3. Messages: hashmap of Message ID to the two Ciphertext Elements.
+
+Arkiv stores each User Key and each Channel whole, under its hash, and the app drops any that doesn't hash to one on PqMsg.
 
 It emits `Registered(user)`, `ChannelOpened(channelKeyHash)` and `Posted(messageId)`, each indexed.
 
@@ -35,7 +37,7 @@ Deep dive mode (🤿 in the header) explains each step as it happens: what ran i
 
 pqmsg leads with **privacy**: only a Channel's two ends can read it, even with a future quantum computer, and the chain never shows who is talking to whom.
 
-- **Censorship resistant.** PqMsg has no allowlist, and its owner can only swap the Verifier. The Fixed Sender can refuse to send, but `openChannel` and `post` take calls from any wallet, at the cost of showing who sent them.
+- **Censorship resistant.** PqMsg has no allowlist, and its owner can only swap the Verifier. The Fixed Sender can refuse to send, but `openChannel` and `post` take calls from any wallet, at the cost of showing who sent them. Likewise anyone can store a User Key or Channel on Arkiv, and the app takes any copy that hashes right.
 - **Open source.** MIT-licensed. Everything builds from this repo: `yarn circuits:build` builds the circuit, Verifier and WASM prover, `yarn deploy` the contracts, and `yarn start` the app.
 - **Private.** The chain shows only the Fixed Sender opening Channels and posting ciphertexts (ADR-0003). The RPC server sees your address and which messages you read, but not whom you open a Channel to, as their User Key comes over Anon-RPC (`docs/anon-rpc.md`). The app has no trackers or analytics.
 - **Secure.** Channel Keys are encrypted to Kyber512 keys, with a Groth16 proof that each encryption is well formed, though its setup is dev-only. Your Sender Key, kept only in memory, comes from a passkey that only answers pqmsg's own domain. Channel Keys stay in this browser's storage unencrypted, and "Find my chats" restores them.
@@ -46,6 +48,7 @@ Set up with Scaffold-ETH 2 using Foundry (`npx create-eth@latest -s foundry`), p
 
 | Job | Primitive | Code |
 | --- | --- | --- |
+| Keep User Keys and Channels available, cheaply | Arkiv entities on the Rabdi testnet, checked against keccak256 hashes on PqMsg | `packages/nextjs/utils/arkiv.ts`, `app/api/fixed-sender/route.ts` |
 | Carry the Channel Key to its recipient | Kyber512 CPA-PKE (NIST level 1), with the ciphertext left uncompressed so the circuit can check it | `packages/circuits/kyber.go`, `native/` |
 | Prove the Encrypted Channel Key is well formed | Groth16 on BN254 (gnark v0.16), checked on-chain by `Verifier.sol` | `packages/circuits/circuits.go`, `circuit/` |
 | Every hash, key derivation and message pad | gnark's Poseidon2 on BN254, in Merkle-Damgård mode | `packages/circuits/circuits.go` |
@@ -62,7 +65,7 @@ Every key comes from one passkey (ADR-0004). H is Poseidon2, and `tag` is 2⁶�
 passkey's PRF output on "pqmsg: derive Sender Key v2"
 └─ Sender Key = H(PRF output)                           kept in memory, never sent
    ├─ User Key = Kyber512 key pair seeded by H(Sender Key, tag)
-   │             its 800-byte public key is registered on-chain
+   │             its 800-byte public key goes on Arkiv, its keccak256 on-chain
    └─ Channel Key = H(Sender Key, recipient's User Index)
       ├─ Channel Key Hash = H(Channel Key)              public
       ├─ Encrypted Sender = sender's User Index + H(Channel Key, tag)
@@ -140,17 +143,18 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 
 ### Known gaps in the protocol
 
-- **Kyber512 CPA-PKE, not ML-KEM.** It's NIST level 1 and only CPA-secure, without the Fujisaki-Okamoto transform. User Keys never change, and the proof doesn't tie a ciphertext to a registered User Key, so anyone can post crafted ciphertexts to a User. If a User's behaviour shows whether one decrypted to a valid Channel, for example by replying, that's the plaintext-checking oracle that known key-recovery attacks on CPA Kyber need. Each try costs a Channel opening, at well over 1M gas.
+- **Kyber512 CPA-PKE, not ML-KEM.** It's NIST level 1 and only CPA-secure, without the Fujisaki-Okamoto transform. User Keys never change, and the proof doesn't tie a ciphertext to a registered User Key, so anyone can post crafted ciphertexts to a User. If a User's behaviour shows whether one decrypted to a valid Channel, for example by replying, that's the plaintext-checking oracle that known key-recovery attacks on CPA Kyber need. Each try costs a Channel opening, at about 0.8M gas.
 - **Messages aren't authenticated.** A Ciphertext Element is the message half plus a pad, so changing it shifts the plaintext predictably. Someone watching the mempool can front-run a `post` with altered Ciphertext Elements under the same Message ID: the recipient reads the altered message, and the real one reverts.
 - **The trusted setup is single-party.** `cmd/artifacts` runs a dev-only Groth16 setup, and whoever runs it could keep its secret randomness and forge proofs. That allows junk Channel openings but exposes no messages. A multi-party ceremony should replace it before mainnet.
-- **The contract doesn't refuse repeats.** The Fixed Sender refuses a Channel that's already open, but `openChannel` doesn't, so anyone can replay a proof. `getChannels` returns every Channel, and each User trial-decrypts all of them.
+- **The contract doesn't refuse repeats.** The Fixed Sender refuses a Channel that's already open, but `openChannel` doesn't, so anyone can replay a proof. `getChannels` returns every Channel Hash, and each User fetches every Channel from Arkiv and trial-decrypts all of them.
 
 ### Side channels, memory and metadata
 
 - **No side-channel guarantees.** The crypto runs as Go compiled to WASM, and nothing in a browser promises constant time. CIRCL's Kyber aims to be constant-time in native code; we don't claim that survives WASM.
 - **No memory wiping.** Keys cross between JavaScript and Go as strings, which can't be zeroed, and stay on Go's heap until it's reclaimed. On the GPU path, the witness sits in GPU buffers.
 - **The proving key is read without subgroup checks** (`UnsafeReadFrom`), which saves 18 s. It's served from the same origin as `pqmsg.wasm`, so anyone able to swap it could swap the prover too.
-- **Metadata.** Registering is public. The RPC provider sees which Message IDs a browser polls, and the Fixed Sender sees the IP address behind each Channel opening and message.
+- **Metadata.** Registering is public. The RPC provider sees which Message IDs a browser polls, and the Fixed Sender sees the IP address behind each Channel opening and message. Arkiv's RPC sees whose User Key a browser fetches before opening a Channel.
+- **Arkiv keeps the data available.** If an entity expires or Arkiv loses it, the hash on PqMsg can't bring it back: a Channel nobody can fetch can't be read. A User Key comes back the next time its owner unlocks; a Channel doesn't yet.
 
 ## Run locally
 
@@ -179,13 +183,15 @@ CI runs only the lint and type checks so far.
 
 You need Node 20.18.3 or later, Yarn 4 (`corepack enable`) and Foundry, plus Go to rebuild the circuit. After `yarn install`, `yarn chain`, `yarn deploy` and `yarn start` run everything locally on anvil, with an anvil account as the Fixed Sender. To ship to Sepolia:
 
-1. **Deployer.** Create a keystore with `yarn generate`, or import a key with `yarn account:import`. Fund its address with Sepolia ETH; `yarn account` shows the address and balance. The deployer becomes PqMsg's owner. The deploy uses about 17.3M gas in two transactions (Verifier 12.0M, PqMsg 5.4M), many times more than on local anvil, because Sepolia's Amsterdam fork charges far more for new contract code and storage. Forge's local simulation misses this, so live deploys estimate gas through the RPC (`--skip-simulation`).
+1. **Deployer.** Create a keystore with `yarn generate`, or import a key with `yarn account:import`. Fund its address with Sepolia ETH; `yarn account` shows the address and balance. The deployer becomes PqMsg's owner. The deploy uses about 22.5M gas in two transactions (Verifier 18.1M, PqMsg 4.4M), many times more than on local anvil, because Sepolia's Amsterdam fork charges far more for new contract code and storage. Forge's local simulation misses this, so live deploys estimate gas through the RPC (`--skip-simulation`).
 2. **Deploy.** Run `yarn deploy --network sepolia --keystore <name>`. It reaches Sepolia through Alchemy with `ALCHEMY_API_KEY` from `packages/foundry/.env`; the template's shared key works, and your own avoids rate limits. It writes the address into `packages/nextjs/contracts/deployedContracts.ts`. Commit that file with `packages/foundry/broadcast/Deploy.s.sol/11155111/` and `packages/foundry/deployments/11155111.json`, so later deploys keep the Sepolia address.
-3. **Fixed Sender.** Create a separate account with `cast wallet new` and send it Sepolia ETH. It pays the gas for every Channel opening (well over 1M gas, as it stores the 37-element Encrypted Channel Key) and message (about 240k gas), so keep it topped up.
+3. **Fixed Sender.** Create a separate account with `cast wallet new` and send it Sepolia ETH. It pays the gas for every Channel opening (about 0.83M gas) and message (about 240k gas), so keep it topped up. It also stores User Keys and Channels on Arkiv's Rabdi testnet, so claim tGLM for it at the [Arkiv faucet](https://hub.arkiv.network/faucet), or set `ARKIV_PRIVATE_KEY` to another funded key.
 4. **Frontend env.** Set these in `packages/nextjs/.env.local`, or in your host's environment settings, such as Vercel's:
    - `NEXT_PUBLIC_TARGET_NETWORK=sepolia`, which is read at build time.
    - `FIXED_SENDER_PRIVATE_KEY`: the Fixed Sender's key. It's server-only, so never prefix it with `NEXT_PUBLIC_`. Without it, sending fails with an error that names it.
    - `FIXED_SENDER_RPC_URL` (optional): a server-only Sepolia RPC for the Fixed Sender. It defaults to Alchemy with `NEXT_PUBLIC_ALCHEMY_API_KEY`.
+   - `ARKIV_PRIVATE_KEY` (optional): a server-only key for Arkiv writes. It defaults to `FIXED_SENDER_PRIVATE_KEY`.
+   - `NEXT_PUBLIC_ARKIV_ACCESS_KEY` (optional): an [Arkiv access key](https://hub.arkiv.network/access-keys), to lift the public RPC's rate limit.
    - `NEXT_PUBLIC_ALCHEMY_API_KEY` and `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` (recommended): your own keys instead of the template's shared ones.
 5. **Run.** `yarn start` serves the app in dev mode, and `yarn next:build && yarn next:serve` builds and serves it for production. On Vercel, `yarn vercel --prod` deploys it.
 
@@ -193,10 +199,10 @@ You need Node 20.18.3 or later, Yarn 4 (`corepack enable`) and Foundry, plus Go 
 
 | Contract | Address |
 | --- | --- |
-| PqMsg | [`0xF4a1628850B5C030801002A7e10436699Dd4933C`](https://sepolia.etherscan.io/address/0xF4a1628850B5C030801002A7e10436699Dd4933C) |
-| Verifier | [`0x5184F86dB5c85DB386554F2Cbfe232412741C5d3`](https://sepolia.etherscan.io/address/0x5184F86dB5c85DB386554F2Cbfe232412741C5d3) |
+| PqMsg | [`0x83Ba93654CaC7a6F9489E81c89F4AaA48d755c52`](https://sepolia.etherscan.io/address/0x83Ba93654CaC7a6F9489E81c89F4AaA48d755c52) |
+| Verifier | [`0x56d42ba891FDC1f3367018f789aE964207499633`](https://sepolia.etherscan.io/address/0x56d42ba891FDC1f3367018f789aE964207499633) |
 
-The owner is `0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C`. Both were deployed in blocks 12075350 and 12075351. The transactions are in `packages/foundry/broadcast/Deploy.s.sol/11155111/`. This deployment predates the events; they arrive with the next PqMsg deploy.
+The owner is `0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C`. Both were deployed in blocks 12079574 and 12079575. The transactions are in `packages/foundry/broadcast/Deploy.s.sol/11155111/`.
 
 ### Swapping the Verifier
 
@@ -208,6 +214,24 @@ The owner can replace the Verifier without redeploying PqMsg, which keeps its Us
 4. Ship the frontend with the new proving key.
 
 If the circuit's number of public inputs changes, `openChannel` changes too, so PqMsg itself needs redeploying.
+
+## Arkiv
+
+pqmsg keeps each User Key and Channel on [Arkiv](https://arkiv.network)'s Rabdi testnet (chain 7794095), and only its keccak256 on PqMsg (ADR-0005). The Fixed Sender writes every entity; whoever reads one checks it hashes to PqMsg's hash. Under Sepolia's Glamsterdam gas, this cut `register` from 3.11M to 0.36M gas and `openChannel` from 5.01M to 0.83M; `docs/gas.md` has the transactions.
+
+- **Wallet that writes the entities:** `0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C`, the Fixed Sender ([on the explorer](https://rabdi.explorer.arkiv.network/address/0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C)).
+- **A query to run:** every pqmsg entity for the Sepolia PqMsg, User Keys and Channels alike:
+
+  ```sh
+  curl -s https://rpc.rabdi.db-chain.testnet.arkiv.network -H 'content-type: application/json' \
+    -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"arkiv_query\",\"params\":[\"pqmsg = str('0x83ba93654cac7a6f9489e81c89f4aaa48d755c52')\",{\"limit\":100}]}"
+  ```
+
+The judging write-ups are in `arkiv/`: `schema.md` (entities, fields, owners, expiry), `friction.md`, `reach.md`, `why-arkiv.md` and `how-you-use-arkiv.md`.
+
+## How we used AI
+
+pqmsg is built with Claude Code. It wrote most of the code, tests and docs from our prompts, and we reviewed, steered and tested each change. For the Arkiv move, it read Arkiv's docs and SDK, wrote ADR-0005, changed the contract and app, measured gas on Sepolia and drafted the `arkiv/` write-ups. Commits it co-wrote carry a `Co-Authored-By: Claude` trailer.
 
 ## Contributing
 
