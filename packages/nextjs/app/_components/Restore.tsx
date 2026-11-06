@@ -14,7 +14,7 @@ type Props = { me: Address } & Pick<ReturnType<typeof useOpenChannel>, "step" | 
 export const Restore = ({ me, step, restored, restore }: Props) => {
   const [restoring, setRestoring] = useState(false);
 
-  const tap = async () => {
+  const bringBackChats = async () => {
     setRestoring(true);
     try {
       await restore(me);
@@ -30,7 +30,11 @@ export const Restore = ({ me, step, restored, restore }: Props) => {
         {restoring && step !== "open" ? PROGRESS[step ?? "start"] : "New phone or browser?"}
       </span>
       {restored === undefined ? (
-        <button className="btn btn-soft btn-primary btn-lg btn-block rounded-full" disabled={restoring} onClick={tap}>
+        <button
+          className="btn btn-soft btn-primary btn-lg btn-block rounded-full"
+          disabled={restoring}
+          onClick={bringBackChats}
+        >
           {restoring ? <span className="loading loading-dots" /> : <ArrowPathIcon className="h-5 w-5" />}
           Bring back my chats
         </button>
