@@ -9,6 +9,7 @@ import (
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/frontend"
+	"github.com/consensys/gnark/frontend/cs/r1cs"
 	"github.com/consensys/gnark/std/math/emulated"
 	"github.com/consensys/gnark/test"
 	"github.com/mistcash/pqmsg/packages/circuits/circuit"
@@ -72,4 +73,12 @@ func TestEncrypt(t *testing.T) {
 	if test.IsSolved(&encCircuit{}, &w, ecc.BN254.ScalarField()) == nil {
 		t.Fatal("tampered v accepted")
 	}
+}
+
+func TestEncryptConstraints(t *testing.T) {
+	cs, err := frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, &encCircuit{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(cs.GetNbConstraints())
 }
