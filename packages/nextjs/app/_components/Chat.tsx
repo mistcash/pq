@@ -48,7 +48,7 @@ export const Chat = ({ me, other, joining, onBack }: Props) => {
       </button>
       <div className="flex flex-col items-center text-center gap-3">
         <div className={`relative isolate ${busy ? "animate-bounce" : ""}`}>
-          {celebrate && <Confetti />}
+          {celebrate && <Confetti key={celebrate} />}
           <Avatar address={other} size={128} />
         </div>
         <h1 className="text-3xl font-bold m-0">{short(other)}</h1>

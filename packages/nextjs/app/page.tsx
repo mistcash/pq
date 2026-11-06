@@ -28,7 +28,8 @@ const Home: NextPage = () => {
         <Join />
       ) : person ? (
         <Chat
-          key={person}
+          // A join starts Chat afresh, so it celebrates even after you said hi.
+          key={joining ? `${person}:joining` : person}
           me={address}
           other={person}
           joining={joining}
