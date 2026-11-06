@@ -444,7 +444,7 @@ export const Landing = () => (
         id={`beat-${i + 1}`}
         className={`snap-start min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center gap-8 px-4 py-10 text-center ${dark ? "bg-neutral text-neutral-content" : i % 2 ? "bg-base-200" : "bg-base-100"}`}
       >
-        <div className="flex flex-col items-center gap-4 max-w-4xl">
+        <div className="flex flex-col items-center gap-4 max-w-5xl">
           <span className={`font-semibold tracking-wide ${dark ? "text-success" : "text-primary"}`}>
             {String(i + 1).padStart(2, "0")} · {kicker}
           </span>
