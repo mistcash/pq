@@ -8,7 +8,7 @@ pqmsg stores every message publicly on-chain, yet only the two ends of a convers
 
 Status: Phase 1, on the Sepolia testnet. A research prototype, not audited.
 
-Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`.
+Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`. What the OpenChannel proof checks, and how post-quantum pqmsg is, is in `docs/security/open-channel-proof.md`.
 
 ## How it works
 
