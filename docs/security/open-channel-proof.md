@@ -1,11 +1,11 @@
 # The OpenChannel proof, and how post-quantum pqmsg is
 
-What the `OpenChannel` proof checks, which parts of ML-KEM it covers, and how secure pqmsg is overall, as of `8b3a1c3`. Terms are as in `GLOSSARY.md`.
+What the `OpenChannel` proof checks, which parts of ML-KEM it covers, and how secure pqmsg is overall, as of #45 (`452f922`), which makes the Sender Key from a passkey. Terms are as in `GLOSSARY.md`.
 
 - The proof shows the opener knows the Channel Key behind the Channel Key Hash. It doesn't show that the Encrypted Channel Key encrypts that Channel Key to anyone: the circuit accepts any well-formed Encrypted Channel Key.
 - The circuit covers K-PKE.Encrypt's arithmetic, but none of the key binding, sampling, compression or KEM layer.
 - Uncompressed, Kyber512 gives Encrypted Channel Keys about 112 bits of core-SVP hardness, just above NIST level 1.
-- pqmsg isn't post-quantum end to end: every key derives from a secp256k1 wallet signature, which a quantum attacker can recompute.
+- Since #45, the Sender Key comes from a passkey's PRF, which nothing on-chain reveals, so chain data alone won't let a quantum attacker read past messages. The wallet still controls `register`, so once its key falls, an attacker can swap in their own User Key and read Channels opened to that User afterwards.
 
 ## What the proof checks
 
@@ -113,11 +113,11 @@ The Sender Key, User Key seed, Channel Keys, Message Keys, Message IDs and messa
 
 ## Overall
 
-The proof gives integrity and some friction against spam, not confidentiality. Confidentiality comes from Kyber512 at about 112 bits of core-SVP hardness, capped by the secp256k1-derived Sender Key. pqmsg isn't post-quantum end to end yet.
+The proof gives integrity and some friction against spam, not confidentiality. With #45, past messages rest on Kyber512 at about 112 bits of core-SVP hardness, and on HMAC-SHA-256 and Poseidon2 at about 128 bits against Grover. What's left is mostly about the future: a fallen wallet key lets an attacker take over a User's later Channels, and a synced passkey is only as safe as its provider's sync.
 
 ## Fixes, by impact
 
-1. **A Sender Key the wallet key can't recompute.** Mix in a secret the wallet doesn't hold, such as a random seed the User backs up. This trades away ADR-0002's "nothing to back up".
+1. **Stop the wallet alone replacing a User Key.** A one-shot `register` is simplest, but then a lost passkey retires the address (#45). Or store H(H(Sender Key, tag′)) at Join, and accept a new User Key only after a commit-reveal of H(Sender Key, tag′): a quantum attacker can't forge a hash preimage, and a front-runner can't reuse a reveal. A Groth16 proof of the Sender Key wouldn't do, since a quantum attacker can forge one.
 2. **Bind the User Key in the circuit.** Commit to registered User Keys, for example with a Merkle root of their hashes as a public input, and prove membership; the recipient stays hidden. One system-wide matrix A, as circuit constants, would make this cheaper by leaving only t̂ to commit. A system-wide A changes User Keys, so Users would register again. Existing Channels stay readable as long as the secret key is still derived the same way, since decrypting needs only that.
 3. **Prove the Encrypted Sender, and have `openChannel` refuse a Channel Key Hash it already has.**
 4. **Compress the Encrypted Channel Key** (d_u = 10, d_v = 4) to reach the spec's 118 bits under its weak-LWR assumption, at the cost of proving the compression.
