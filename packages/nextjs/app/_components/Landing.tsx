@@ -93,28 +93,6 @@ const BEATS: Beat[] = [
     ),
   },
   {
-    kicker: "Easy",
-    title: "One passkey, and free to send.",
-    lines: [
-      "A passkey makes all your keys: one tap, nothing to back up.",
-      "pq posts each message for you: no gas, and your address stays off it.",
-    ],
-    visual: (
-      <ul className="m-0 p-0 grid grid-cols-3 gap-3 sm:gap-6 max-w-2xl mx-auto">
-        {[
-          ["🔑", "One passkey"],
-          ["⛽", "No gas"],
-          ["🙈", "No address"],
-        ].map(([emoji, name]) => (
-          <li key={name} className="flex flex-col items-center gap-2 rounded-3xl border-2 bg-base-100 p-4 sm:p-6">
-            <span className="text-4xl sm:text-5xl">{emoji}</span>
-            <b className="sm:text-lg leading-tight">{name}</b>
-          </li>
-        ))}
-      </ul>
-    ),
-  },
-  {
     kicker: "Lasting",
     title: "Private now, and for years to come.",
     lines: [
