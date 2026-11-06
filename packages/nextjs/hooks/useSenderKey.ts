@@ -1,5 +1,6 @@
 import type { Address, Hex } from "viem";
 import { useSignMessage } from "wagmi";
+import { recordStep } from "~~/services/store/deepDive";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError } from "~~/utils/friendly";
 
@@ -28,7 +29,13 @@ export const useSenderKey = (onStep: (step: "sign" | "check") => void) => {
   };
 
   return async (me: Address) => {
-    if (!senderKeys.has(me)) senderKeys.set(me, (await loadCrypto()).senderKey(await signTwiceFirstTime(me)));
+    if (!senderKeys.has(me)) {
+      const crypto = await loadCrypto();
+      const signature = await signTwiceFirstTime(me);
+      const senderKey = crypto.senderKey(signature);
+      senderKeys.set(me, senderKey);
+      recordStep("unlock", { signature, senderKey, userKey: crypto.userKey(senderKey) });
+    }
     return senderKeys.get(me)!;
   };
 };
