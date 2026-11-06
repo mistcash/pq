@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Hex } from "viem";
 import { ArrowPathIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Confetti } from "~~/components/Confetti";
+import { TxLink } from "~~/components/TxLink";
 import { useMessages } from "~~/hooks/useMessages";
 import { friendlyMessage } from "~~/utils/friendly";
 import { notification } from "~~/utils/scaffold-eth";
@@ -36,13 +37,14 @@ export const Messages = ({ channelKey, mine }: { channelKey: Hex; mine?: boolean
       {!messages ? (
         <span className="loading loading-dots mx-auto my-4" />
       ) : messages.length ? (
-        messages.map((message, i) => (
+        messages.map(({ text, tx }, i) => (
           <div key={i} className={`chat ${mine ? "chat-end" : "chat-start"}`}>
             <div
               className={`chat-bubble break-words animate-pop ${mine ? "chat-bubble-primary origin-bottom-right" : "chat-bubble-secondary origin-bottom-left"}`}
             >
-              {message}
+              {text}
             </div>
+            <TxLink hash={tx} className="chat-footer" />
           </div>
         ))
       ) : (

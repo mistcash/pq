@@ -4,6 +4,9 @@ import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 import { useFixedSender } from "~~/hooks/useFixedSender";
 import { loadCrypto } from "~~/utils/crypto";
 
+/** Where this browser keeps the hash of a message it sent, to link it on the block explorer. */
+const txKey = (messageId: Hex) => `pqmsg:tx:${messageId}`;
+
 /** A Channel's messages, decrypted in order, and sending the next one through the Fixed Sender. */
 export const useMessages = (channelKey: Hex) => {
   const { data: pqMsg } = useScaffoldContract({ contractName: "PqMsg" });
@@ -14,13 +17,16 @@ export const useMessages = (channelKey: Hex) => {
     // Reads from Message Index 0 upward until a Message ID has nothing stored.
     queryFn: async () => {
       const crypto = await loadCrypto();
-      const read: string[] = [];
+      const read: { text: string; tx?: string }[] = [];
       for (;;) {
         const i = read.length;
-        const id = BigInt(crypto.messageId(channelKey, i));
-        const [c1, c2] = (await pqMsg!.read.messages([id])) as readonly [bigint, bigint];
+        const id = crypto.messageId(channelKey, i);
+        const [c1, c2] = (await pqMsg!.read.messages([BigInt(id)])) as readonly [bigint, bigint];
         if (!c1 && !c2) return read;
-        read.push(crypto.decrypt(channelKey, i, toHex(c1), toHex(c2)));
+        read.push({
+          text: crypto.decrypt(channelKey, i, toHex(c1), toHex(c2)),
+          tx: localStorage.getItem(txKey(id)) ?? undefined,
+        });
       }
     },
   });
@@ -30,7 +36,8 @@ export const useMessages = (channelKey: Hex) => {
     const index = (await refetch({ throwOnError: true })).data!.length;
     const crypto = await loadCrypto();
     const [ciphertext1, ciphertext2] = crypto.encrypt(channelKey, index, message);
-    await fixedSender({ type: "post", messageId: crypto.messageId(channelKey, index), ciphertext1, ciphertext2 });
+    const messageId = crypto.messageId(channelKey, index);
+    localStorage.setItem(txKey(messageId), await fixedSender({ type: "post", messageId, ciphertext1, ciphertext2 }));
     await refetch();
   };
 
