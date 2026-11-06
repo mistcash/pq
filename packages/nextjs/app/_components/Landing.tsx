@@ -103,7 +103,7 @@ const BEATS: Beat[] = [
     title: "pqmsg: tiny private messages, on-chain.",
     lines: [
       "62-byte messages, stored in plain sight.",
-      "Only the two ends can read them, and nobody sees who's talking to whom.",
+      "Only the two ends can read them, and the chain doesn't show who's talking to whom.",
     ],
     tags: ["Kyber512 key exchange", "lattice-based", "Sepolia"],
     visual: (
