@@ -7,7 +7,10 @@ import { Verifier } from "./Verifier.sol";
 contract PqMsg is Verifier {
     struct Channel {
         uint256 channelKeyHash;
-        bytes encryptedChannelKey;
+        /// The Channel Key encrypted to the recipient's User Key: Kyber512 u‖v, 21 12-bit coefficients per element.
+        uint256[37] encryptedChannelKey;
+        /// The sender's User Index plus a pad from the Channel Key.
+        uint256 encryptedSender;
     }
 
     /// A message's two Ciphertext Elements.
@@ -38,10 +41,20 @@ contract PqMsg is Verifier {
         return users;
     }
 
-    /// Opens a Channel once `proof` shows knowledge of the Channel Key behind `channelKeyHash`.
-    function openChannel(uint256 channelKeyHash, bytes calldata encryptedChannelKey, bytes calldata proof) external {
-        this.verifyProof(proof, [channelKeyHash]);
-        channels.push(Channel(channelKeyHash, encryptedChannelKey));
+    /// Opens a Channel once `proof` shows `encryptedChannelKey` encrypts the Channel Key behind `channelKeyHash`.
+    function openChannel(
+        uint256 channelKeyHash,
+        uint256[37] calldata encryptedChannelKey,
+        uint256 encryptedSender,
+        bytes calldata proof
+    ) external {
+        uint256[38] memory input;
+        input[0] = channelKeyHash;
+        for (uint256 i; i < 37; i++) {
+            input[i + 1] = encryptedChannelKey[i];
+        }
+        this.verifyProof(proof, input);
+        channels.push(Channel(channelKeyHash, encryptedChannelKey, encryptedSender));
     }
 
     /// Every Channel, so the app can find one by its Channel Key Hash.
