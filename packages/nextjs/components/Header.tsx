@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { hardhat } from "viem/chains";
 import { useAccount } from "wagmi";
 import { BugAntIcon } from "@heroicons/react/24/outline";
+import { DeepDiveToggle } from "~~/components/DeepDive";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 
@@ -25,6 +26,7 @@ export const Header = () => {
         pqmsg
       </Link>
       <div className="flex items-center gap-1">
+        <DeepDiveToggle />
         {showConnect && <RainbowKitCustomConnectButton />}
         {isLocalNetwork && <FaucetButton />}
         {isLocalNetwork && (
