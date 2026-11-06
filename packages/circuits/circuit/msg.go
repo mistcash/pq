@@ -16,3 +16,9 @@ func DecompressMessage(api frontend.API, f *F, msg [2]frontend.Variable) (p Poly
 	}
 	return
 }
+
+// MsgOf is native.MsgOf of x's 32 little-endian bytes: x's low and high 128 bits, with x < r so they're unique.
+func MsgOf(api frontend.API, x frontend.Variable) [2]frontend.Variable {
+	b := bits.ToBinary(api, x)
+	return [2]frontend.Variable{bits.FromBinary(api, b[:128]), bits.FromBinary(api, b[128:])}
+}
