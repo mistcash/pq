@@ -16,7 +16,7 @@ var tag = func() (t fr.Element) {
 	return
 }()
 
-// UserKeys returns the Kyber512 key pair seeded by H(senderKey, tag), so the wallet alone recovers it.
+// UserKeys returns the Kyber512 key pair seeded by H(senderKey, tag), so the wallet and Password recover it.
 func UserKeys(senderKey fr.Element) (*math.PK, *math.SK) {
 	h := hash(senderKey, tag)
 	seed := h.Bytes()
