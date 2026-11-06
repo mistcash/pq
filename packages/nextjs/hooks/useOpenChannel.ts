@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { Address, Hex } from "viem";
-import { usePublicClient, useSignMessage } from "wagmi";
+import { useSignMessage } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useFixedSender } from "~~/hooks/useFixedSender";
 import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
@@ -21,9 +22,9 @@ export const useOpenChannel = () => {
   const [error, setError] = useState<string>();
   const [restored, setRestored] = useState<number>();
   const { signMessageAsync } = useSignMessage();
-  const publicClient = usePublicClient();
   const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
   const { refetch: getChannels } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getChannels" });
+  const fixedSender = useFixedSender();
 
   const signTwiceFirstTime = async (me: Address) => {
     setStep("sign");
@@ -62,16 +63,7 @@ export const useOpenChannel = () => {
         await painted();
         const { proof } = (await crypto).prove(channelKey);
         setStep("send");
-        const response = await fetch("/api/fixed-sender", {
-          method: "POST",
-          body: JSON.stringify({ type: "openChannel", channelKeyHash, proof }),
-        });
-        const { hash, error } = await response.json();
-        if (error) throw new FriendlyError(error);
-        setStep("confirm");
-        if ((await publicClient!.waitForTransactionReceipt({ hash })).status !== "success") {
-          throw new FriendlyError("That didn't go through. Try again?");
-        }
+        await fixedSender({ type: "openChannel", channelKeyHash, proof }, () => setStep("confirm"));
       }
       saveChannelKey(me, other, channelKey);
       setStep("open");
