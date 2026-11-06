@@ -25,7 +25,7 @@ Contract stores:
 2. Channels array: each Channel's Channel Hash, the keccak256 of its Channel Key Hash, Encrypted Channel Key and Encrypted Sender.
 3. Messages: hashmap of Message ID to the two Ciphertext Elements.
 
-Arkiv stores each User Key and each Channel whole, under its hash, and the app drops any that doesn't hash to one on PqMsg.
+Arkiv stores each User Key and each Channel whole, under its hash, and readers drop any that doesn't hash to one on PqMsg.
 
 It emits `Registered(user)`, `ChannelOpened(channelKeyHash)` and `Posted(messageId)`, each indexed.
 
@@ -37,7 +37,7 @@ Deep dive mode (🤿 in the header) explains each step as it happens: what ran i
 
 pqmsg leads with **privacy**: only a Channel's two ends can read it, even with a future quantum computer, and the chain never shows who is talking to whom.
 
-- **Censorship resistant.** PqMsg has no allowlist, and its owner can only swap the Verifier. The Fixed Sender can refuse to send, but `openChannel` and `post` take calls from any wallet, at the cost of showing who sent them. Likewise anyone can store a User Key or Channel on Arkiv, and the app takes any copy that hashes right.
+- **Censorship resistant.** PqMsg has no allowlist, and its owner can only swap the Verifier. The Fixed Sender can refuse to send, but `openChannel` and `post` take calls from any wallet, at the cost of showing who sent them. Likewise anyone can store a User Key or Channel on Arkiv, and readers take any copy that hashes right.
 - **Open source.** MIT-licensed. Everything builds from this repo: `yarn circuits:build` builds the circuit, Verifier and WASM prover, `yarn deploy` the contracts, and `yarn start` the app.
 - **Private.** The chain shows only the Fixed Sender opening Channels and posting ciphertexts (ADR-0003). The RPC server sees your address and which messages you read, but not whom you open a Channel to, as their User Key comes over Anon-RPC (`docs/anon-rpc.md`). The app has no trackers or analytics.
 - **Secure.** Channel Keys are encrypted to Kyber512 keys, with a Groth16 proof that each encryption is well formed, though its setup is dev-only. Your Sender Key, kept only in memory, comes from a passkey that only answers pqmsg's own domain. Channel Keys stay in this browser's storage unencrypted, and "Find my chats" restores them.
@@ -154,7 +154,7 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 - **No memory wiping.** Keys cross between JavaScript and Go as strings, which can't be zeroed, and stay on Go's heap until it's reclaimed. On the GPU path, the witness sits in GPU buffers.
 - **The proving key is read without subgroup checks** (`UnsafeReadFrom`), which saves 18 s. It's served from the same origin as `pqmsg.wasm`, so anyone able to swap it could swap the prover too.
 - **Metadata.** Registering is public. The RPC provider sees which Message IDs a browser polls, and the Fixed Sender sees the IP address behind each Channel opening and message. Arkiv's RPC sees whose User Key a browser fetches before opening a Channel.
-- **Arkiv keeps the data available.** If an entity expires or Arkiv loses it, the hash on PqMsg can't bring it back: a Channel nobody can fetch can't be read. A User Key comes back the next time its owner unlocks; a Channel doesn't yet.
+- **Arkiv keeps the data available.** If an entity expires or Arkiv loses it, the hash on PqMsg can't bring it back: a Channel nobody can fetch can't be read. Nothing renews an entity yet, so each one lasts about 182 days.
 
 ## Run locally
 
