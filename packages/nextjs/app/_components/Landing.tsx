@@ -126,10 +126,7 @@ const BEATS: Beat[] = [
   {
     kicker: "Keys",
     title: "One passkey unlocks everything.",
-    lines: [
-      "You make a passkey when you join, and every key grows from it.",
-      "Nothing to back up beyond the passkey.",
-    ],
+    lines: ["You make a passkey when you join, and every key grows from it.", "Nothing to back up beyond the passkey."],
     tags: ["H = Poseidon2", "User Key = Kyber512"],
     visual: (
       <div className="flex flex-col items-center max-w-2xl mx-auto">
