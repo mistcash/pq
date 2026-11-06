@@ -38,6 +38,17 @@ export async function POST(request: Request) {
     transport: http(process.env.FIXED_SENDER_RPC_URL || getAlchemyHttpUrl(chain.id)),
   }).extend(publicActions);
   try {
+    // A proof can be replayed, so refuse a Channel that's already open rather than pay for it again.
+    if (call.functionName === "openChannel") {
+      const channels = await client.readContract({
+        address: pqMsg.address,
+        abi: pqMsg.abi,
+        functionName: "getChannels",
+      });
+      if ((channels as { channelKeyHash: bigint }[]).some(channel => channel.channelKeyHash === call.args[0])) {
+        return NextResponse.json({ error: "That chat is already open." }, { status: 409 });
+      }
+    }
     // Simulate first: a bad proof would otherwise burn all the gas it's given.
     const { request: tx } = await client.simulateContract({ address: pqMsg.address, abi: pqMsg.abi, ...call });
     return NextResponse.json({ hash: await client.writeContract(tx) });
