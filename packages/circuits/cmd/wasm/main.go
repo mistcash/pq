@@ -19,6 +19,7 @@ import (
 	groth16bn254 "github.com/consensys/gnark/backend/groth16/bn254"
 	"github.com/consensys/gnark/logger"
 	"github.com/mistcash/pqmsg/packages/circuits"
+	"github.com/mistcash/pqmsg/packages/circuits/native"
 )
 
 func main() {
@@ -42,6 +43,32 @@ func main() {
 		"channelKeyHash": fn(func(a []js.Value) (any, error) {
 			channelKey, err := element(a[0])
 			return toHex(circuits.ChannelKeyHash(channelKey)), err
+		}),
+		// userKey(senderKey) returns the packed Kyber512 public key to register.
+		"userKey": fn(func(a []js.Value) (any, error) {
+			senderKey, err := element(a[0])
+			return "0x" + hex.EncodeToString(circuits.UserKey(senderKey)), err
+		}),
+		// decryptChannelKey(senderKey, encryptedChannelKey) returns a Channel Key, junk if the Channel isn't to you.
+		"decryptChannelKey": fn(func(a []js.Value) (any, error) {
+			senderKey, err := element(a[0])
+			var ct native.Ciphertext
+			for i := range ct {
+				_, e := ct[i].SetString(a[1].Index(i).String())
+				err = errors.Join(err, e)
+			}
+			return toHex(circuits.DecryptChannelKey(senderKey, ct)), err
+		}),
+		// encryptSender(channelKey, senderIndex)
+		"encryptSender": fn(func(a []js.Value) (any, error) {
+			channelKey, err := element(a[0])
+			return toHex(circuits.EncryptSender(channelKey, uint64(a[1].Int()))), err
+		}),
+		// decryptSender(channelKey, encryptedSender) returns the sender's User Index as hex.
+		"decryptSender": fn(func(a []js.Value) (any, error) {
+			channelKey, err := element(a[0])
+			encryptedSender, err2 := element(a[1])
+			return toHex(circuits.DecryptSender(channelKey, encryptedSender)), errors.Join(err, err2)
 		}),
 		// prove(ccs, pk, userKey, channelKey) returns { proof, channelKeyHash, encryptedChannelKey }, ready for the contract.
 		"prove": fn(func(a []js.Value) (any, error) {
