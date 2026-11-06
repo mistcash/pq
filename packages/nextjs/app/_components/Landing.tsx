@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import {
   ArrowRightIcon,
+  BoltIcon,
   CheckIcon,
   ChevronDownIcon,
+  CpuChipIcon,
   EyeIcon,
   LockClosedIcon,
   LockOpenIcon,
@@ -230,6 +232,39 @@ const BEATS: Beat[] = [
             posted by <Avatar address={FIXED_SENDER} size={32} /> the Fixed Sender
           </span>
         </div>
+      </div>
+    ),
+  },
+  {
+    kicker: "Prover",
+    title: "The proof is made in your browser, on your GPU.",
+    lines: ["No server ever sees your keys.", "No GPU? The CPU takes over, in about 8 s."],
+    tags: ["Go → WASM", "Web Worker", "gnark's WebGPU bridge"],
+    visual: (
+      <div className="mx-auto max-w-3xl rounded-3xl border-2 bg-base-100 text-left overflow-hidden">
+        <div className="flex items-center gap-2 border-b-2 px-5 py-3">
+          {[1, 2, 3].map(n => (
+            <span key={n} className="size-3 rounded-full bg-base-300" />
+          ))}
+          <span className="ml-2 text-sm opacity-60">pqmsg</span>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 p-6">
+          <Node name="Page" note="starts the prover on load" />
+          <Arrow />
+          <Node name="Web Worker" note="Go prover, as WASM" />
+          <Arrow />
+          <div className="flex flex-col gap-2">
+            <span className="flex items-center gap-2 rounded-2xl bg-primary text-primary-content px-4 py-2">
+              <BoltIcon className="size-6" /> GPU <span className="text-sm opacity-80">MSMs + NTT</span>
+            </span>
+            <span className="flex items-center gap-2 rounded-2xl bg-base-200 px-4 py-2">
+              <CpuChipIcon className="size-6" /> CPU <span className="text-sm opacity-70">fallback, ~8 s</span>
+            </span>
+          </div>
+        </div>
+        <p className="m-0 border-t-2 px-5 py-3 text-sm opacity-70">
+          Back to the CPU when there&apos;s no WebGPU, GPU setup takes over 10 s, or a GPU proof fails.
+        </p>
       </div>
     ),
   },
