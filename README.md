@@ -217,21 +217,23 @@ If the circuit's number of public inputs changes, `openChannel` changes too, so 
 
 ## Arkiv
 
-pqmsg keeps each User Key and Channel on [Arkiv](https://arkiv.network)'s Rabdi testnet (chain 7794095), and only its keccak256 on PqMsg (ADR-0005). The Fixed Sender writes every entity; whoever reads one checks it hashes to PqMsg's hash. Under Sepolia's Glamsterdam gas, this cut `register` from 3.11M to 0.36M gas and `openChannel` from 5.01M to 0.83M; `docs/gas.md` has the transactions.
+pqmsg keeps each User Key and Channel on [Arkiv](https://arkiv.network)'s Rabdi testnet (chain 7794095), and only its keccak256 on PqMsg (ADR-0005). The Fixed Sender writes every entity; whoever reads one checks it hashes to PqMsg's hash. Under Sepolia's Glamsterdam gas, this cut `register` from 3.02M to 0.36M gas and `openChannel` from 5.01M to 0.83M, and Arkiv charges the Fixed Sender about 0.5M Rabdi gas per entity; `docs/gas.md` has the transactions. `Registered` and `ChannelOpened` carry each hash too.
+
+So far the Fixed Sender writes to Arkiv and checks User Keys against PqMsg there (`app/api/fixed-sender/route.ts`). The app still reads User Keys and Channels from PqMsg, as before ADR-0005, so it can't use this deployment until it reads them from Arkiv, which comes next.
 
 - **Wallet that writes the entities:** `0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C`, the Fixed Sender ([on the explorer](https://rabdi.explorer.arkiv.network/address/0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C)).
 - **A query to run:** every pqmsg entity for the Sepolia PqMsg, User Keys and Channels alike:
 
   ```sh
   curl -s https://rpc.rabdi.db-chain.testnet.arkiv.network -H 'content-type: application/json' \
-    -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"arkiv_query\",\"params\":[\"pqmsg = str('0x83ba93654cac7a6f9489e81c89f4aaa48d755c52')\",{\"limit\":100}]}"
+    -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"arkiv_query\",\"params\":[\"pqmsg = str('0xfbf7e8e3cc9c6c641f23ab5be6cabc919a8af515')\",{\"limit\":100,\"select\":{\"owner\":true,\"attributes\":true}}]}"
   ```
 
 The judging write-ups are in `arkiv/`: `schema.md` (entities, fields, owners, expiry), `friction.md`, `reach.md`, `why-arkiv.md` and `how-you-use-arkiv.md`.
 
 ## How we used AI
 
-pqmsg is built with Claude Code. It wrote most of the code, tests and docs from our prompts, and we reviewed, steered and tested each change. For the Arkiv move, it read Arkiv's docs and SDK, wrote ADR-0005, changed the contract and app, measured gas on Sepolia and drafted the `arkiv/` write-ups. Commits it co-wrote carry a `Co-Authored-By: Claude` trailer.
+pqmsg is built with Claude Code. It wrote most of the code, tests and docs from our prompts, and we reviewed, steered and tested each change. For the Arkiv move, it read Arkiv's docs and SDK, wrote ADR-0005, changed the contract and the Fixed Sender, measured gas on Sepolia and Arkiv, and drafted the `arkiv/` write-ups. Commits it co-wrote carry a `Co-Authored-By: Claude` trailer.
 
 ## Contributing
 
