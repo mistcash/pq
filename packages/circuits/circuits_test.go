@@ -141,3 +141,15 @@ func TestEncryptRejectsMessageOver62Bytes(t *testing.T) {
 		t.Fatal("accepted a 63-byte message")
 	}
 }
+
+func TestEncryptSender(t *testing.T) {
+	var channelKey fr.Element
+	channelKey.SetUint64(42)
+	e := circuits.EncryptSender(channelKey, 7)
+	if e == fr.NewElement(7) {
+		t.Fatal("sender's User Index in the clear")
+	}
+	if got := circuits.DecryptSender(channelKey, e); got != fr.NewElement(7) {
+		t.Fatalf("decrypted User Index %s, want 7", got.String())
+	}
+}

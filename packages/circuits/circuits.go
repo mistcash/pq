@@ -123,3 +123,16 @@ func ProveChannelKey(ccs constraint.ConstraintSystem, pk groth16.ProvingKey, cha
 	proof, err := groth16.Prove(ccs, pk, w)
 	return proof, hash, err
 }
+
+// EncryptSender returns the Encrypted Sender, senderIndex + H(channelKey, tag), which only the Channel's two ends can read.
+func EncryptSender(channelKey fr.Element, senderIndex uint64) fr.Element {
+	pad := hash(channelKey, tag)
+	i := fr.NewElement(senderIndex)
+	return *i.Add(&i, &pad)
+}
+
+// DecryptSender returns the sender's User Index in encryptedSender.
+func DecryptSender(channelKey, encryptedSender fr.Element) fr.Element {
+	pad := hash(channelKey, tag)
+	return *encryptedSender.Sub(&encryptedSender, &pad)
+}
