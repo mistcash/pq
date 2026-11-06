@@ -9,11 +9,13 @@ const SIGN_MESSAGE = "pqmsg: derive Sender Key v1";
 /** Sender Keys live in memory only, for this page session (ADR-0002). */
 const senderKeys = new Map<Address, Hex>();
 
+export type UnlockStep = "password" | "sign" | "check";
+
 /**
- * Gets your Sender Key from your password and a wallet signature, asking once more the first time to check the wallet
- * signs alike. Once you've joined, a password that doesn't give back your User Key is refused (ADR-0004).
+ * Gets your Sender Key from your Password and a wallet signature, asking once more the first time to check the wallet
+ * signs alike. Once you've joined, a Password that doesn't give back your User Key is refused (ADR-0004).
  */
-export const useSenderKey = (onStep: (step: "password" | "sign" | "check") => void) => {
+export const useSenderKey = (onStep: (step: UnlockStep) => void) => {
   const { signMessageAsync } = useSignMessage();
   const { data: pqMsg } = useScaffoldContract({ contractName: "PqMsg" });
 
@@ -36,11 +38,12 @@ export const useSenderKey = (onStep: (step: "password" | "sign" | "check") => vo
   return async (me: Address) => {
     if (!senderKeys.has(me)) {
       const userKey = (await pqMsg!.read.userKeys([me])) as Hex;
+      const isNew = userKey === "0x";
       onStep("password");
-      const password = await askPassword(userKey === "0x");
+      const password = await askPassword(isNew);
       const crypto = await loadCrypto();
       const senderKey = crypto.senderKey(await signTwiceFirstTime(me), password);
-      if (userKey !== "0x" && crypto.userKey(senderKey) !== userKey) {
+      if (!isNew && crypto.userKey(senderKey) !== userKey) {
         throw new FriendlyError("That's not your password. Try again?");
       }
       senderKeys.set(me, senderKey);

@@ -6,7 +6,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { Avatar } from "~~/components/Avatar";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
-import { useSenderKey } from "~~/hooks/useSenderKey";
+import { type UnlockStep, useSenderKey } from "~~/hooks/useSenderKey";
 import { loadCrypto } from "~~/utils/crypto";
 import { friendlyMessage } from "~~/utils/friendly";
 import { notification } from "~~/utils/scaffold-eth";
@@ -18,7 +18,7 @@ export const Register = () => {
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { writeContractAsync, isMining } = useScaffoldWriteContract({ contractName: "PqMsg" });
-  const [step, setStep] = useState<"start" | "password" | "sign" | "check">();
+  const [step, setStep] = useState<"start" | UnlockStep>();
   const senderKey = useSenderKey(setStep);
 
   const join = async () => {
