@@ -25,12 +25,15 @@ export const People = ({ me, onPick }: { me: Address; onPick: (user: Address) =>
         <h2 className="text-xl font-semibold m-0 px-5 pt-5 pb-2">
           People <span className="text-base-content/70 font-normal">{users?.length}</span>
         </h2>
+        {users && users.length > 1 && !users.some((user: Address) => loadChannelKey(me, user)) && (
+          <p className="text-base-content/70 m-0 px-5 pb-2">No chats yet. Tap someone to say hi!</p>
+        )}
         {users ? (
           <ul className="divide-y divide-base-300">
             {users.map((user: Address) => (
               <li key={user}>
                 <button
-                  className="flex items-center gap-4 px-5 py-3 w-full text-left enabled:hover:bg-base-200 enabled:cursor-pointer"
+                  className="flex items-center gap-4 px-5 py-3 w-full text-left transition-colors enabled:hover:bg-base-200 enabled:active:bg-base-300/50 enabled:cursor-pointer"
                   disabled={user === me}
                   onClick={() => onPick(user)}
                 >
@@ -45,6 +48,12 @@ export const People = ({ me, onPick }: { me: Address; onPick: (user: Address) =>
                 </button>
               </li>
             ))}
+            {users.length < 2 && (
+              <li className="flex items-center gap-4 px-5 py-3 text-base-content/70">
+                <span className="size-12 shrink-0 rounded-full border-2 border-dashed border-base-300" />
+                Friends who join pop up here
+              </li>
+            )}
           </ul>
         ) : (
           <span className="loading loading-dots mx-auto my-6" />

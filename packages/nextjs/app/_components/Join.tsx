@@ -31,7 +31,7 @@ export const Join = () => {
         </div>
       )}
       <div>
-        <h1 className="text-4xl font-bold m-0">{address ? "Hey, that's you!" : "pqmsg"}</h1>
+        <h1 className="text-4xl font-bold m-0">{address ? "Hi, it's you!" : "pqmsg"}</h1>
         <p className="text-lg text-base-content/70 mb-0">
           {address ? "Join so people can find you and message you." : "Tiny private messages, from you to anyone."}
         </p>
