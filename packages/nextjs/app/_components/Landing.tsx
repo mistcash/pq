@@ -2,14 +2,18 @@ import type { ReactNode } from "react";
 import {
   ArrowRightIcon,
   BoltIcon,
+  CheckBadgeIcon,
   CheckIcon,
   ChevronDownIcon,
   ClockIcon,
   CpuChipIcon,
   EyeIcon,
+  KeyIcon,
   LockClosedIcon,
   LockOpenIcon,
+  PaperAirplaneIcon,
   ShieldCheckIcon,
+  UserGroupIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Avatar } from "~~/components/Avatar";
@@ -351,6 +355,33 @@ const BEATS: Beat[] = [
           </div>
         ))}
       </div>
+    ),
+  },
+  {
+    kicker: "Next",
+    title: "What's next.",
+    lines: ["Closing the edges, one by one."],
+    visual: (
+      <ol className="relative isolate m-0 p-0 grid grid-cols-2 sm:grid-cols-5 gap-x-3 gap-y-6">
+        <span className="hidden sm:block absolute inset-x-[10%] top-10 -z-10 border-t-2 border-dashed" />
+        {(
+          [
+            [KeyIcon, "A post-quantum root secret", "so the Sender Key stops resting on ECDSA"],
+            [LockClosedIcon, "ML-KEM", "the standardized Kyber"],
+            [UserGroupIcon, "A multi-party setup ceremony", "no single trusted party"],
+            [CheckBadgeIcon, "Message authentication", "so tampering shows"],
+            [PaperAirplaneIcon, "A real relayer", "in place of the Fixed Sender"],
+          ] as const
+        ).map(([Icon, name, note]) => (
+          <li key={name} className="flex flex-col items-center gap-2 last:col-span-2 sm:last:col-span-1">
+            <span className="grid place-items-center size-16 sm:size-20 rounded-full bg-primary text-primary-content">
+              <Icon className="size-8 sm:size-10" />
+            </span>
+            <b className="sm:text-lg leading-tight">{name}</b>
+            <span className="text-sm sm:text-base opacity-70">{note}</span>
+          </li>
+        ))}
+      </ol>
     ),
   },
 ];
