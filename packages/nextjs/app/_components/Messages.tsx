@@ -1,16 +1,14 @@
 "use client";
 
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Hex } from "viem";
 import { ArrowPathIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Confetti } from "~~/components/Confetti";
 import { useMessages } from "~~/hooks/useMessages";
 import { notification } from "~~/utils/scaffold-eth";
 
-type Props = { channelKey: Hex; mine?: boolean; children?: ReactNode };
-
-/** A Channel's messages in order, with a refresh button and a pinned footer: the composer for your own, else children. */
-export const Messages = ({ channelKey, mine, children }: Props) => {
+/** A Channel's messages in order, with a refresh button and, on your own, a pinned composer. */
+export const Messages = ({ channelKey, mine }: { channelKey: Hex; mine?: boolean }) => {
   const { messages, refresh, refreshing, send } = useMessages(channelKey);
   const count = messages?.length;
   const seen = useRef(count);
@@ -54,10 +52,12 @@ export const Messages = ({ channelKey, mine, children }: Props) => {
           </div>
         </div>
       )}
-      {/* Room above the footer, and a fade, so messages slide under it instead of being cut off. */}
-      <div className="sticky bottom-0 bg-base-100 py-3 mt-3 before:absolute before:inset-x-0 before:bottom-full before:h-4 before:bg-linear-to-t before:from-base-100">
-        {mine ? <Composer send={send} /> : children}
-      </div>
+      {/* Room above the composer, and a fade, so messages slide under it instead of being cut off. */}
+      {mine && (
+        <div className="sticky bottom-0 bg-base-100 py-3 mt-3 before:absolute before:inset-x-0 before:bottom-full before:h-4 before:bg-linear-to-t before:from-base-100">
+          <Composer send={send} />
+        </div>
+      )}
     </div>
   );
 };

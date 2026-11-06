@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Address, Hex } from "viem";
 import { usePublicClient, useSignMessage } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
-import { loadChannelKey, saveChannelKey } from "~~/utils/channels";
+import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 
 export type OpenStep = "start" | "sign" | "check" | "prove" | "send" | "confirm" | "open";
@@ -50,13 +50,10 @@ export const useOpenChannel = () => {
     setError(undefined);
     try {
       const crypto = loadCrypto();
-      let channelKey = loadChannelKey(me, other);
-      if (!channelKey) {
-        const { data: users } = await getUsers({ throwOnError: true });
-        const index = users!.indexOf(other);
-        if (index < 0) throw new Error("They haven't joined pqmsg yet. Ask them to join first!");
-        channelKey = (await crypto).channelKey(await senderKey(me), index);
-      }
+      const { data: users } = await getUsers({ throwOnError: true });
+      const index = users!.indexOf(other);
+      if (index < 0) throw new Error("They haven't joined pqmsg yet. Ask them to join first!");
+      const channelKey = (await crypto).channelKey(await senderKey(me), index);
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
       const { data: channels } = await getChannels();
       if (!channels!.some((channel: { channelKeyHash: bigint }) => channel.channelKeyHash === BigInt(channelKeyHash))) {
