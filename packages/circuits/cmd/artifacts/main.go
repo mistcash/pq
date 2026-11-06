@@ -10,33 +10,36 @@ import (
 	"io"
 	"os"
 
-	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/backend/groth16"
 	groth16bn254 "github.com/consensys/gnark/backend/groth16/bn254"
-	"github.com/consensys/gnark/frontend"
-	"github.com/consensys/gnark/frontend/cs/r1cs"
 	"github.com/mistcash/pqmsg/packages/circuits"
 )
 
 const public = "../nextjs/public/circuits/"
 
 func main() {
-	ccs, err := frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, &circuits.OpenChannel{})
+	ccs, err := circuits.Compile()
 	check(err)
 	pk, vk, err := groth16.Setup(ccs)
 	check(err)
-	var channelKey fr.Element
+	var senderKey, channelKey fr.Element
 	channelKey.SetUint64(42)
-	proof, channelKeyHash, err := circuits.ProveChannelKey(ccs, pk, channelKey)
+	proof, ct, err := circuits.ProveChannelKey(ccs, pk, circuits.UserKey(senderKey), channelKey, make([]byte, 32))
 	check(err)
+	channelKeyHash := circuits.ChannelKeyHash(channelKey)
+	encryptedChannelKey := make([]string, len(ct))
+	for i := range ct {
+		encryptedChannelKey[i] = ct[i].String()
+	}
 
 	check(os.MkdirAll(public, 0o755))
 	write("../foundry/contracts/Verifier.sol", func(w io.Writer) error { return vk.ExportSolidity(w) })
 	write("../foundry/test/openChannelProof.json", func(w io.Writer) error {
-		return json.NewEncoder(w).Encode(map[string]string{
-			"channelKeyHash": channelKeyHash.String(),
-			"proof":          "0x" + hex.EncodeToString(proof.(*groth16bn254.Proof).MarshalSolidity()),
+		return json.NewEncoder(w).Encode(map[string]any{
+			"channelKeyHash":      channelKeyHash.String(),
+			"encryptedChannelKey": encryptedChannelKey,
+			"proof":               "0x" + hex.EncodeToString(proof.(*groth16bn254.Proof).MarshalSolidity()),
 		})
 	})
 	write(public+"openChannel.pk", func(w io.Writer) error { _, err := pk.WriteRawTo(w); return err })

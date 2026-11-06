@@ -11,13 +11,25 @@ import (
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/consensys/gnark/constraint"
 	"github.com/consensys/gnark/frontend"
+	"github.com/consensys/gnark/frontend/cs/r1cs"
 	poseidon2gadget "github.com/consensys/gnark/std/hash/poseidon2"
+	"github.com/mistcash/pqmsg/packages/circuits/circuit"
+	"github.com/mistcash/pqmsg/packages/circuits/native"
 )
 
-// OpenChannel proves knowledge of a Channel Key whose hash is the Channel Key Hash.
+// OpenChannel proves knowledge of a Channel Key whose hash is the Channel Key Hash, and that Ciphertext
+// encrypts it to a User Key. The User Key stays private, so the recipient stays hidden. Assign builds the witness.
 type OpenChannel struct {
 	ChannelKey     frontend.Variable
 	ChannelKeyHash frontend.Variable `gnark:",public"`
+	// The Encrypted Channel Key; see native.PackCiphertext.
+	Ciphertext [native.CiphertextElements]frontend.Variable `gnark:",public"`
+	// The recipient's User Key.
+	AT circuit.Mat
+	Th circuit.Vec
+	// The encryption noise; see native.Noise.
+	R, E1 circuit.Vec
+	E2    circuit.Poly
 }
 
 func (c *OpenChannel) Define(api frontend.API) error {
@@ -27,7 +39,14 @@ func (c *OpenChannel) Define(api frontend.API) error {
 	}
 	h.Write(c.ChannelKey)
 	api.AssertIsEqual(h.Sum(), c.ChannelKeyHash)
+	// TODO: Ciphertext = native.PackCiphertext(circuit.Encrypt(AT, Th, msg, R, E1, E2)) with ChannelKey = msg[0] + 2^128·msg[1],
+	// R, E1, E2 in CBD range, and Compile's IgnoreUnconstrainedInputs dropped.
 	return nil
+}
+
+// Compile compiles OpenChannel.
+func Compile() (constraint.ConstraintSystem, error) {
+	return frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, &OpenChannel{}, frontend.IgnoreUnconstrainedInputs())
 }
 
 // hash returns H(elements...) with gnark's native Poseidon2 Merkle-Damgård hasher.
@@ -113,15 +132,18 @@ func Decrypt(channelKey fr.Element, index uint64, ciphertext [2]fr.Element) []by
 	return bytes.TrimRight(message, "\x00")
 }
 
-// ProveChannelKey proves knowledge of channelKey and returns the proof with its Channel Key Hash.
-func ProveChannelKey(ccs constraint.ConstraintSystem, pk groth16.ProvingKey, channelKey fr.Element) (groth16.Proof, fr.Element, error) {
-	hash := ChannelKeyHash(channelKey)
-	w, err := frontend.NewWitness(&OpenChannel{ChannelKey: channelKey, ChannelKeyHash: hash}, ecc.BN254.ScalarField())
+// ProveChannelKey encrypts channelKey to userKey with the noise of seed, and proves it.
+func ProveChannelKey(ccs constraint.ConstraintSystem, pk groth16.ProvingKey, userKey []byte, channelKey fr.Element, seed []byte) (groth16.Proof, native.Ciphertext, error) {
+	a, ct, err := Assign(userKey, channelKey, seed)
 	if err != nil {
-		return nil, hash, err
+		return nil, ct, err
+	}
+	w, err := frontend.NewWitness(a, ecc.BN254.ScalarField())
+	if err != nil {
+		return nil, ct, err
 	}
 	proof, err := groth16.Prove(ccs, pk, w)
-	return proof, hash, err
+	return proof, ct, err
 }
 
 // EncryptSender returns the Encrypted Sender, senderIndex + H(channelKey, tag), which only the Channel's two ends can read.

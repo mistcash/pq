@@ -8,14 +8,13 @@ import (
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/consensys/gnark/frontend"
-	"github.com/consensys/gnark/frontend/cs/r1cs"
 	"github.com/consensys/gnark/std/hash/poseidon2"
 	"github.com/consensys/gnark/test"
 	"github.com/mistcash/pqmsg/packages/circuits"
 )
 
 func TestProveChannelKey(t *testing.T) {
-	ccs, err := frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, &circuits.OpenChannel{})
+	ccs, err := circuits.Compile()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,15 +22,19 @@ func TestProveChannelKey(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var channelKey fr.Element
+	var senderKey, channelKey fr.Element
 	channelKey.SetUint64(42)
 
-	proof, channelKeyHash, err := circuits.ProveChannelKey(ccs, pk, channelKey)
+	proof, ct, err := circuits.ProveChannelKey(ccs, pk, circuits.UserKey(senderKey), channelKey, make([]byte, 32))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	public, err := frontend.NewWitness(&circuits.OpenChannel{ChannelKeyHash: channelKeyHash}, ecc.BN254.ScalarField(), frontend.PublicOnly())
+	assignment := &circuits.OpenChannel{ChannelKeyHash: circuits.ChannelKeyHash(channelKey)}
+	for i := range ct {
+		assignment.Ciphertext[i] = ct[i]
+	}
+	public, err := frontend.NewWitness(assignment, ecc.BN254.ScalarField(), frontend.PublicOnly())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,9 +44,24 @@ func TestProveChannelKey(t *testing.T) {
 }
 
 func TestOpenChannelRejectsWrongChannelKeyHash(t *testing.T) {
-	wrong := &circuits.OpenChannel{ChannelKey: 42, ChannelKeyHash: 42}
-	if test.IsSolved(&circuits.OpenChannel{}, wrong, ecc.BN254.ScalarField()) == nil {
+	var senderKey, channelKey fr.Element
+	channelKey.SetUint64(42)
+	a, _, err := circuits.Assign(circuits.UserKey(senderKey), channelKey, make([]byte, 32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := test.IsSolved(&circuits.OpenChannel{}, a, ecc.BN254.ScalarField()); err != nil {
+		t.Fatal(err)
+	}
+	a.ChannelKeyHash = 42
+	if test.IsSolved(&circuits.OpenChannel{}, a, ecc.BN254.ScalarField()) == nil {
 		t.Fatal("solved with a wrong Channel Key Hash")
+	}
+}
+
+func TestAssignRejectsUserKeyNot800Bytes(t *testing.T) {
+	if _, _, err := circuits.Assign(make([]byte, 799), fr.Element{}, make([]byte, 32)); err == nil {
+		t.Fatal("accepted a 799-byte User Key")
 	}
 }
 

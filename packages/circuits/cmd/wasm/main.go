@@ -7,6 +7,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
 	"encoding/hex"
 	"errors"
 	"strings"
@@ -42,7 +43,7 @@ func main() {
 			channelKey, err := element(a[0])
 			return toHex(circuits.ChannelKeyHash(channelKey)), err
 		}),
-		// prove(ccs, pk, channelKey) returns { proof, channelKeyHash }, with the proof ready for the verifier contract.
+		// prove(ccs, pk, userKey, channelKey) returns { proof, channelKeyHash, encryptedChannelKey }, ready for the contract.
 		"prove": fn(func(a []js.Value) (any, error) {
 			ccs := groth16.NewCS(ecc.BN254)
 			if _, err := ccs.ReadFrom(bytes.NewReader(bytesOf(a[0]))); err != nil {
@@ -52,17 +53,28 @@ func main() {
 			if _, err := pk.ReadFrom(bytes.NewReader(bytesOf(a[1]))); err != nil {
 				return nil, err
 			}
-			channelKey, err := element(a[2])
+			userKey, err := hex.DecodeString(strings.TrimPrefix(a[2].String(), "0x"))
 			if err != nil {
 				return nil, err
 			}
-			proof, channelKeyHash, err := circuits.ProveChannelKey(ccs, pk, channelKey)
+			channelKey, err := element(a[3])
 			if err != nil {
 				return nil, err
+			}
+			seed := make([]byte, 32)
+			rand.Read(seed)
+			proof, ct, err := circuits.ProveChannelKey(ccs, pk, userKey, channelKey, seed)
+			if err != nil {
+				return nil, err
+			}
+			encryptedChannelKey := make([]any, len(ct))
+			for i := range ct {
+				encryptedChannelKey[i] = toHex(ct[i])
 			}
 			return map[string]any{
-				"proof":          "0x" + hex.EncodeToString(proof.(*groth16bn254.Proof).MarshalSolidity()),
-				"channelKeyHash": toHex(channelKeyHash),
+				"proof":               "0x" + hex.EncodeToString(proof.(*groth16bn254.Proof).MarshalSolidity()),
+				"channelKeyHash":      toHex(circuits.ChannelKeyHash(channelKey)),
+				"encryptedChannelKey": encryptedChannelKey,
 			}, nil
 		}),
 		// messageId(channelKey, messageIndex)
