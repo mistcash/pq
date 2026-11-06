@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { type Address, type Hex, toHex } from "viem";
+import { type Address, type Hex, type PublicClient, size, toHex } from "viem";
 import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useChannels } from "~~/hooks/useChannels";
 import { useFixedSender } from "~~/hooks/useFixedSender";
 import { useSenderKey } from "~~/hooks/useSenderKey";
+import { anonRead, startAnonRpc } from "~~/utils/anonRpc";
 import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
 
-export type OpenStep = "start" | "passkey" | "prove" | "send" | "confirm" | "open";
+export type OpenStep = "start" | "passkey" | "lookup" | "prove" | "send" | "confirm" | "open";
 
 /** Lets the current step render before proving blocks the page. */
 const painted = () => new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve)));
@@ -28,6 +29,7 @@ export const useOpenChannel = () => {
   const open = async (me: Address, other: Address) => {
     setStep("start");
     setError(undefined);
+    startAnonRpc();
     try {
       // Before anything else, while the tap still counts: Safari only shows passkey prompts straight after one.
       const senderKey = await unlock(me);
@@ -38,7 +40,18 @@ export const useOpenChannel = () => {
       const channelKey = (await crypto).channelKey(senderKey, index);
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
       if (!(await getChannels()).some(channel => channel.channelKeyHash === BigInt(channelKeyHash))) {
-        const userKey = (await pqMsg!.read.userKeys([other])) as Hex;
+        // Reading their User Key directly would tell the RPC server who you're about to message.
+        setStep("lookup");
+        const read = (client: PublicClient) =>
+          client.readContract({
+            address: pqMsg!.address,
+            abi: pqMsg!.abi,
+            functionName: "userKeys",
+            args: [other],
+          }) as Promise<Hex>;
+        const anonKey = await anonRead(read);
+        // Anything but a whole User Key means Anon-RPC misbehaved, so read it the regular way.
+        const userKey = anonKey && size(anonKey) === 800 ? anonKey : ((await pqMsg!.read.userKeys([other])) as Hex);
         setStep("prove");
         await painted();
         const { proof, encryptedChannelKey } = await (await crypto).prove(userKey, channelKey);

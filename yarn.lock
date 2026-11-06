@@ -19,6 +19,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anon-rpc/browser-harness@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@anon-rpc/browser-harness@npm:0.4.0"
+  dependencies:
+    "@anon-rpc/harness-core": "npm:0.4.0"
+    "@kpstreams/webrtc-client": "npm:^0.2.1"
+    "@noble/hashes": "npm:^1.5.0"
+  checksum: 10/137ca4e9dada948c267059ee7d6914cd903933d0717dd289b04cc1fd6b310511863742c3ab0c6480e322a9ccc66f8ca94f75740b4f475f99cbb1405db9ee31e8
+  languageName: node
+  linkType: hard
+
+"@anon-rpc/harness-core@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@anon-rpc/harness-core@npm:0.4.0"
+  dependencies:
+    "@noble/hashes": "npm:^1.5.0"
+  checksum: 10/56d5c794f830d1f60e82467c092ef522cbe107c4089574d90c638e4e6a3b6ba3ed1afe5f321dc242016eb7c47203b9b61f37f805575cddb0f335e5e8a45e80ca
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/code-frame@npm:7.29.7"
@@ -2216,6 +2236,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@kpstreams/core@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@kpstreams/core@npm:0.2.1"
+  checksum: 10/102cc6104041be5ae8bfb291f016e2558dd09a41efad6c1951a426ef4dc9da34760a8fbcd6c04ec902436f1fe3eaf2465a87dc3d78d08818b874f36bca4232ba
+  languageName: node
+  linkType: hard
+
+"@kpstreams/webrtc-client@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@kpstreams/webrtc-client@npm:0.2.1"
+  dependencies:
+    "@kpstreams/core": "npm:^0.2.1"
+  checksum: 10/bed9502a6e8e7540524035280ae3b9b7d65baee5b73a76618a243106f1e278d8c4bd47eb8d297f7839037a48b6bc65b1cb31b68c7ba87fa7fa6987dc27e8097e
+  languageName: node
+  linkType: hard
+
 "@leichtgewicht/ip-codec@npm:^2.0.4":
   version: 2.0.5
   resolution: "@leichtgewicht/ip-codec@npm:2.0.5"
@@ -3904,6 +3940,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@se-2/nextjs@workspace:packages/nextjs"
   dependencies:
+    "@anon-rpc/browser-harness": "npm:0.4.0"
     "@heroicons/react": "npm:~2.2.0"
     "@rainbow-me/rainbowkit": "npm:2.2.11"
     "@react-native-async-storage/async-storage": "npm:~2.2.0"
@@ -6042,6 +6079,25 @@ __metadata:
     "@walletconnect/utils": "npm:2.21.1"
     events: "npm:3.3.0"
   checksum: 10/1e1cdc013076504335a383316c54bebdf0862e09c50f14599cd339af2c6c787055388d19cc21971b20105d8faba4ea5139863d0ca84b8f713b57623a8d176704
+  languageName: node
+  linkType: hard
+
+"@walletconnect/ethereum-provider@patch:@walletconnect/ethereum-provider@npm%3A2.21.1#~/.yarn/patches/@walletconnect-ethereum-provider-npm-2.21.1-ca668ac558.patch":
+  version: 2.21.1
+  resolution: "@walletconnect/ethereum-provider@patch:@walletconnect/ethereum-provider@npm%3A2.21.1#~/.yarn/patches/@walletconnect-ethereum-provider-npm-2.21.1-ca668ac558.patch::version=2.21.1&hash=92418e"
+  dependencies:
+    "@reown/appkit": "npm:1.7.8"
+    "@walletconnect/jsonrpc-http-connection": "npm:1.0.8"
+    "@walletconnect/jsonrpc-provider": "npm:1.0.14"
+    "@walletconnect/jsonrpc-types": "npm:1.0.4"
+    "@walletconnect/jsonrpc-utils": "npm:1.0.8"
+    "@walletconnect/keyvaluestorage": "npm:1.1.1"
+    "@walletconnect/sign-client": "npm:2.21.1"
+    "@walletconnect/types": "npm:2.21.1"
+    "@walletconnect/universal-provider": "npm:2.21.1"
+    "@walletconnect/utils": "npm:2.21.1"
+    events: "npm:3.3.0"
+  checksum: 10/372002ad1a5999d56387b7d6a4e8de69c9cb610c872288aae679dcc3a2ddd3f30177428a346042ea2f56758fb6967eaa17f0cb5892e9ceb3df4577cd79d79f25
   languageName: node
   linkType: hard
 
