@@ -19,6 +19,7 @@ import (
 	"github.com/consensys/gnark/std/math/emulated"
 	"github.com/mistcash/pqmsg/packages/circuits/circuit"
 	"github.com/mistcash/pqmsg/packages/circuits/native"
+	"golang.org/x/crypto/argon2"
 )
 
 // OpenChannel proves knowledge of a Channel Key whose hash is the Channel Key Hash, and that Ciphertext
@@ -76,8 +77,10 @@ func hash(elements ...fr.Element) fr.Element {
 	return sum
 }
 
-// SenderKey returns H of a 65-byte wallet signature, zero-padded and split into three 31-byte big-endian chunks.
-func SenderKey(signature []byte) (fr.Element, error) {
+// SenderKey returns H of a 65-byte wallet signature, zero-padded and split into three 31-byte big-endian chunks, and of
+// the password stretched by Argon2id with RFC 9106's second recommended parameters, salted with the signature. A
+// quantum attacker can re-sign from the wallet's public key, but still needs the password (ADR-0004).
+func SenderKey(signature []byte, password string) (fr.Element, error) {
 	if len(signature) != 65 {
 		return fr.Element{}, errors.New("signature must be 65 bytes")
 	}
@@ -87,7 +90,10 @@ func SenderKey(signature []byte) (fr.Element, error) {
 	for i := range chunks {
 		chunks[i].SetBytes(padded[i*31 : (i+1)*31])
 	}
-	return hash(chunks[:]...), nil
+	// 31 bytes always fit below the field modulus.
+	var stretched fr.Element
+	stretched.SetBytes(argon2.IDKey([]byte(password), signature, 3, 64*1024, 4, 31))
+	return hash(append(chunks[:], stretched)...), nil
 }
 
 // ChannelKey returns H(senderKey, userIndex), the Channel Key from a sender to the User at userIndex.
