@@ -50,16 +50,20 @@ const Row = ({ children }: { children: ReactNode }) => (
 /** About a minute, one beat per line of the walkthrough. */
 const BEATS: Beat[] = [
   {
-    kicker: "Pay",
-    title: "Pay anyone, privately.",
-    lines: ["A private payment keeps who paid whom off the chain.", "To collect it, your friend just needs its key."],
+    kicker: "Payments",
+    title: "Paid someone privately? They still need the key.",
+    lines: [
+      "Private payment apps keep who paid whom off the chain.",
+      "But to claim the payment, your friend needs its claiming key, and only you have it.",
+    ],
     visual: (
       <Row>
-        <Person address={ALICE} says="100 USDC 💸" mine />
+        <Avatar address={ALICE} size={80} />
         <Arrow />
         <Public>
           <b>Private payment</b>
           <Hex>100 USDC</Hex>
+          <span className="text-sm opacity-70">made in your payments app</span>
         </Public>
         <Arrow />
         <Person address={BOB} says="🔑 ?" />
@@ -68,14 +72,14 @@ const BEATS: Beat[] = [
   },
   {
     kicker: "Hand-off",
-    title: "pq passes them the key, privately.",
+    title: "Send them the key with pq.",
     lines: [
-      "Send the key in a pq message, stored on-chain.",
-      "Only your friend can open it, and the chain can't tell it's for them.",
+      "Put the claiming key in a pq message, and only your friend can open it.",
+      "The chain can't tell who it's for. They claim the payment as usual.",
     ],
     visual: (
       <Row>
-        <Person address={ALICE} says="🔑 payment key" mine />
+        <Person address={ALICE} says="🔑 claiming key" mine />
         <Arrow />
         <Public>
           <span className="flex items-center gap-2 opacity-70">
@@ -85,7 +89,7 @@ const BEATS: Beat[] = [
           <Hex>0x09a7…77e2</Hex>
         </Public>
         <Arrow />
-        <Person address={BOB} says="claimed! 🎉" />
+        <Person address={BOB} says="got the key! 🎉" />
       </Row>
     ),
   },
