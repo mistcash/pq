@@ -1,9 +1,11 @@
 package circuits_test
 
 import (
+	"slices"
 	"strings"
 	"testing"
 
+	"github.com/cloudflare/circl/pke/kyber/kyber512/math"
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/backend/groth16"
@@ -80,6 +82,31 @@ func TestOpenChannelRejectsWrongEncryptedChannelKey(t *testing.T) {
 		if test.IsSolved(&circuits.OpenChannel{}, a, ecc.BN254.ScalarField()) == nil {
 			t.Fatal("solved with a wrong Encrypted Channel Key")
 		}
+	}
+}
+
+func TestOpenChannelRejectsNoiseOutOfRange(t *testing.T) {
+	var senderKey, channelKey fr.Element
+	channelKey.SetUint64(42)
+	a, _, err := circuits.Assign(circuits.UserKey(senderKey), channelKey, make([]byte, 32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	pk, _ := circuits.UserKeys(senderKey)
+	pt := channelKey.Bytes()
+	slices.Reverse(pt[:])
+	r, e1, e2 := native.Noise(make([]byte, 32))
+	e2[0] = (math.Q + 1) / 2 // flips plaintext bit 0
+	ct := native.PackCiphertext(native.EncryptUV(pk, pt[:], r, e1, e2))
+	if circuits.DecryptChannelKey(senderKey, ct) == channelKey {
+		t.Fatal("decrypted the Channel Key despite the noise")
+	}
+	a.E2 = native.PolyOf(e2, false)
+	for i := range ct {
+		a.Ciphertext[i] = ct[i]
+	}
+	if test.IsSolved(&circuits.OpenChannel{}, a, ecc.BN254.ScalarField()) == nil {
+		t.Fatal("solved with noise out of range")
 	}
 }
 

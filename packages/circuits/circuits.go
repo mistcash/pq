@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"errors"
 
+	"github.com/cloudflare/circl/pke/kyber/kyber512/math"
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/poseidon2"
@@ -44,7 +45,11 @@ func (c *OpenChannel) Define(api frontend.API) error {
 	if err != nil {
 		return err
 	}
-	// TODO: R, E1, E2 in CBD range.
+	for i := range c.R {
+		circuit.AssertNoise(api, f, &c.R[i], math.Eta1)
+		circuit.AssertNoise(api, f, &c.E1[i], math.Eta2)
+	}
+	circuit.AssertNoise(api, f, &c.E2, math.Eta2)
 	u, v := circuit.Encrypt(api, f, &c.AT, &c.Th, circuit.MsgOf(api, c.ChannelKey), &c.R, &c.E1, &c.E2)
 	for i, x := range circuit.Pack(api, f, &u, &v) {
 		api.AssertIsEqual(x, c.Ciphertext[i])
