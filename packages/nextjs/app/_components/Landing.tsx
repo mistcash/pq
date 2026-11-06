@@ -297,8 +297,8 @@ const BEATS: Beat[] = [
           </>,
         ].map((step, i) => (
           <li key={i}>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-primary" />
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input type="checkbox" className="checkbox checkbox-primary mt-1.5" />
               <span className="leading-9">{step}</span>
             </label>
           </li>
