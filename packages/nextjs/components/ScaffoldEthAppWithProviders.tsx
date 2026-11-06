@@ -7,7 +7,6 @@ import { Toaster } from "react-hot-toast";
 import { WagmiProvider } from "wagmi";
 import { Avatar } from "~~/components/Avatar";
 import { Header } from "~~/components/Header";
-import { PasswordPrompt } from "~~/components/PasswordPrompt";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
@@ -18,7 +17,6 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
         <main className="relative flex flex-col flex-1 overflow-x-clip">{children}</main>
       </div>
       <Toaster />
-      <PasswordPrompt />
     </>
   );
 };
