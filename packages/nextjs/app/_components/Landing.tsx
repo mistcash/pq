@@ -30,6 +30,20 @@ const Person = ({ address, says, mine }: { address: string; says: string; mine?:
   </div>
 );
 
+const Node = ({ name, note, className = "" }: { name: string; note?: string; className?: string }) => (
+  <div className={`rounded-2xl border-2 bg-base-100 px-4 py-1.5 leading-tight ${className}`}>
+    <p className="m-0 font-semibold sm:text-lg">{name}</p>
+    {note && <p className="m-0 text-xs sm:text-sm opacity-70">{note}</p>}
+  </div>
+);
+
+/** A line down from one key to the next, labelled with how it's derived. */
+const Edge = ({ label }: { label: string }) => (
+  <div className="flex flex-col items-center font-mono text-xs sm:text-sm text-primary before:h-2 before:w-0.5 before:bg-base-300 after:h-2 after:w-0.5 after:bg-base-300">
+    {label}
+  </div>
+);
+
 const BEATS: Beat[] = [
   {
     kicker: "Public",
@@ -82,6 +96,48 @@ const BEATS: Beat[] = [
         </div>
         <Arrow />
         <Person address={BOB} says="lunch at 1? 🍜" />
+      </div>
+    ),
+  },
+  {
+    kicker: "Keys",
+    title: "One signature unlocks everything.",
+    lines: [
+      "Your wallet signs one fixed message, and every key grows from it.",
+      "Nothing to back up beyond the wallet.",
+    ],
+    tags: ["H = Poseidon2", "User Key = Kyber512"],
+    visual: (
+      <div className="flex flex-col items-center max-w-2xl mx-auto">
+        <Hex>✍️ wallet signature</Hex>
+        <Edge label="H" />
+        <Node
+          name="Sender Key"
+          note="never leaves your browser"
+          className="bg-neutral text-neutral-content border-neutral"
+        />
+        <span className="h-2 w-0.5 bg-base-300" />
+        <span className="w-1/2 h-3 border-2 border-b-0 rounded-t-xl" />
+        <div className="grid grid-cols-2 w-full">
+          <div className="flex flex-col items-center px-1">
+            <Edge label="H(·, tag)" />
+            <Node name="User Key" note="a Kyber512 key pair" />
+            <Edge label="public half" />
+            <Hex>on-chain</Hex>
+          </div>
+          <div className="flex flex-col items-center px-1">
+            <Edge label="H(·, their User Index)" />
+            <Node name="Channel Key" note="one per recipient" />
+            <Edge label="H(·, Message Index)" />
+            <Node name="Message Key" note="one per message" />
+            <span className="h-3 w-0.5 bg-base-300" />
+            <div className="flex flex-wrap justify-center gap-1">
+              {["Message ID", "pad", "pad"].map((name, i) => (
+                <Node key={i} name={name} note={`H(·, ${i})`} className="px-2!" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     ),
   },
