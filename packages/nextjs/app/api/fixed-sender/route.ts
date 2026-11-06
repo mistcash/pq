@@ -14,9 +14,30 @@ const key = process.env.FIXED_SENDER_PRIVATE_KEY || (chain.id === hardhat.id ? A
 const isHexOfSize = (value: unknown, bytes: number): value is Hex => isHex(value) && size(value) === bytes;
 
 /** Builds the contract call for a typed open-Channel or post request, and for nothing else. */
-const callFor = ({ type, channelKeyHash, proof, messageId, ciphertext1, ciphertext2 }: any) => {
-  if (type === "openChannel" && isHexOfSize(channelKeyHash, 32) && isHexOfSize(proof, 256)) {
-    return { functionName: "openChannel", args: [BigInt(channelKeyHash), "0x", proof] };
+const callFor = ({
+  type,
+  channelKeyHash,
+  encryptedChannelKey,
+  encryptedSender,
+  proof,
+  messageId,
+  ciphertext1,
+  ciphertext2,
+}: any) => {
+  if (
+    type === "openChannel" &&
+    isHexOfSize(channelKeyHash, 32) &&
+    Array.isArray(encryptedChannelKey) &&
+    encryptedChannelKey.length === 37 &&
+    encryptedChannelKey.every(element => isHexOfSize(element, 32)) &&
+    isHexOfSize(encryptedSender, 32) &&
+    // Any length: it changes with the circuit, and simulating checks the proof anyway.
+    isHex(proof)
+  ) {
+    return {
+      functionName: "openChannel",
+      args: [BigInt(channelKeyHash), encryptedChannelKey.map(BigInt), BigInt(encryptedSender), proof],
+    };
   }
   if (type === "post" && isHexOfSize(messageId, 32) && isHexOfSize(ciphertext1, 32) && isHexOfSize(ciphertext2, 32)) {
     return { functionName: "post", args: [BigInt(messageId), BigInt(ciphertext1), BigInt(ciphertext2)] };
