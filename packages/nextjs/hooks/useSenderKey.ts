@@ -21,11 +21,11 @@ export const useSenderKey = (onStep: (step: UnlockStep) => void) => {
 
   const signTwiceFirstTime = async (me: Address) => {
     onStep("sign");
-    const signature = await signMessageAsync({ message: SIGN_MESSAGE });
+    const signature = await signMessageAsync({ account: me, message: SIGN_MESSAGE });
     const checked = `pqmsg:signs-alike:${me}`;
     if (!localStorage.getItem(checked)) {
       onStep("check");
-      if ((await signMessageAsync({ message: SIGN_MESSAGE })) !== signature) {
+      if ((await signMessageAsync({ account: me, message: SIGN_MESSAGE })) !== signature) {
         throw new FriendlyError(
           "Your wallet signed the same thing two different ways, so it can't keep your chats. Try another wallet.",
         );
