@@ -20,6 +20,7 @@ import (
 	groth16bn254 "github.com/consensys/gnark/backend/groth16/bn254"
 	"github.com/consensys/gnark/logger"
 	"github.com/mistcash/pqmsg/packages/circuits"
+	"github.com/mistcash/pqmsg/packages/circuits/native"
 )
 
 func main() {
@@ -100,6 +101,24 @@ func main() {
 				"sk": "0x" + hex.EncodeToString(skb),
 			}, nil
 		}),
+		// kyberEncrypt(pk, pt, seed) returns { u, v } uncompressed: u is K arrays of N coefficients, v is N.
+		"kyberEncrypt": fn(func(a []js.Value) (any, error) {
+			pkb, err := hexBytes(a[0], math.PublicKeySize)
+			pt, err1 := hexBytes(a[1], math.PlaintextSize)
+			seed, err2 := hexBytes(a[2], math.SeedSize)
+			if err := errors.Join(err, err1, err2); err != nil {
+				return nil, err
+			}
+			var pk math.PK
+			pk.Unpack(pkb)
+			r, e1, e2 := native.Noise(seed)
+			u, v := native.EncryptUV(&pk, pt, r, e1, e2)
+			us := make([]any, math.K)
+			for i := range u {
+				us[i] = coeffs(u[i])
+			}
+			return map[string]any{"u": us, "v": coeffs(v)}, nil
+		}),
 	})
 	select {}
 }
@@ -129,6 +148,14 @@ func bytesOf(v js.Value) []byte {
 	b := make([]byte, v.Length())
 	js.CopyBytesToGo(b, v)
 	return b
+}
+
+func coeffs(p math.Poly) []any {
+	c := make([]any, math.N)
+	for i, x := range p {
+		c[i] = x
+	}
+	return c
 }
 
 // hexBytes decodes 0x-hex of exactly n bytes: circl slices unchecked, and a panic kills the module.
