@@ -12,6 +12,19 @@ import (
 	"github.com/mistcash/pqmsg/packages/circuits/circuit"
 )
 
+func assertEq(f *circuit.F, a, b *circuit.Poly) {
+	for i := range a {
+		f.AssertIsEqual(&a[i], &b[i])
+	}
+}
+
+func randPoly() (p math.Poly) {
+	for i := range p {
+		p[i] = int16(rand.IntN(int(math.Q)))
+	}
+	return
+}
+
 type addCircuit struct{ A, B, C circuit.Poly }
 
 func (c *addCircuit) Define(api frontend.API) error {
@@ -20,9 +33,7 @@ func (c *addCircuit) Define(api frontend.API) error {
 		return err
 	}
 	p := circuit.Add(f, &c.A, &c.B)
-	for i := range p {
-		f.AssertIsEqual(&p[i], &c.C[i])
-	}
+	assertEq(f, &p, &c.C)
 	return nil
 }
 
