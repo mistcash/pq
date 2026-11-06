@@ -7,13 +7,13 @@ import { FriendlyError } from "~~/utils/friendly";
 /** Long enough that a quantum attacker can't guess it offline against your on-chain User Key (ADR-0004). */
 const MIN_LENGTH = 12;
 
-type Ask = { isNew: boolean; resolve: (password?: string) => void };
-const usePrompt = create<{ ask?: Ask }>(() => ({}));
+type PasswordRequest = { isNew: boolean; resolve: (password?: string) => void };
+const usePasswordRequest = create<{ ask?: PasswordRequest }>(() => ({}));
 
-/** Asks for the password that, with your wallet's signature, makes your Sender Key. New Users pick one. */
+/** Asks for the Password that, with your wallet's signature, makes your Sender Key. New Users pick one. */
 export const askPassword = (isNew: boolean) =>
   new Promise<string>((resolve, reject) =>
-    usePrompt.setState({
+    usePasswordRequest.setState({
       ask: {
         isNew,
         resolve: password =>
@@ -24,14 +24,14 @@ export const askPassword = (isNew: boolean) =>
 
 /** The password sheet, shown while `askPassword` waits. */
 export const PasswordPrompt = () => {
-  const ask = usePrompt(state => state.ask);
+  const ask = usePasswordRequest(state => state.ask);
   const [password, setPassword] = useState("");
   const [again, setAgain] = useState("");
   if (!ask) return null;
 
   const close = (answer?: string) => {
     ask.resolve(answer);
-    usePrompt.setState({ ask: undefined });
+    usePasswordRequest.setState({ ask: undefined });
     setPassword("");
     setAgain("");
   };
@@ -74,7 +74,7 @@ export const PasswordPrompt = () => {
           className="btn btn-primary btn-lg btn-block"
           disabled={ask.isNew ? password.length < MIN_LENGTH || again !== password : !password}
         >
-          Unlock
+          {ask.isNew ? "Lock my chats" : "Unlock"}
         </button>
         <button type="button" className="btn btn-ghost btn-block" onClick={() => close()}>
           Cancel
