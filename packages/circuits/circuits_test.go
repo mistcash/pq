@@ -154,27 +154,24 @@ func TestChannelKey(t *testing.T) {
 	assertHash(t, circuits.ChannelKey(senderKey, 7), 42, 7)
 }
 
-func TestSenderKeyFromFixedSignatureAndPassword(t *testing.T) {
-	signature := make([]byte, 65)
-	for i := range signature {
-		signature[i] = byte(i + 1)
+func TestSenderKeyFromFixedPasskeyOutput(t *testing.T) {
+	output := make([]byte, 32)
+	for i := range output {
+		output[i] = byte(i + 1)
 	}
-	senderKey, err := circuits.SenderKey(signature, "correct horse battery staple")
+	senderKey, err := circuits.SenderKey(output)
 	if err != nil {
 		t.Fatal(err)
 	}
-	// The signature, zero-padded and split into three 31-byte big-endian chunks, then the stretched password. Pinned,
-	// since changing the Argon2id parameters would lock every User out.
+	// The output, zero-padded and split into two 31-byte big-endian chunks.
 	assertHash(t, senderKey,
 		"0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-		"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e",
-		"0x3f4041"+strings.Repeat("00", 28),
-		"0x086beeccd1cda97660da6836729df13f12804234f484d04df4ff405c3c8aca")
+		"0x20"+strings.Repeat("00", 30))
 }
 
-func TestSenderKeyRejectsSignatureNot65Bytes(t *testing.T) {
-	if _, err := circuits.SenderKey(make([]byte, 64), "correct horse battery staple"); err == nil {
-		t.Fatal("accepted a 64-byte signature")
+func TestSenderKeyRejectsOutputNot32Bytes(t *testing.T) {
+	if _, err := circuits.SenderKey(make([]byte, 65)); err == nil {
+		t.Fatal("accepted a 65-byte output")
 	}
 }
 
