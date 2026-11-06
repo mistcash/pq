@@ -41,7 +41,7 @@ export const useOpenChannel = () => {
         setStep("prove");
         await painted();
         const started = performance.now();
-        const { proof, encryptedChannelKey } = (await crypto).prove(userKey, channelKey);
+        const { proof, encryptedChannelKey } = await (await crypto).prove(userKey, channelKey);
         const provingTime = `${((performance.now() - started) / 1000).toFixed(1)} s`;
         // Tells them who opened it, readable only with the Channel Key.
         const encryptedSender = (await crypto).encryptSender(channelKey, users!.indexOf(me));
