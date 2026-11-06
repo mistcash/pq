@@ -117,6 +117,12 @@ contract PqMsgTest is Test {
         assertEq(ciphertext2, 2);
     }
 
+    function testPostEmitsPosted() public {
+        vm.expectEmit(address(pqMsg));
+        emit PqMsg.Posted(7);
+        pqMsg.post(7, 1, 2);
+    }
+
     function testPostRevertsOnUsedMessageId() public {
         pqMsg.post(7, 1, 2);
 

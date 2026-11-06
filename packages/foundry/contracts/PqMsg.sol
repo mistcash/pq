@@ -34,6 +34,8 @@ contract PqMsg is Ownable {
     event Registered(address indexed user);
     /// A Channel was opened under its Channel Key Hash.
     event ChannelOpened(uint256 indexed channelKeyHash);
+    /// A message was posted under its Message ID.
+    event Posted(uint256 indexed messageId);
 
     error BadUserKey();
     error MessageIdUsed();
@@ -87,5 +89,6 @@ contract PqMsg is Ownable {
         Message storage message = messages[messageId];
         if (message.ciphertext1 != 0 || message.ciphertext2 != 0) revert MessageIdUsed();
         messages[messageId] = Message(ciphertext1, ciphertext2);
+        emit Posted(messageId);
     }
 }
