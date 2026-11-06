@@ -9,9 +9,11 @@ import (
 	"bytes"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"strings"
 	"syscall/js"
 
+	"github.com/cloudflare/circl/pke/kyber/kyber512/math"
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/backend/groth16"
@@ -83,6 +85,21 @@ func main() {
 			c2, err2 := element(a[3])
 			return string(circuits.Decrypt(channelKey, uint64(a[1].Int()), [2]fr.Element{c1, c2})), errors.Join(err, err1, err2)
 		}),
+		// kyberKeyPair(seed) returns { pk, sk }, packed.
+		"kyberKeyPair": fn(func(a []js.Value) (any, error) {
+			seed, err := hexBytes(a[0], math.SeedSize)
+			if err != nil {
+				return nil, err
+			}
+			pk, sk := math.NewKeyPair(seed)
+			pkb, skb := make([]byte, math.PublicKeySize), make([]byte, math.PrivateKeySize)
+			pk.Pack(pkb)
+			sk.Pack(skb)
+			return map[string]any{
+				"pk": "0x" + hex.EncodeToString(pkb),
+				"sk": "0x" + hex.EncodeToString(skb),
+			}, nil
+		}),
 	})
 	select {}
 }
@@ -112,4 +129,13 @@ func bytesOf(v js.Value) []byte {
 	b := make([]byte, v.Length())
 	js.CopyBytesToGo(b, v)
 	return b
+}
+
+// hexBytes decodes 0x-hex of exactly n bytes: circl slices unchecked, and a panic kills the module.
+func hexBytes(v js.Value, n int) ([]byte, error) {
+	b, err := hex.DecodeString(strings.TrimPrefix(v.String(), "0x"))
+	if err == nil && len(b) != n {
+		err = fmt.Errorf("want %d bytes, got %d", n, len(b))
+	}
+	return b, err
 }
