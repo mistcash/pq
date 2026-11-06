@@ -1,8 +1,12 @@
 # pqmsg
 
-Install matt pocock skills before starting.
+Tiny private messages on Ethereum, with a post-quantum key exchange.
 
-we are building post quantum secure messaging layer for ethereum testnet.
+pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one wallet signature, so there's nothing to back up.
+
+**Why it matters.** Whatever goes on a public chain stays there forever. Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists. pqmsg is a working testbed for private messaging on a public chain without that expiry date, and it's explicit about the parts that aren't post-quantum yet (see [Security considerations](#security-considerations)).
+
+Status: Phase 1, on the Sepolia testnet. A research prototype, not audited.
 
 Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`.
 
@@ -65,3 +69,7 @@ The owner can replace the Verifier without redeploying PqMsg, which keeps its Us
 4. Ship the frontend with the new proving key.
 
 If the circuit's number of public inputs changes, `openChannel` changes too, so PqMsg itself needs redeploying.
+
+## Contributing
+
+Install matt pocock skills before starting.
