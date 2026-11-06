@@ -2,6 +2,11 @@
 
 What the `OpenChannel` proof checks, which parts of ML-KEM it covers, and how secure pqmsg is overall, as of `8b3a1c3`. Terms are as in `GLOSSARY.md`.
 
+- The proof shows the opener knows the Channel Key behind the Channel Key Hash. It doesn't show that the Encrypted Channel Key encrypts that Channel Key to anyone: the circuit accepts any well-formed Encrypted Channel Key.
+- The circuit covers K-PKE.Encrypt's arithmetic, but none of the key binding, sampling, compression or KEM layer.
+- Uncompressed, Kyber512 gives Encrypted Channel Keys 112 bits of core-SVP hardness, just above NIST level 1.
+- pqmsg isn't post-quantum end to end: every key derives from a secp256k1 wallet signature, which a quantum attacker can recompute.
+
 ## What the proof checks
 
 [`OpenChannel`](../../packages/circuits/circuits.go#L39) proves:
