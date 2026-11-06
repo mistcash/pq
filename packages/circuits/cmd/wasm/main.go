@@ -18,6 +18,7 @@ import (
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/backend/groth16"
 	groth16bn254 "github.com/consensys/gnark/backend/groth16/bn254"
+	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/logger"
 	"github.com/mistcash/pqmsg/packages/circuits"
 	"github.com/mistcash/pqmsg/packages/circuits/native"
@@ -103,14 +104,10 @@ func main() {
 		}),
 		// kyberEncrypt(pk, pt, seed) returns { u, v } uncompressed: u is K arrays of N coefficients, v is N.
 		"kyberEncrypt": fn(func(a []js.Value) (any, error) {
-			pkb, err := hexBytes(a[0], math.PublicKeySize)
-			pt, err1 := hexBytes(a[1], math.PlaintextSize)
-			seed, err2 := hexBytes(a[2], math.SeedSize)
-			if err := errors.Join(err, err1, err2); err != nil {
+			pk, pt, seed, err := encArgs(a)
+			if err != nil {
 				return nil, err
 			}
-			var pk math.PK
-			pk.Unpack(pkb)
 			r, e1, e2 := native.Noise(seed)
 			u, v := native.EncryptUV(&pk, pt, r, e1, e2)
 			us := make([]any, math.K)
@@ -142,6 +139,20 @@ func main() {
 			sk.Unpack(skb)
 			return "0x" + hex.EncodeToString(native.DecryptUV(&sk, u, v)), nil
 		}),
+		// kyberWitness(pk, pt, seed) returns the circuit.EncCircuit witness of kyberEncrypt(pk, pt, seed), binary-marshalled.
+		"kyberWitness": fn(func(a []js.Value) (any, error) {
+			pk, pt, seed, err := encArgs(a)
+			if err != nil {
+				return nil, err
+			}
+			w := native.Witness(&pk, pt, seed)
+			wit, err := frontend.NewWitness(&w, ecc.BN254.ScalarField())
+			if err != nil {
+				return nil, err
+			}
+			b, err := wit.MarshalBinary()
+			return "0x" + hex.EncodeToString(b), err
+		}),
 	})
 	select {}
 }
@@ -171,6 +182,16 @@ func bytesOf(v js.Value) []byte {
 	b := make([]byte, v.Length())
 	js.CopyBytesToGo(b, v)
 	return b
+}
+
+func encArgs(a []js.Value) (pk math.PK, pt, seed []byte, err error) {
+	pkb, err := hexBytes(a[0], math.PublicKeySize)
+	pt, err1 := hexBytes(a[1], math.PlaintextSize)
+	seed, err2 := hexBytes(a[2], math.SeedSize)
+	if err = errors.Join(err, err1, err2); err == nil {
+		pk.Unpack(pkb)
+	}
+	return
 }
 
 func coeffs(p math.Poly) []any {
