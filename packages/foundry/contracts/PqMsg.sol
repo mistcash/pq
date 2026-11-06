@@ -32,6 +32,8 @@ contract PqMsg is Ownable {
 
     /// A User registered or replaced their User Key.
     event Registered(address indexed user);
+    /// A Channel was opened under its Channel Key Hash.
+    event ChannelOpened(uint256 indexed channelKeyHash);
 
     error BadUserKey();
     error MessageIdUsed();
@@ -70,6 +72,7 @@ contract PqMsg is Ownable {
         }
         verifier.verifyProof(proof, input);
         channels.push(Channel(channelKeyHash, encryptedChannelKey, encryptedSender));
+        emit ChannelOpened(channelKeyHash);
     }
 
     /// Every Channel, so the app can find one by its Channel Key Hash.

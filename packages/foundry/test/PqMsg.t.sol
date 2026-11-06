@@ -91,6 +91,12 @@ contract PqMsgTest is Test {
         assertEq(opened[0].encryptedSender, 7);
     }
 
+    function testOpenChannelEmitsChannelOpened() public {
+        vm.expectEmit(address(pqMsg));
+        emit PqMsg.ChannelOpened(channelKeyHash);
+        pqMsg.openChannel(channelKeyHash, encryptedChannelKey, 7, proof);
+    }
+
     function testOpenChannelRevertsOnBadProof() public {
         proof[0] ^= 0x01;
         vm.expectRevert(Verifier.ProofInvalid.selector);
