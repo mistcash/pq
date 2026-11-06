@@ -12,6 +12,13 @@ Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`. What the O
 
 ## How it works
 
+1. **Join.** You make a passkey. It gives you a Sender Key, and from that a Kyber512 User Key, which your wallet registers on-chain.
+2. **Open a Channel.** Pick a User. Your browser derives a Channel Key for them, encrypts it to their User Key, and proves in zero knowledge that it knows the Channel Key and that the Encrypted Channel Key is well formed, without revealing the recipient.
+3. **Send.** Each message, up to 62 bytes, is padded with hashes of its Message Key and stored under a Message ID that only the Channel's two ends can work out.
+4. **Read.** The recipient finds Channels opened to them by trial-decrypting every Encrypted Channel Key, then reads messages by Message ID from Message Index 0 upward.
+
+A Fixed Sender submits Channel openings and messages, so the chain shows only it calling PqMsg. The full protocol is in [ARCHITECTURE.md](ARCHITECTURE.md).
+
 Deep dive mode (🤿 in the header) explains each step as it happens: what ran in the browser, the circuit and on-chain, the values involved (secrets hidden until tapped), and what to watch out for. It's a sidebar on desktop and sits below the page on phones.
 
 ## CROPS
