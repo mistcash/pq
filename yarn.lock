@@ -6045,6 +6045,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@walletconnect/ethereum-provider@patch:@walletconnect/ethereum-provider@npm%3A2.21.1#~/.yarn/patches/@walletconnect-ethereum-provider-npm-2.21.1-ca668ac558.patch":
+  version: 2.21.1
+  resolution: "@walletconnect/ethereum-provider@patch:@walletconnect/ethereum-provider@npm%3A2.21.1#~/.yarn/patches/@walletconnect-ethereum-provider-npm-2.21.1-ca668ac558.patch::version=2.21.1&hash=92418e"
+  dependencies:
+    "@reown/appkit": "npm:1.7.8"
+    "@walletconnect/jsonrpc-http-connection": "npm:1.0.8"
+    "@walletconnect/jsonrpc-provider": "npm:1.0.14"
+    "@walletconnect/jsonrpc-types": "npm:1.0.4"
+    "@walletconnect/jsonrpc-utils": "npm:1.0.8"
+    "@walletconnect/keyvaluestorage": "npm:1.1.1"
+    "@walletconnect/sign-client": "npm:2.21.1"
+    "@walletconnect/types": "npm:2.21.1"
+    "@walletconnect/universal-provider": "npm:2.21.1"
+    "@walletconnect/utils": "npm:2.21.1"
+    events: "npm:3.3.0"
+  checksum: 10/372002ad1a5999d56387b7d6a4e8de69c9cb610c872288aae679dcc3a2ddd3f30177428a346042ea2f56758fb6967eaa17f0cb5892e9ceb3df4577cd79d79f25
+  languageName: node
+  linkType: hard
+
 "@walletconnect/events@npm:1.0.1, @walletconnect/events@npm:^1.0.1":
   version: 1.0.1
   resolution: "@walletconnect/events@npm:1.0.1"
