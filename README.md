@@ -44,6 +44,25 @@ Set up with Scaffold-ETH 2 using Foundry (`npx create-eth@latest -s foundry`), p
 
 The browser runs the same Go code, compiled to WASM (`packages/circuits/cmd/wasm`), so each hash and each Kyber step has one implementation, natively, in the circuit and in the browser. Kyber comes from Cloudflare's CIRCL, through the `mistcash/circl` fork (v1.6.4-e.1), which exports Kyber512's internal polynomial math as `pke/kyber/kyber512/math` for the circuit and its witness.
 
+### Keys
+
+Every key comes from one wallet signature (ADR-0002). H is Poseidon2, and `tag` is 2⁶⁴, an input no User Index or Message Index can take.
+
+```
+wallet signature over "pqmsg: derive Sender Key v1"
+└─ Sender Key = H(signature)                            kept in memory, never sent
+   ├─ User Key = Kyber512 key pair seeded by H(Sender Key, tag)
+   │             its 800-byte public key is registered on-chain
+   └─ Channel Key = H(Sender Key, recipient's User Index)
+      ├─ Channel Key Hash = H(Channel Key)              public
+      ├─ Encrypted Sender = sender's User Index + H(Channel Key, tag)
+      └─ Message Key = H(Channel Key, Message Index)
+         ├─ Message ID = H(Message Key, 0)              public
+         └─ pads H(Message Key, 1) and H(Message Key, 2)
+```
+
+There are no ephemeral keys. The one random input is the Kyber encryption noise: 32 fresh bytes from `crypto.getRandomValues` for each Channel opening.
+
 ## Design
 
 See `DESIGN.md`.
