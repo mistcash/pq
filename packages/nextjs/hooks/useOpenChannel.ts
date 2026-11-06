@@ -1,18 +1,14 @@
 import { useState } from "react";
-import type { Address, Hex } from "viem";
-import { useSignMessage } from "wagmi";
+import type { Address } from "viem";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useChannelKeyHashes } from "~~/hooks/useChannelKeyHashes";
 import { useFixedSender } from "~~/hooks/useFixedSender";
+import { useSenderKey } from "~~/hooks/useSenderKey";
 import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
 
 export type OpenStep = "start" | "sign" | "check" | "prove" | "send" | "confirm" | "open";
-
-const SIGN_MESSAGE = "pqmsg: derive Sender Key v1";
-/** Sender Keys live in memory only, for this page session (ADR-0002). */
-const senderKeys = new Map<Address, Hex>();
 
 /** Lets the current step render before proving blocks the page. */
 const painted = () => new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve)));
@@ -22,31 +18,10 @@ export const useOpenChannel = () => {
   const [step, setStep] = useState<OpenStep>();
   const [error, setError] = useState<string>();
   const [restored, setRestored] = useState<number>();
-  const { signMessageAsync } = useSignMessage();
   const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
   const channelKeyHashes = useChannelKeyHashes();
   const fixedSender = useFixedSender();
-
-  const signTwiceFirstTime = async (me: Address) => {
-    setStep("sign");
-    const signature = await signMessageAsync({ message: SIGN_MESSAGE });
-    const checked = `pqmsg:signs-alike:${me}`;
-    if (!localStorage.getItem(checked)) {
-      setStep("check");
-      if ((await signMessageAsync({ message: SIGN_MESSAGE })) !== signature) {
-        throw new FriendlyError(
-          "Your wallet signed the same thing two different ways, so it can't keep your chats. Try another wallet.",
-        );
-      }
-      localStorage.setItem(checked, "1");
-    }
-    return signature;
-  };
-
-  const senderKey = async (me: Address) => {
-    if (!senderKeys.has(me)) senderKeys.set(me, (await loadCrypto()).senderKey(await signTwiceFirstTime(me)));
-    return senderKeys.get(me)!;
-  };
+  const senderKey = useSenderKey(setStep);
 
   const open = async (me: Address, other: Address) => {
     setStep("start");
