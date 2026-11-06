@@ -110,6 +110,6 @@ The proof gives integrity and some friction against spam, not confidentiality. C
 ## Fixes, by impact
 
 1. **A Sender Key the wallet key can't recompute.** Mix in a secret the wallet doesn't hold, such as a random seed the User backs up. This trades away ADR-0002's "nothing to back up".
-2. **Bind the User Key in the circuit.** Commit to registered User Keys, for example with a Merkle root of their hashes as a public input, and prove membership; the recipient stays hidden. One system-wide matrix A, as circuit constants, would make this cheaper by leaving only t̂ to commit. Either changes User Keys, so it would orphan existing Channels (ADR-0002).
+2. **Bind the User Key in the circuit.** Commit to registered User Keys, for example with a Merkle root of their hashes as a public input, and prove membership; the recipient stays hidden. One system-wide matrix A, as circuit constants, would make this cheaper by leaving only t̂ to commit. A system-wide A changes User Keys, so Users would register again. Existing Channels stay readable as long as the secret key is still derived the same way, since decrypting needs only that.
 3. **Prove the Encrypted Sender, and have `openChannel` refuse a Channel Key Hash it already has.**
-4. **Compress the Encrypted Channel Key** (d_u = 10, d_v = 4) to get back to 118 bits, at the cost of proving the compression.
+4. **Compress the Encrypted Channel Key** (d_u = 10, d_v = 4) to reach the spec's 118 bits under its weak-LWR assumption, at the cost of proving the compression.
