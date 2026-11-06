@@ -32,3 +32,25 @@ So the proof only ensures:
 3. **Nothing private leaks.** Groth16 is perfectly zero-knowledge, so the proof hides the Channel Key, the User Key and the noise, even from a quantum adversary.
 
 _Contradicts ADR-0003_, which says "the proof only shows the Channel Key was encrypted to some Kyber512 key". That "key" can be any (Â, t̂), including ones no secret key decrypts, so the encryption check adds nothing. ADR-0003's conclusion still roughly holds: a bad Encrypted Channel Key mostly breaks its sender's own Channel.
+
+## Which parts of ML-KEM the circuit covers
+
+The circuit mirrors round-3 Kyber512's CPAPKE.Enc, which is ML-KEM-512's K-PKE.Encrypt (k = 2, η₁ = 3, η₂ = 2). Algorithm numbers are [FIPS 203](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf)'s.
+
+**In the circuit:**
+
+- K-PKE.Encrypt's arithmetic (Alg. 14): NTT (Alg. 9), NTT⁻¹ (Alg. 10), MultiplyNTTs and BaseCaseMultiply (Alg. 11, 12), for Âᵀ ∘ r̂ and t̂ᵀ ∘ r̂.
+- Decompress₁ of the message bits, and polynomial addition.
+- Range checks on r, e₁ and e₂: their range, not their distribution.
+- Canonical packing of u‖v into 37 field elements.
+- Poseidon2 binding the plaintext to the Channel Key Hash.
+
+**Skipped:**
+
+- SampleNTT (Alg. 7): Â isn't expanded from ρ.
+- ByteDecode₁₂ (Alg. 6) of the User Key, and any binding to a registered User Key: t̂ is free.
+- SamplePolyCBD and PRF (Alg. 8): the noise isn't derived from a seed.
+- Compress and ByteEncode (Alg. 5): Encrypted Channel Keys are uncompressed.
+- The KEM layer (Alg. 16–21): Encaps, Decaps, the Fujisaki–Okamoto transform, implicit rejection and H(ek). pqmsg uses K-PKE alone, so it's only CPA-secure.
+- K-PKE.Decrypt (Alg. 15): recipients decrypt natively, and nothing proves it.
+- K-PKE.KeyGen's (Alg. 13) domain separator: User Keys come from round-3 Kyber key generation, G(seed) rather than G(d‖k). `register` checks only a User Key's length, not FIPS 203 §7.2's encapsulation key check. Neither weakens security, but User Keys aren't byte-compatible with ML-KEM-512's.
