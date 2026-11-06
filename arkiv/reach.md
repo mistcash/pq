@@ -8,7 +8,7 @@ It's also for builders. pqmsg's User Keys are an open directory of post-quantum 
 
 ## Would they use it?
 
-The main thing that would have stopped them was cost. Under Sepolia's Glamsterdam gas, joining cost 3.1M gas and every new chat 5.0M, which a sponsor paying for chats couldn't sustain. Moving the data to Arkiv cut those to 0.36M and 0.83M (`docs/gas.md`), and the Fixed Sender pays for chats, so a user only pays for the one transaction that joins.
+The main thing that would have stopped them was cost. Under Sepolia's Glamsterdam gas, joining cost 3.0M gas and every new chat 5.0M, which a sponsor paying for chats couldn't sustain. Moving the data to Arkiv cut those to 0.36M and 0.83M (`docs/gas.md`), and the Fixed Sender pays for chats, so a user only pays for the one transaction that joins.
 
 What users need: a wallet and a browser whose passkeys support PRF, such as recent Chrome, Safari or Edge with a synced passkey manager. No Arkiv wallet or tokens are needed.
 
@@ -16,9 +16,10 @@ What users need: a wallet and a browser whose passkeys support PRF, such as rece
 
 Yes, on testnets:
 
-- **Contracts:** PqMsg on Sepolia at [`0x83Ba…5c52`](https://sepolia.etherscan.io/address/0x83Ba93654CaC7a6F9489E81c89F4AaA48d755c52), with its Verifier at `0x56d4…9633`.
+- **Contracts:** PqMsg on Sepolia at [`0xFbF7…f515`](https://sepolia.etherscan.io/address/0xFbF7E8E3CC9C6C641F23aB5be6caBC919A8Af515), with its Verifier at `0x5e6a…c295`.
 - **Data:** every pqmsg entity on Arkiv's Rabdi testnet, written by `0xaE7b…626C` ([explorer](https://rabdi.explorer.arkiv.network/address/0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C)), queryable with the `curl` in `schema.md`.
-- **App:** `yarn install && yarn start` with `NEXT_PUBLIC_TARGET_NETWORK=sepolia` runs it against those contracts (README, "Deploy to Sepolia"). Join with Sepolia ETH in your wallet, open a Channel to another User, and tap 🤿 to watch each value land on Sepolia or Arkiv.
+- **Relayer:** `yarn start` with `NEXT_PUBLIC_TARGET_NETWORK=sepolia` and a funded `FIXED_SENDER_PRIVATE_KEY` serves the Fixed Sender, whose `/api/fixed-sender` stores User Keys and Channels on Arkiv (README, "Deploy to Sepolia").
+- **App:** it still reads User Keys and Channels from PqMsg, so it works against this deployment once its reads move to Arkiv, the next change. Then: join with Sepolia ETH in your wallet, open a Channel to another User, and tap 🤿 to watch each value land on Sepolia or Arkiv.
 
 ## Will we keep building it after Mumbai?
 
