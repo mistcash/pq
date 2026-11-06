@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PROGRESS } from "./Chat";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
@@ -10,25 +10,33 @@ import { useSenderKey } from "~~/hooks/useSenderKey";
 import { recordTx } from "~~/services/store/deepDive";
 import { loadCrypto } from "~~/utils/crypto";
 import { friendlyMessage } from "~~/utils/friendly";
+import { passkeyProblem } from "~~/utils/passkey";
 import { notification } from "~~/utils/scaffold-eth";
 
 const FRIENDS = ["0x01", "0x02", "0x05"].map(n => n.padEnd(42, "0"));
 
-/** Connect, then register with one tap and a signature, which unlocks your User Key. */
+/** Connect, then register with one tap and a new passkey, which makes your User Key. */
 export const Register = () => {
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { writeContractAsync, isMining } = useScaffoldWriteContract({ contractName: "PqMsg" });
-  const [step, setStep] = useState<"start" | "sign" | "check">();
-  const senderKey = useSenderKey(setStep);
+  const [step, setStep] = useState<"start" | "passkey">();
+  const { join: newSenderKey } = useSenderKey(setStep);
+  const [problem, setProblem] = useState<string>();
+  // Says so up front when this browser can't make the passkey Join needs.
+  useEffect(() => void passkeyProblem().then(setProblem, () => undefined), []);
 
   const join = async () => {
     setStep("start");
     try {
-      const userKey = (await loadCrypto()).userKey(await senderKey(address!));
+      // Before anything else, while the tap still counts: Safari only shows passkey prompts straight after one.
+      const senderKey = await newSenderKey(address!);
+      const userKey = (await loadCrypto()).userKey(senderKey);
       setStep(undefined);
       // The transactor shows its own errors.
-      const tx = await writeContractAsync({ functionName: "register", args: [userKey] }).catch(() => undefined);
+      const tx = await writeContractAsync({ functionName: "register", args: [userKey], account: address }).catch(
+        () => undefined,
+      );
       if (tx) recordTx("unlock", tx);
     } catch (e) {
       notification.error(friendlyMessage(e));
@@ -55,12 +63,12 @@ export const Register = () => {
           {step
             ? PROGRESS[step]
             : address
-              ? "Join so people can find you and message you."
+              ? (problem ?? "Join so people can find you and message you.")
               : "Tiny private messages, from you to anyone."}
         </p>
       </div>
       {address ? (
-        <button className="btn btn-primary btn-lg btn-block" disabled={!!step || isMining} onClick={join}>
+        <button className="btn btn-primary btn-lg btn-block" disabled={!!step || isMining || !!problem} onClick={join}>
           {step || isMining ? <span className="loading loading-dots" /> : "Join"}
         </button>
       ) : (

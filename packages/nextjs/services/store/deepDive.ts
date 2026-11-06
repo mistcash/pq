@@ -8,7 +8,7 @@ export type DiveStep = "unlock" | "open" | "send" | "read" | "find";
  * that stays in your "browser", or something anyone can read on the "chain".
  */
 export const VALUES = {
-  signature: ["Wallet signature", "secret"],
+  prfOutput: ["Passkey PRF output", "secret"],
   senderKey: ["Sender Key", "secret"],
   userKey: ["User Key", "chain"],
   userIndex: ["Their User Index", "browser"],

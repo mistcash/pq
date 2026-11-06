@@ -76,14 +76,15 @@ func hash(elements ...fr.Element) fr.Element {
 	return sum
 }
 
-// SenderKey returns H of a 65-byte wallet signature, zero-padded and split into three 31-byte big-endian chunks.
-func SenderKey(signature []byte) (fr.Element, error) {
-	if len(signature) != 65 {
-		return fr.Element{}, errors.New("signature must be 65 bytes")
+// SenderKey returns H of a passkey's 32-byte PRF output, zero-padded and split into two 31-byte big-endian chunks. The
+// PRF secret never leaves the passkey, and no public key reveals it (ADR-0004).
+func SenderKey(prfOutput []byte) (fr.Element, error) {
+	if len(prfOutput) != 32 {
+		return fr.Element{}, errors.New("passkey output must be 32 bytes")
 	}
-	var padded [93]byte
-	copy(padded[:], signature)
-	var chunks [3]fr.Element
+	var padded [62]byte
+	copy(padded[:], prfOutput)
+	var chunks [2]fr.Element
 	for i := range chunks {
 		chunks[i].SetBytes(padded[i*31 : (i+1)*31])
 	}

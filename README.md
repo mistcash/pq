@@ -2,19 +2,19 @@
 
 Tiny private messages on Ethereum, with a post-quantum key exchange.
 
-pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one wallet signature, so there's nothing to back up.
+pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join.
 
 **Why it matters.** Whatever goes on a public chain stays there forever. Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists. pqmsg is a working testbed for private messaging on a public chain without that expiry date, and it's explicit about the parts that aren't post-quantum yet (see [Security considerations](#security-considerations)).
 
 Status: Phase 1, on the Sepolia testnet. A research prototype, not audited.
 
-Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`.
+Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`. What the OpenChannel proof checks, and how post-quantum pqmsg is, is in `docs/security/open-channel-proof.md`.
 
 ## How it works
 
-1. Users connect their wallet and register a User Key, a Kyber512 public key derived from the same wallet signature as their Sender Key (ADR-0002).
+1. Users connect their wallet and register a User Key, a Kyber512 public key derived from their Sender Key, which comes from a passkey they make when joining (ADR-0004).
 2. Registered Users are shown in a list, and the sender picks a recipient.
-3. The sender opens a Channel to them. Its Channel Key is H(Sender Key, recipient's User Index), and the Sender Key is derived from a wallet signature (ADR-0002). The sender encrypts it to the recipient's User Key (Kyber512 CPA-PKE, uncompressed), and the circuit proves that the Channel Key hashes to the Channel Key Hash and that the Encrypted Channel Key encrypts it. The User Key is a private input, so the recipient stays hidden (ADR-0003). The recipient finds the Channel by decrypting every Encrypted Channel Key and checking each result against its Channel Key Hash, and learns who opened it from the Encrypted Sender. Nothing is shared out of band.
+3. The sender opens a Channel to them. Its Channel Key is H(Sender Key, recipient's User Index), and the Sender Key comes from the sender's passkey (ADR-0004). The sender encrypts it to the recipient's User Key (Kyber512 CPA-PKE, uncompressed), and the circuit proves that the Channel Key hashes to the Channel Key Hash and that the Encrypted Channel Key encrypts it. The User Key is a private input, so the recipient stays hidden (ADR-0003). The recipient finds the Channel by decrypting every Encrypted Channel Key and checking each result against its Channel Key Hash, and learns who opened it from the Encrypted Sender. Nothing is shared out of band.
 4. To send a message, the sender derives the Message Key = H(Channel Key, Message Index) and the Message ID = H(Message Key, 0). The message's two 31-byte halves become the two Ciphertext Elements by adding H(Message Key, 1) and H(Message Key, 2) respectively (hash and add). In Phase 1 this happens outside the circuit.
 5. The contract stores the two Ciphertext Elements as u256 values in a publicly readable hashmap keyed by Message ID. The recipient finds messages by checking Message IDs from Message Index 0 upward.
 
@@ -38,7 +38,7 @@ pqmsg leads with **privacy**: only a Channel's two ends can read it, even with a
 - **Censorship resistant.** PqMsg has no allowlist, and its owner can only swap the Verifier. The Fixed Sender can refuse to send, but `openChannel` and `post` take calls from any wallet, at the cost of showing who sent them.
 - **Open source.** MIT-licensed. Everything builds from this repo: `yarn circuits:build` builds the circuit, Verifier and WASM prover, `yarn deploy` the contracts, and `yarn start` the app.
 - **Private.** The chain shows only the Fixed Sender opening Channels and posting ciphertexts (ADR-0003). The RPC server sees your address and which messages you read, but not whom you open a Channel to, as their User Key comes over Anon-RPC (`docs/anon-rpc.md`). The app has no trackers or analytics.
-- **Secure.** Channel Keys are encrypted to Kyber512 keys, with a Groth16 proof that each encryption is well formed, though its setup is dev-only. Your Sender Key, kept only in memory, comes from signing a fixed message, so a site that got you to sign it too would get the key. Channel Keys stay in this browser's storage unencrypted, and "Find my chats" restores them.
+- **Secure.** Channel Keys are encrypted to Kyber512 keys, with a Groth16 proof that each encryption is well formed, though its setup is dev-only. Your Sender Key, kept only in memory, comes from a passkey that only answers pqmsg's own domain. Channel Keys stay in this browser's storage unencrypted, and "Find my chats" restores them.
 
 ## Architecture
 
@@ -50,17 +50,17 @@ Set up with Scaffold-ETH 2 using Foundry (`npx create-eth@latest -s foundry`), p
 | Prove the Encrypted Channel Key is well formed | Groth16 on BN254 (gnark v0.16), checked on-chain by `Verifier.sol` | `packages/circuits/circuits.go`, `circuit/` |
 | Every hash, key derivation and message pad | gnark's Poseidon2 on BN254, in Merkle-Damgård mode | `packages/circuits/circuits.go` |
 | Encrypt a message | Each 31-byte half plus a Poseidon2 pad, in BN254's scalar field | `circuits.Encrypt` |
-| Root secret | Poseidon2 of a wallet signature over `pqmsg: derive Sender Key v1` | `packages/nextjs/hooks/useSenderKey.ts` |
+| Root secret | Poseidon2 of a passkey's WebAuthn PRF output on `pqmsg: derive Sender Key v2` | `packages/nextjs/utils/passkey.ts` |
 
 The browser runs the same Go code, compiled to WASM (`packages/circuits/cmd/wasm`), so each hash and each Kyber step has one implementation, natively, in the circuit and in the browser. Kyber comes from Cloudflare's CIRCL, through the `mistcash/circl` fork (v1.6.4-e.1), which exports Kyber512's internal polynomial math as `pke/kyber/kyber512/math` for the circuit and its witness.
 
 ### Keys
 
-Every key comes from one wallet signature (ADR-0002). H is Poseidon2, and `tag` is 2⁶⁴, an input no User Index or Message Index can take.
+Every key comes from one passkey (ADR-0004). H is Poseidon2, and `tag` is 2⁶⁴, an input no User Index or Message Index can take.
 
 ```
-wallet signature over "pqmsg: derive Sender Key v1"
-└─ Sender Key = H(signature)                            kept in memory, never sent
+passkey's PRF output on "pqmsg: derive Sender Key v2"
+└─ Sender Key = H(PRF output)                           kept in memory, never sent
    ├─ User Key = Kyber512 key pair seeded by H(Sender Key, tag)
    │             its 800-byte public key is registered on-chain
    └─ Channel Key = H(Sender Key, recipient's User Index)
@@ -126,16 +126,17 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 | Carrying Channel Keys | Module-LWE (Kyber512, NIST level 1) | Holds | That Channel's messages |
 | Hashes, Message Keys and pads | Poseidon2 | Holds; Grover's speed-up on hashes is only quadratic | Messages |
 | The opening proof's soundness | Pairings on BN254 (Groth16) | Breaks | Forged Channel openings: junk, not leaks. Groth16 is perfectly zero-knowledge, so proofs still hide the recipient. |
-| The Sender Key | The wallet's secp256k1 key | Breaks | Everything the User sent and received |
+| The Sender Key | A passkey's PRF secret, through HMAC-SHA-256 | Holds | Everything the User sent and received |
+| Who can replace a User Key | The wallet's secp256k1 key, through `register` | Breaks | Channels opened to the User after the swap |
 
-**The Sender Key is the weak link.** It's a hash of a wallet signature, and the app only accepts wallets that sign deterministically. Registering sends a transaction from that wallet, which reveals its public key. A quantum attacker who recovers the private key from it can sign `pqmsg: derive Sender Key v1` again, get the same Sender Key, and from it every Channel the User opened or was sent. So harvest now, decrypt later works against registered Users today. Fixing it means a root secret that doesn't come from the wallet's ECDSA key, at the cost of ADR-0002's "nothing to back up".
+**The wallet is the weak link.** The Sender Key comes from a passkey's PRF output (ADR-0004), which no public key reveals, so harvest now, decrypt later can't recover it from chain data, and past Channels stay safe. But `register` still overwrites, and only the wallet authorizes it. Registering reveals the wallet's public key, so a quantum attacker who recovers its private key can register their own User Key and read Channels opened to that User afterwards. The User would notice, since their passkey stops unlocking. A one-shot `register` would close this, but then a lost passkey would retire the address. A synced passkey is also only as safe as its provider's sync, which we haven't seen documented as post-quantum.
 
 ### Keys, and where they live
 
 - **No ephemeral keys.** Every key comes from the Sender Key, by design (ADR-0002), so there's no forward secrecy and no re-keying. A leaked Sender Key exposes every Channel its User opened and every Channel opened to them, since their User Key comes from it too.
-- **Only sign it on pqmsg.** Any site that gets your wallet to sign `pqmsg: derive Sender Key v1` learns your Sender Key, because a plain `personal_sign` isn't tied to the site that asked.
+- **Passkeys are tied to pqmsg's domain.** Another site can't ask yours for its PRF output. But pqmsg on a new domain would need new passkeys, and losing yours loses every Channel (ADR-0004).
 - **Sender Keys stay in memory** for the page's lifetime and are never sent anywhere.
-- **Channel Keys are cached unencrypted in `localStorage`**, so anyone who can run script in this browser profile (an XSS bug, an extension) or open it can read your chats. **Find my chats** rebuilds them from one signature, so they could live in memory instead. The app doesn't set a Content Security Policy yet.
+- **Channel Keys are cached unencrypted in `localStorage`**, so anyone who can run script in this browser profile (an XSS bug, an extension) or open it can read your chats. **Find my chats** rebuilds them from one passkey tap, so they could live in memory instead. The app doesn't set a Content Security Policy yet.
 
 ### Known gaps in the protocol
 
