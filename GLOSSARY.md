@@ -17,12 +17,8 @@ A User's permanent position in the list of registered Users.
 _Avoid_: recipient index, user id
 
 **Sender Key**:
-A User's private secret, made from their wallet's signature and their Password, from which their User Key and every Channel Key they open are derived.
+A User's private secret, made from their passkey, from which their User Key and every Channel Key they open are derived.
 _Avoid_: root key, master key, User Key
-
-**Password**:
-The secret a User chooses that, with their wallet's signature, makes their Sender Key.
-_Avoid_: passphrase, PIN
 
 **Channel**:
 A one-way conversation from one sender to one recipient; replies travel on the reverse Channel.
