@@ -12,7 +12,6 @@ Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`.
 
 ## How it works
 
-The flow is,
 1. Users connect their wallet and register a User Key, a Kyber512 public key derived from the same wallet signature as their Sender Key (ADR-0002).
 2. Registered Users are shown in a list, and the sender picks a recipient.
 3. The sender opens a Channel to them. Its Channel Key is H(Sender Key, recipient's User Index), and the Sender Key is derived from a wallet signature (ADR-0002). The sender encrypts it to the recipient's User Key (Kyber512 CPA-PKE, uncompressed), and the circuit proves that the Channel Key hashes to the Channel Key Hash and that the Encrypted Channel Key encrypts it. The User Key is a private input, so the recipient stays hidden (ADR-0003). The recipient finds the Channel by decrypting every Encrypted Channel Key and checking each result against its Channel Key Hash, and learns who opened it from the Encrypted Sender. Nothing is shared out of band.
@@ -151,8 +150,6 @@ yarn chain    # anvil, in its own terminal
 yarn deploy   # the Verifier and PqMsg, on anvil
 yarn start    # the app, at http://localhost:3000
 ```
-
-On anvil, an anvil account is the Fixed Sender, so there's nothing else to set up.
 
 To change the circuit, run `yarn circuits:build`. It runs a fresh setup, so it regenerates `Verifier.sol` and the proving key together, and you redeploy afterwards. `sh packages/circuits/build.sh wasm` rebuilds only the WASM and the WebGPU bundle, and keeps the setup.
 
