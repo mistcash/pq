@@ -103,19 +103,19 @@ func ChannelKeyHash(channelKey fr.Element) fr.Element {
 	return hash(channelKey)
 }
 
-// messageKey returns H(channelKey, index), the Message Key.
-func messageKey(channelKey fr.Element, index uint64) fr.Element {
+// MessageKey returns H(channelKey, index), the Message Key.
+func MessageKey(channelKey fr.Element, index uint64) fr.Element {
 	return hash(channelKey, fr.NewElement(index))
 }
 
 // MessageID returns H(Message Key, 0), the public ID the message at index is stored under.
 func MessageID(channelKey fr.Element, index uint64) fr.Element {
-	return hash(messageKey(channelKey, index), fr.Element{})
+	return hash(MessageKey(channelKey, index), fr.Element{})
 }
 
 // pads returns H(Message Key, j) for j = 1, 2.
 func pads(channelKey fr.Element, index uint64) [2]fr.Element {
-	key := messageKey(channelKey, index)
+	key := MessageKey(channelKey, index)
 	return [2]fr.Element{hash(key, fr.NewElement(1)), hash(key, fr.NewElement(2))}
 }
 

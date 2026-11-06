@@ -15,6 +15,7 @@ export type Crypto = {
   encryptSender: (channelKey: Hex, senderIndex: number) => Hex;
   /** The sender's User Index as hex; a huge number if junk. */
   decryptSender: (channelKey: Hex, encryptedSender: Hex) => Hex;
+  messageKey: (channelKey: Hex, messageIndex: number) => Hex;
   messageId: (channelKey: Hex, messageIndex: number) => Hex;
   /** Throws if the message is over 62 bytes. */
   encrypt: (channelKey: Hex, messageIndex: number, message: string) => [Hex, Hex];
@@ -48,6 +49,7 @@ const load = async (): Promise<Crypto> => {
     decryptChannelKey: call("decryptChannelKey"),
     encryptSender: call("encryptSender"),
     decryptSender: call("decryptSender"),
+    messageKey: call("messageKey"),
     messageId: call("messageId"),
     encrypt: call("encrypt"),
     decrypt: call("decrypt"),

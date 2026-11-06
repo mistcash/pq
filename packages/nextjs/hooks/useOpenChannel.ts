@@ -4,6 +4,7 @@ import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-
 import { useChannels } from "~~/hooks/useChannels";
 import { useFixedSender } from "~~/hooks/useFixedSender";
 import { useSenderKey } from "~~/hooks/useSenderKey";
+import { recordStep, recordTx } from "~~/services/store/deepDive";
 import { anonRead, startAnonRpc } from "~~/utils/anonRpc";
 import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
@@ -54,15 +55,27 @@ export const useOpenChannel = () => {
         const userKey = anonKey && size(anonKey) === 800 ? anonKey : ((await pqMsg!.read.userKeys([other])) as Hex);
         setStep("prove");
         await painted();
+        const started = performance.now();
         const { proof, encryptedChannelKey } = await (await crypto).prove(userKey, channelKey);
+        const provingTime = `${((performance.now() - started) / 1000).toFixed(1)} s`;
         // Tells them who opened it, readable only with the Channel Key.
         const encryptedSender = (await crypto).encryptSender(channelKey, users!.indexOf(me));
+        recordStep("open", {
+          userIndex: String(index),
+          channelKey,
+          channelKeyHash,
+          encryptedChannelKey: encryptedChannelKey.join(" "),
+          encryptedSender,
+          proof,
+          provingTime,
+        });
         setStep("send");
         const hash = await fixedSender(
           { type: "openChannel", channelKeyHash, encryptedChannelKey, encryptedSender, proof },
           () => setStep("confirm"),
         );
         setTx(hash);
+        recordTx("open", hash);
       }
       saveChannelKey(me, other, channelKey);
       setStep("open");
@@ -100,6 +113,7 @@ export const useOpenChannel = () => {
       found++;
     });
     setRestored(found);
+    recordStep("find", { users: String(users!.length), channels: String(channels.length), found: String(found) });
   };
 
   return { step, error, open, tx, restored, restore };

@@ -29,6 +29,8 @@ It emits `Registered(user)`, `ChannelOpened(channelKeyHash)` and `Posted(message
 
 Right after you open a Channel, and under each message you sent from this browser, the app links the transaction on Etherscan, which shows only the Fixed Sender calling PqMsg.
 
+Deep dive mode (🤿 in the header) explains each step as it happens: what ran in the browser, the circuit and on-chain, the values involved (secrets hidden until tapped), and what to watch out for. It's a sidebar on desktop and sits below the page on phones.
+
 ## CROPS
 
 pqmsg leads with **privacy**: only a Channel's two ends can read it, even with a future quantum computer, and the chain never shows who is talking to whom.

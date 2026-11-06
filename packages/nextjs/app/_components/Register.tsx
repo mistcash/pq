@@ -7,6 +7,7 @@ import { useAccount } from "wagmi";
 import { Avatar } from "~~/components/Avatar";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useSenderKey } from "~~/hooks/useSenderKey";
+import { recordTx } from "~~/services/store/deepDive";
 import { loadCrypto } from "~~/utils/crypto";
 import { friendlyMessage } from "~~/utils/friendly";
 import { passkeyProblem } from "~~/utils/passkey";
@@ -33,7 +34,10 @@ export const Register = () => {
       const userKey = (await loadCrypto()).userKey(senderKey);
       setStep(undefined);
       // The transactor shows its own errors.
-      await writeContractAsync({ functionName: "register", args: [userKey], account: address }).catch(() => undefined);
+      const tx = await writeContractAsync({ functionName: "register", args: [userKey], account: address }).catch(
+        () => undefined,
+      );
+      if (tx) recordTx("unlock", tx);
     } catch (e) {
       notification.error(friendlyMessage(e));
     }

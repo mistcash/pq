@@ -1,5 +1,6 @@
 import type { Address, Hex } from "viem";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
+import { recordStep } from "~~/services/store/deepDive";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError } from "~~/utils/friendly";
 import { createPasskey, passkeyOutput } from "~~/utils/passkey";
@@ -15,8 +16,10 @@ export const useSenderKey = (onStep: (step: "passkey") => void) => {
   const join = async (me: Address) => {
     onStep("passkey");
     const prfOutput = await createPasskey(me);
-    const senderKey = (await loadCrypto()).senderKey(prfOutput);
+    const crypto = await loadCrypto();
+    const senderKey = crypto.senderKey(prfOutput);
     senderKeys.set(me, senderKey);
+    recordStep("unlock", { prfOutput, senderKey, userKey: crypto.userKey(senderKey) });
     return senderKey;
   };
 
@@ -27,10 +30,12 @@ export const useSenderKey = (onStep: (step: "passkey") => void) => {
       const prfOutput = await passkeyOutput();
       const crypto = await loadCrypto();
       const senderKey = crypto.senderKey(prfOutput);
-      if (crypto.userKey(senderKey) !== (await pqMsg!.read.userKeys([me]))) {
+      const userKey = crypto.userKey(senderKey);
+      if (userKey !== (await pqMsg!.read.userKeys([me]))) {
         throw new FriendlyError("That passkey doesn't unlock this wallet. Pick the one you made when it joined.");
       }
       senderKeys.set(me, senderKey);
+      recordStep("unlock", { prfOutput, senderKey, userKey });
     }
     return senderKeys.get(me)!;
   };
