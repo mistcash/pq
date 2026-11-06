@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { create } from "zustand";
 import { FriendlyError } from "~~/utils/friendly";
 
@@ -32,6 +32,11 @@ export const PasswordPrompt = () => {
   const ask = usePasswordRequest(state => state.ask);
   const [password, setPassword] = useState("");
   const [again, setAgain] = useState("");
+  const dialog = useRef<HTMLDialogElement>(null);
+  // A modal dialog makes the page behind it inert, and Escape cancels.
+  useEffect(() => {
+    if (ask && !dialog.current?.open) dialog.current?.showModal();
+  }, [ask]);
   if (!ask) return null;
 
   const close = (answer?: string) => {
@@ -42,7 +47,14 @@ export const PasswordPrompt = () => {
   };
 
   return (
-    <dialog open className="modal modal-bottom sm:modal-middle">
+    <dialog
+      ref={dialog}
+      className="modal modal-bottom sm:modal-middle"
+      onCancel={e => {
+        e.preventDefault();
+        close();
+      }}
+    >
       <form
         className="modal-box flex flex-col gap-4"
         onSubmit={e => {
