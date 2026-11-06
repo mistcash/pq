@@ -26,6 +26,7 @@ contract PqMsg is Verifier {
 
     error ZeroKey();
     error MessageIdUsed();
+    error ZeroCiphertext();
 
     function register(uint256 key) external {
         if (key == 0) revert ZeroKey();
@@ -49,7 +50,9 @@ contract PqMsg is Verifier {
     }
 
     /// Stores a message's Ciphertext Elements under its Message ID, which must be unused. Anyone can post.
+    /// All zeros reads as no message, so it can't be posted.
     function post(uint256 messageId, uint256 ciphertext1, uint256 ciphertext2) external {
+        if (ciphertext1 == 0 && ciphertext2 == 0) revert ZeroCiphertext();
         Message storage message = messages[messageId];
         if (message.ciphertext1 != 0 || message.ciphertext2 != 0) revert MessageIdUsed();
         messages[messageId] = Message(ciphertext1, ciphertext2);

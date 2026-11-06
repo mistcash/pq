@@ -89,4 +89,9 @@ contract PqMsgTest is Test {
         vm.expectRevert(PqMsg.MessageIdUsed.selector);
         pqMsg.post(7, 3, 4);
     }
+
+    function testPostRejectsZeroCiphertext() public {
+        vm.expectRevert(PqMsg.ZeroCiphertext.selector);
+        pqMsg.post(7, 0, 0);
+    }
 }
