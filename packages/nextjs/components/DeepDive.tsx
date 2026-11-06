@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { TxLink } from "~~/components/TxLink";
 import { type DiveStep, type DiveValues, VALUES, useDeepDive } from "~~/services/store/deepDive";
 
-type Layer = "Browser" | "Circuit" | "Chain" | "Watch out";
+type Topic = "Browser" | "Circuit" | "Chain" | "Watch out";
 
-const LAYERS: Record<Layer, string> = { Browser: "💻", Circuit: "🧮", Chain: "⛓️", "Watch out": "⚠️" };
+const TOPICS: Record<Topic, string> = { Browser: "💻", Circuit: "🧮", Chain: "⛓️", "Watch out": "⚠️" };
 const WHERE = { secret: "🔒 secret", browser: "💻 your browser", chain: "🌍 on-chain" };
 
-const STEPS: { step: DiveStep; title: string; what: string; notes: [Layer, string][] }[] = [
+const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, string][] }[] = [
   {
     step: "unlock",
     title: "Join & unlock",
@@ -118,9 +118,9 @@ export const DeepDive = () => {
         <p className="text-base-content/70 m-0">What each step just did, with your real values.</p>
       </div>
       {STEPS.map(({ step, title, what, notes }) => (
-        <details key={step} open className="card bg-base-100 border border-base-300 p-4">
-          <summary className="text-lg font-semibold cursor-pointer">{title}</summary>
-          <div className="flex flex-col gap-3 mt-3">
+        <details key={step} open className="collapse collapse-arrow bg-base-100 border border-base-300">
+          <summary className="collapse-title text-lg font-semibold">{title}</summary>
+          <div className="collapse-content flex flex-col gap-3">
             <p className="m-0">{what}</p>
             {steps[step] ? (
               <Values values={steps[step]} />
@@ -128,10 +128,10 @@ export const DeepDive = () => {
               <p className="text-sm text-base-content/70 m-0">Do this step to see your values here.</p>
             )}
             <ul className="flex flex-col gap-2 m-0 p-0 list-none text-sm">
-              {notes.map(([layer, text]) => (
-                <li key={layer}>
+              {notes.map(([topic, text]) => (
+                <li key={topic}>
                   <span className="font-semibold">
-                    {LAYERS[layer]} {layer}:
+                    {TOPICS[topic]} {topic}:
                   </span>{" "}
                   {text}
                 </li>
@@ -148,7 +148,8 @@ const Values = ({ values }: { values: DiveValues }) => (
   <dl className="flex flex-col gap-2 m-0 p-3 rounded-box bg-base-200">
     {(Object.keys(VALUES) as (keyof typeof VALUES)[]).map(name => {
       const value = values[name];
-      return value && <Value key={name} name={name} value={value} />;
+      // Keyed by value too, so a newly recorded secret starts hidden.
+      return value && <Value key={`${name}:${value}`} name={name} value={value} />;
     })}
   </dl>
 );
@@ -156,18 +157,19 @@ const Values = ({ values }: { values: DiveValues }) => (
 /** One value, labelled with where it lives. Secrets show a short prefix until tapped. */
 const Value = ({ name, value }: { name: keyof typeof VALUES; value: string }) => {
   const [label, where] = VALUES[name];
+  const secret = where === "secret";
   const [shown, setShown] = useState(false);
 
   return (
     <div className="flex flex-col gap-1 min-w-0">
       <dt className="flex items-center justify-between gap-2 text-sm font-semibold">
         {label}
-        <span className={`badge badge-sm ${where === "secret" ? "badge-warning" : "badge-soft"}`}>
-          {where === "secret" && shown ? "🔒 don't share" : WHERE[where]}
+        <span className={`badge badge-sm ${secret ? "badge-warning" : "badge-soft"}`}>
+          {secret && shown ? "🔒 don't share" : WHERE[where]}
         </span>
       </dt>
       <dd className="m-0">
-        {where === "secret" ? (
+        {secret ? (
           <button
             className="font-mono text-xs text-left break-all cursor-pointer"
             aria-label={shown ? `Hide ${label}` : `Reveal ${label}`}
