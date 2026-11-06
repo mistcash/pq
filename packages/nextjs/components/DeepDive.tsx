@@ -38,7 +38,7 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
     notes: [
       [
         "Browser",
-        "Channel Key = H(Sender Key, their User Index). Kyber512, which is post-quantum, encrypts it to their User Key, and a Groth16 proof is made right here. The Channel Key is also saved, unencrypted, in this browser's storage.",
+        "Channel Key = H(Sender Key, their User Index). Kyber512, which is post-quantum, encrypts it to their User Key, and a Groth16 proof is made right here, in a Web Worker, on your GPU through WebGPU when it can. The Channel Key is also saved, unencrypted, in this browser's storage.",
       ],
       [
         "Circuit",
