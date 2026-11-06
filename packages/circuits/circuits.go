@@ -9,7 +9,9 @@ import (
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/poseidon2"
+	"github.com/consensys/gnark/backend"
 	"github.com/consensys/gnark/backend/groth16"
+	"github.com/consensys/gnark/backend/solidity"
 	"github.com/consensys/gnark/constraint"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
@@ -155,7 +157,8 @@ func ProveChannelKey(ccs constraint.ConstraintSystem, pk groth16.ProvingKey, use
 	if err != nil {
 		return nil, ct, err
 	}
-	proof, err := groth16.Prove(ccs, pk, w)
+	// Hash the range checks' commitment with keccak256, as the exported Verifier.sol does.
+	proof, err := groth16.Prove(ccs, pk, w, solidity.WithProverTargetSolidityVerifier(backend.GROTH16))
 	return proof, ct, err
 }
 
