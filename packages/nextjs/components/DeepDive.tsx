@@ -144,7 +144,7 @@ export const DeepDive = () => {
         <p className="text-base-content/70 m-0">What each step just did, with your real values.</p>
       </div>
       {STEPS.map(({ step, title, what, notes }) => (
-        <details key={step} open className="collapse collapse-arrow bg-base-100 border border-base-300">
+        <details key={step} open className="collapse collapse-arrow shrink-0 bg-base-100 border border-base-300">
           <summary className="collapse-title text-lg font-semibold">{title}</summary>
           <div className="collapse-content flex flex-col gap-3">
             <p className="m-0">{what}</p>
