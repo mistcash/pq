@@ -12,7 +12,7 @@ contract PqMsgTest is Test {
     address alice = makeAddr("alice");
 
     function setUp() public {
-        pqMsg = new PqMsg();
+        pqMsg = new PqMsg(new Verifier());
         string memory json = vm.readFile("test/openChannelProof.json");
         channelKeyHash = vm.parseJsonUint(json, ".channelKeyHash");
         uint256[] memory ct = vm.parseJsonUintArray(json, ".encryptedChannelKey");
@@ -30,6 +30,18 @@ contract PqMsgTest is Test {
 
     function testDeployerOwns() public view {
         assertEq(pqMsg.owner(), address(this));
+    }
+
+    function testOwnerSetsVerifier() public {
+        Verifier next = new Verifier();
+        pqMsg.setVerifier(next);
+        assertEq(address(pqMsg.verifier()), address(next));
+    }
+
+    function testSetVerifierRejectsNonOwner() public {
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, alice));
+        vm.prank(alice);
+        pqMsg.setVerifier(Verifier(address(0)));
     }
 
     function testRegisterListsUserWithKey() public {
