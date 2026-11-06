@@ -4,16 +4,8 @@ pragma solidity ^0.8.19;
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { Verifier } from "./Verifier.sol";
 
-/// pqmsg: Channels and messages stored publicly on-chain.
+/// pqmsg: messages stored publicly on-chain, with hashes of the User Keys and Channels kept on Arkiv (ADR-0005).
 contract PqMsg is Ownable {
-    struct Channel {
-        uint256 channelKeyHash;
-        /// The Channel Key encrypted to the recipient's User Key: Kyber512 u‖v, 21 12-bit coefficients per element.
-        uint256[37] encryptedChannelKey;
-        /// The sender's User Index plus a pad from the Channel Key.
-        uint256 encryptedSender;
-    }
-
     /// A message's two Ciphertext Elements.
     struct Message {
         uint256 ciphertext1;
@@ -24,9 +16,10 @@ contract PqMsg is Ownable {
     Verifier public verifier;
     /// Users in registration order; a User's position is their User Index.
     address[] public users;
-    /// User Key of each User, a packed Kyber512 public key; empty means not registered.
-    mapping(address => bytes) public userKeys;
-    Channel[] public channels;
+    /// keccak256 of each User's User Key, a packed Kyber512 public key; zero means not registered.
+    mapping(address => bytes32) public userKeyHashes;
+    /// keccak256 of each Channel's abi.encode(channelKeyHash, encryptedChannelKey, encryptedSender).
+    bytes32[] public channels;
     /// Messages by Message ID; all zeros means no message.
     mapping(uint256 => Message) public messages;
 
@@ -49,8 +42,8 @@ contract PqMsg is Ownable {
 
     function register(bytes calldata key) external {
         if (key.length != 800) revert BadUserKey();
-        if (userKeys[msg.sender].length == 0) users.push(msg.sender);
-        userKeys[msg.sender] = key;
+        if (userKeyHashes[msg.sender] == 0) users.push(msg.sender);
+        userKeyHashes[msg.sender] = keccak256(key);
         emit Registered(msg.sender);
     }
 
@@ -59,6 +52,8 @@ contract PqMsg is Ownable {
     }
 
     /// Opens a Channel once `proof` shows `encryptedChannelKey` encrypts the Channel Key behind `channelKeyHash`.
+    /// `encryptedChannelKey` is Kyber512 u‖v, 21 12-bit coefficients per element; `encryptedSender` is the sender's
+    /// User Index plus a pad from the Channel Key.
     function openChannel(
         uint256 channelKeyHash,
         uint256[37] calldata encryptedChannelKey,
@@ -71,12 +66,12 @@ contract PqMsg is Ownable {
             input[i + 1] = encryptedChannelKey[i];
         }
         verifier.verifyProof(proof, input);
-        channels.push(Channel(channelKeyHash, encryptedChannelKey, encryptedSender));
+        channels.push(keccak256(abi.encode(channelKeyHash, encryptedChannelKey, encryptedSender)));
         emit ChannelOpened(channelKeyHash);
     }
 
-    /// Every Channel, so the app can find one by its Channel Key Hash.
-    function getChannels() external view returns (Channel[] memory) {
+    /// Every Channel's hash, against which the app checks the Channels it fetches from Arkiv.
+    function getChannels() external view returns (bytes32[] memory) {
         return channels;
     }
 
