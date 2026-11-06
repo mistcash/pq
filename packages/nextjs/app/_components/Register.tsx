@@ -60,7 +60,7 @@ export const Register = () => {
       )}
       <div>
         <h1 className="text-4xl font-bold m-0">{address ? "Hi, it's you!" : "pq"}</h1>
-        <p className="text-lg text-base-content/70 mb-0">
+        <p className="text-lg text-base-content/70 text-balance mb-0">
           {step
             ? PROGRESS[step]
             : address
