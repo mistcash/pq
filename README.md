@@ -15,8 +15,6 @@ pqmsg stores every message publicly on-chain, yet only the two ends of a convers
 
 Status: Phase 1, on the Sepolia testnet. A research prototype, not audited.
 
-Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`. What the OpenChannel proof checks, and how post-quantum pqmsg is, is in `docs/security/open-channel-proof.md`.
-
 ## How it works
 
 1. **Join.** You make a passkey. It gives you a Sender Key, and from that a Kyber512 User Key, which your wallet registers on-chain.
@@ -52,6 +50,19 @@ pqmsg leads with **privacy**: only a Channel's two ends can read it, even with a
 - **Open source.** MIT-licensed. Everything builds from this repo: `yarn circuits:build` builds the circuit, Verifier and WASM prover, `yarn deploy` the contracts, and `yarn start` the app.
 - **Private.** The chain shows only the Fixed Sender opening Channels and posting ciphertexts (ADR-0003). The RPC server sees your address and which messages you read, but not whom you open a Channel to, as their User Key comes over Anon-RPC (`docs/anon-rpc.md`). The app has no trackers or analytics.
 - **Secure.** Channel Keys are encrypted to Kyber512 keys, with a Groth16 proof that each encryption is well formed, though its setup is dev-only. Your Sender Key, kept only in memory, comes from a passkey that only answers pqmsg's own domain. Channel Keys stay in this browser's storage unencrypted, and "Find my chats" restores them.
+
+## Docs
+
+| File | What's in it |
+| --- | --- |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | The protocol, its primitives, the key tree, what the opening proof shows, and a code map |
+| [PROVING.md](PROVING.md) | Proving on the GPU, and a DevTools profiling demo |
+| [SECURITY.md](SECURITY.md) | What is post-quantum and what isn't yet, and the known gaps |
+| [DEPLOY.md](DEPLOY.md) | Deploying to Sepolia, the live addresses, and swapping the Verifier |
+| [GLOSSARY.md](GLOSSARY.md) | The terms used everywhere |
+| [docs/adr/](docs/adr/) | Key decisions |
+| [docs/security/open-channel-proof.md](docs/security/open-channel-proof.md) | What the OpenChannel proof checks, and how post-quantum pqmsg is |
+| [docs/anon-rpc.md](docs/anon-rpc.md) | How the app reads a recipient's User Key over Anon-RPC |
 
 ## Run locally
 
