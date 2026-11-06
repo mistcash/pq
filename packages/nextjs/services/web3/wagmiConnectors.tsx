@@ -48,6 +48,8 @@ export const wagmiConnectors = () => {
     {
       appName: "scaffold-eth-2",
       projectId: scaffoldConfig.walletConnectProjectId,
+      // WalletConnect reads this at runtime, but its types leave it out. Stops its analytics (pulse.walletconnect.org).
+      walletConnectParameters: { telemetryEnabled: false } as object,
     },
   );
 };
