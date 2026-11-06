@@ -127,6 +127,13 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 - **Sender Keys stay in memory** for the page's lifetime and are never sent anywhere.
 - **Channel Keys are cached unencrypted in `localStorage`**, so anyone who can run script in this browser profile (an XSS bug, an extension) or open it can read your chats. **Find my chats** rebuilds them from one signature, so they could live in memory instead. The app doesn't set a Content Security Policy yet.
 
+### Known gaps in the protocol
+
+- **Kyber512 CPA-PKE, not ML-KEM.** It's NIST level 1 and only CPA-secure, without the Fujisaki-Okamoto transform. User Keys never change, and the proof doesn't tie a ciphertext to a registered User Key, so anyone can post crafted ciphertexts to a User. If a User's behaviour shows whether one decrypted to a valid Channel, for example by replying, that's the plaintext-checking oracle that known key-recovery attacks on CPA Kyber need. Each try costs a Channel opening, at well over 1M gas.
+- **Messages aren't authenticated.** A Ciphertext Element is the message half plus a pad, so changing it shifts the plaintext predictably. Someone watching the mempool can front-run a `post` with altered Ciphertext Elements under the same Message ID: the recipient reads the altered message, and the real one reverts.
+- **The trusted setup is single-party.** `cmd/artifacts` runs a dev-only Groth16 setup, and whoever runs it could keep its secret randomness and forge proofs. That allows junk Channel openings but exposes no messages. A multi-party ceremony should replace it before mainnet.
+- **The contract doesn't refuse repeats.** The Fixed Sender refuses a Channel that's already open, but `openChannel` doesn't, so anyone can replay a proof. `getChannels` returns every Channel, and each User trial-decrypts all of them.
+
 ## Design
 
 See `DESIGN.md`.
