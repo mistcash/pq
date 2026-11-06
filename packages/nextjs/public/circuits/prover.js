@@ -17,12 +17,17 @@ const ready = (async () => {
   const keys = await Promise.all([bytes("openChannel.ccs"), bytes("openChannel.pk")]);
   await webgpu.catch(e => console.info("pqmsg prover: no WebGPU,", e.message));
   console.info("pqmsg prover on the", (await pqmsg.loadProver(...keys)) ? "GPU" : "CPU");
+  // DevTools' Performance panel shows these on the worker's track.
+  performance.measure("pqmsg load");
 })();
 
 onmessage = async ({ data: { userKey, channelKey }, ports: [port] }) => {
   try {
     await ready;
-    port.postMessage({ result: await pqmsg.prove(userKey, channelKey) });
+    const start = performance.now();
+    const result = await pqmsg.prove(userKey, channelKey);
+    performance.measure("pqmsg prove", { start });
+    port.postMessage({ result });
   } catch (e) {
     port.postMessage({ error: e.message });
   }
