@@ -1,6 +1,6 @@
 # The OpenChannel proof, and how post-quantum pqmsg is
 
-What the `OpenChannel` proof checks, which parts of ML-KEM it covers, and how secure pqmsg is overall, as of #45 (`452f922`), which makes the Sender Key from a passkey. Terms are as in `GLOSSARY.md`.
+What the `OpenChannel` proof checks, which parts of ML-KEM it covers, and how secure pqmsg is overall, as of [#45](https://github.com/mistcash/private-pq-msg/pull/45) (`452f922`), which makes the Sender Key from a passkey. Terms are as in `GLOSSARY.md`.
 
 - The proof shows the opener knows the Channel Key behind the Channel Key Hash. It doesn't show that the Encrypted Channel Key encrypts that Channel Key to anyone: the circuit accepts any well-formed Encrypted Channel Key.
 - The circuit covers K-PKE.Encrypt's arithmetic, but none of the key binding, sampling, compression or KEM layer.
@@ -117,7 +117,7 @@ The proof gives integrity and some friction against spam, not confidentiality. W
 
 ## Fixes, by impact
 
-1. **Stop the wallet alone replacing a User Key.** A one-shot `register` is simplest, but then a lost passkey retires the address (#45). Or store H(H(Sender Key, tag′)) at Join, and accept a new User Key only after a commit-reveal of H(Sender Key, tag′): a quantum attacker can't forge a hash preimage, and a front-runner can't reuse a reveal. A Groth16 proof of the Sender Key wouldn't do, since a quantum attacker can forge one.
+1. **Stop the wallet alone replacing a User Key.** A one-shot `register` is simplest, but then a lost passkey retires the address (#45). Or store H(H(Sender Key, tag′)) at Join, for a new tag tag′, and accept a new User Key only after a commit-reveal of H(Sender Key, tag′): a quantum attacker can't forge a hash preimage, and a front-runner can't reuse a reveal. A Groth16 proof of the Sender Key wouldn't do, since a quantum attacker can forge one.
 2. **Bind the User Key in the circuit.** Commit to registered User Keys, for example with a Merkle root of their hashes as a public input, and prove membership; the recipient stays hidden. One system-wide matrix A, as circuit constants, would make this cheaper by leaving only t̂ to commit. A system-wide A changes User Keys, so Users would register again. Existing Channels stay readable as long as the secret key is still derived the same way, since decrypting needs only that.
 3. **Prove the Encrypted Sender, and have `openChannel` refuse a Channel Key Hash it already has.**
 4. **Compress the Encrypted Channel Key** (d_u = 10, d_v = 4) to reach the spec's 118 bits under its weak-LWR assumption, at the cost of proving the compression.
