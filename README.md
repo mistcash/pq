@@ -1,4 +1,4 @@
-# pqmsg
+# pq
 
 [![Lint](https://github.com/mistcash/pqmsg/actions/workflows/lint.yaml/badge.svg)](https://github.com/mistcash/pqmsg/actions/workflows/lint.yaml)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENCE)
@@ -7,11 +7,11 @@
 ![Proof: Groth16 on BN254](https://img.shields.io/badge/proof-Groth16%20on%20BN254-0e8a16)
 ![Status: unaudited prototype](https://img.shields.io/badge/status-unaudited%20prototype-orange)
 
-Tiny private messages on Ethereum, with a post-quantum key exchange.
+Scalable, post-quantum cryptographic messaging for private payments and peer coordination.
 
-pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join.
+pq stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join.
 
-**Why it matters.** Whatever goes on a public chain stays there forever. Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists. pqmsg is a working testbed for private messaging on a public chain without that expiry date, and it's explicit about the parts that aren't post-quantum yet (see [SECURITY.md](SECURITY.md)).
+**Why it matters.** Whatever goes on a public chain stays there forever. Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists. pq is a working testbed for private messaging on a public chain without that expiry date, and it's explicit about the parts that aren't post-quantum yet (see [SECURITY.md](SECURITY.md)).
 
 Status: Phase 1, on the Sepolia testnet. A research prototype, not audited.
 
@@ -44,12 +44,12 @@ Deep dive mode (🤿 in the header) explains each step as it happens: what ran i
 
 ## CROPS
 
-pqmsg leads with **privacy**: only a Channel's two ends can read it, even with a future quantum computer, and the chain never shows who is talking to whom.
+pq leads with **privacy**: only a Channel's two ends can read it, even with a future quantum computer, and the chain never shows who is talking to whom.
 
 - **Censorship resistant.** PqMsg has no allowlist, and its owner can only swap the Verifier. The Fixed Sender can refuse to send, but `openChannel` and `post` take calls from any wallet, at the cost of showing who sent them.
 - **Open source.** MIT-licensed. Everything builds from this repo: `yarn circuits:build` builds the circuit, Verifier and WASM prover, `yarn deploy` the contracts, and `yarn start` the app.
 - **Private.** The chain shows only the Fixed Sender opening Channels and posting ciphertexts (ADR-0003). The RPC server sees your address and which messages you read, but not whom you open a Channel to, as their User Key comes over Anon-RPC (`docs/anon-rpc.md`). The app has no trackers or analytics.
-- **Secure.** Channel Keys are encrypted to Kyber512 keys, with a Groth16 proof that each encryption is well formed, though its setup is dev-only. Your Sender Key, kept only in memory, comes from a passkey that only answers pqmsg's own domain. Channel Keys stay in this browser's storage unencrypted, and "Find my chats" restores them.
+- **Secure.** Channel Keys are encrypted to Kyber512 keys, with a Groth16 proof that each encryption is well formed, though its setup is dev-only. Your Sender Key, kept only in memory, comes from a passkey that only answers pq's own domain. Channel Keys stay in this browser's storage unencrypted, and "Find my chats" restores them.
 
 ## Docs
 
@@ -61,7 +61,7 @@ pqmsg leads with **privacy**: only a Channel's two ends can read it, even with a
 | [DEPLOY.md](DEPLOY.md) | Deploying to Sepolia, the live addresses, and swapping the Verifier |
 | [GLOSSARY.md](GLOSSARY.md) | The terms used everywhere |
 | [docs/adr/](docs/adr/) | Key decisions |
-| [docs/security/open-channel-proof.md](docs/security/open-channel-proof.md) | What the OpenChannel proof checks, and how post-quantum pqmsg is |
+| [docs/security/open-channel-proof.md](docs/security/open-channel-proof.md) | What the OpenChannel proof checks, and how post-quantum pq is |
 | [docs/anon-rpc.md](docs/anon-rpc.md) | How the app reads a recipient's User Key over Anon-RPC |
 
 ## Run locally

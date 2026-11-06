@@ -8,7 +8,7 @@ const SALT = new TextEncoder().encode("pqmsg: derive Sender Key v2");
 const PRF = { prf: { eval: { first: SALT } } };
 
 const UNSUPPORTED =
-  "This browser or passkey manager can't make the kind of passkey pqmsg needs. Try an up-to-date Chrome or Safari.";
+  "This browser or passkey manager can't make the kind of passkey pq needs. Try an up-to-date Chrome or Safari.";
 
 /** Runs a passkey prompt, turning a cancelled or timed-out one into plain words. */
 const prompt = async (run: () => Promise<Credential | null>) => {
@@ -54,8 +54,8 @@ export const createPasskey = async (me: Address) => {
   const credential = await prompt(() =>
     navigator.credentials.create({
       publicKey: {
-        rp: { name: "pqmsg" },
-        user: { id: toBytes(me), name: me, displayName: `pqmsg ${me.slice(0, 6)}…${me.slice(-4)}` },
+        rp: { name: "pq" },
+        user: { id: toBytes(me), name: me, displayName: `pq ${me.slice(0, 6)}…${me.slice(-4)}` },
         challenge: challenge(),
         // ES256, then RS256.
         pubKeyCredParams: [
