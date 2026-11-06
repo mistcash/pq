@@ -7,7 +7,7 @@ import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
-  title: "pqmsg",
+  title: "pq",
   description: "Tiny private messages, from you to anyone.",
 });
 

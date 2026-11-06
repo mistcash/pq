@@ -99,8 +99,8 @@ const BEATS: Beat[] = [
     ),
   },
   {
-    kicker: "pqmsg",
-    title: "pqmsg: tiny private messages, on-chain.",
+    kicker: "pq",
+    title: "pq: tiny private messages, on-chain.",
     lines: [
       "62-byte messages, stored in plain sight.",
       "Only the two ends can read them, and the chain doesn't show who's talking to whom.",
@@ -255,7 +255,7 @@ const BEATS: Beat[] = [
           {[1, 2, 3].map(n => (
             <span key={n} className="size-3 rounded-full bg-base-300" />
           ))}
-          <span className="ml-2 text-sm opacity-60">pqmsg</span>
+          <span className="ml-2 text-sm opacity-60">pq</span>
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 p-6">
           <Node name="Page" note="starts the prover on load" />
@@ -455,7 +455,7 @@ const ArrowKeys = () => {
   return null;
 };
 
-/** How pqmsg works, under the app: one full-screen beat per cue of the talk. */
+/** How pq works, under the app: one full-screen beat per cue of the talk. */
 export const Landing = () => (
   <div>
     <ArrowKeys />

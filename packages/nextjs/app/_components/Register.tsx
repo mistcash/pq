@@ -58,7 +58,7 @@ export const Register = () => {
         </div>
       )}
       <div>
-        <h1 className="text-4xl font-bold m-0">{address ? "Hi, it's you!" : "pqmsg"}</h1>
+        <h1 className="text-4xl font-bold m-0">{address ? "Hi, it's you!" : "pq"}</h1>
         <p className="text-lg text-base-content/70 mb-0">
           {step
             ? PROGRESS[step]
