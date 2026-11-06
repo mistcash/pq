@@ -15,7 +15,11 @@ const fredoka = Fredoka({ subsets: ["latin"] });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html suppressHydrationWarning className={`scroll-smooth snap-y snap-proximity scroll-pt-16 ${fredoka.className}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`scroll-smooth snap-y snap-proximity scroll-pt-16 ${fredoka.className}`}
+    >
       <body>
         <ThemeProvider forcedTheme="light">
           <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
