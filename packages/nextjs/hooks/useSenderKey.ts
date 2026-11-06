@@ -2,7 +2,7 @@ import type { Address, Hex } from "viem";
 import { useSignMessage } from "wagmi";
 import { askPassword } from "~~/components/PasswordPrompt";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
-import { dive } from "~~/services/store/deepDive";
+import { recordStep } from "~~/services/store/deepDive";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError } from "~~/utils/friendly";
 
@@ -49,7 +49,7 @@ export const useSenderKey = (onStep: (step: UnlockStep) => void) => {
         throw new FriendlyError("That's not your password. Try again?");
       }
       senderKeys.set(me, senderKey);
-      dive("unlock", { signature, senderKey, userKey, tx: undefined });
+      recordStep("unlock", { signature, senderKey, userKey });
     }
     return senderKeys.get(me)!;
   };

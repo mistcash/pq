@@ -7,7 +7,7 @@ import { useAccount } from "wagmi";
 import { Avatar } from "~~/components/Avatar";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { type UnlockStep, useSenderKey } from "~~/hooks/useSenderKey";
-import { dive } from "~~/services/store/deepDive";
+import { recordTx } from "~~/services/store/deepDive";
 import { loadCrypto } from "~~/utils/crypto";
 import { friendlyMessage } from "~~/utils/friendly";
 import { notification } from "~~/utils/scaffold-eth";
@@ -29,7 +29,7 @@ export const Register = () => {
       setStep(undefined);
       // The transactor shows its own errors.
       const tx = await writeContractAsync({ functionName: "register", args: [userKey] }).catch(() => undefined);
-      if (tx) dive("unlock", { tx });
+      if (tx) recordTx("unlock", tx);
     } catch (e) {
       notification.error(friendlyMessage(e));
     }

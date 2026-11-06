@@ -31,11 +31,11 @@ export const VALUES = {
 
 export type DiveValues = Partial<Record<keyof typeof VALUES, string>>;
 
-type DeepDive = { on: boolean; steps: Partial<Record<DiveStep, DiveValues>> };
+type DeepDiveState = { on: boolean; steps: Partial<Record<DiveStep, DiveValues>> };
 
 /** Whether deep dive mode is on, remembered in this browser, and what each step last computed, in memory only. */
-export const useDeepDive = create<DeepDive>()(
-  persist((): DeepDive => ({ on: false, steps: {} }), {
+export const useDeepDive = create<DeepDiveState>()(
+  persist((): DeepDiveState => ({ on: false, steps: {} }), {
     name: "pqmsg:deep-dive",
     partialize: ({ on }) => ({ on }),
     // Read after the first render, so the server's and the browser's first renders match.
@@ -43,6 +43,10 @@ export const useDeepDive = create<DeepDive>()(
   }),
 );
 
-/** Records values a step just computed, over what it recorded before. */
-export const dive = (step: DiveStep, values: DiveValues) =>
-  useDeepDive.setState(state => ({ steps: { ...state.steps, [step]: { ...state.steps[step], ...values } } }));
+/** Records what a step just computed, replacing what it recorded before. */
+export const recordStep = (step: DiveStep, values: DiveValues) =>
+  useDeepDive.setState(state => ({ steps: { ...state.steps, [step]: values } }));
+
+/** Adds the transaction a recorded step just sent. */
+export const recordTx = (step: DiveStep, tx: string) =>
+  useDeepDive.setState(state => ({ steps: { ...state.steps, [step]: { ...state.steps[step], tx } } }));

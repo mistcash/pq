@@ -4,7 +4,7 @@ import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-
 import { useChannels } from "~~/hooks/useChannels";
 import { useFixedSender } from "~~/hooks/useFixedSender";
 import { type UnlockStep, useSenderKey } from "~~/hooks/useSenderKey";
-import { dive } from "~~/services/store/deepDive";
+import { recordStep, recordTx } from "~~/services/store/deepDive";
 import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
@@ -45,7 +45,7 @@ export const useOpenChannel = () => {
         const provingTime = `${((performance.now() - started) / 1000).toFixed(1)} s`;
         // Tells them who opened it, readable only with the Channel Key.
         const encryptedSender = (await crypto).encryptSender(channelKey, users!.indexOf(me));
-        dive("open", {
+        recordStep("open", {
           userIndex: String(index),
           channelKey,
           channelKeyHash,
@@ -53,7 +53,6 @@ export const useOpenChannel = () => {
           encryptedSender,
           proof,
           provingTime,
-          tx: undefined,
         });
         setStep("send");
         const hash = await fixedSender(
@@ -61,7 +60,7 @@ export const useOpenChannel = () => {
           () => setStep("confirm"),
         );
         setTx(hash);
-        dive("open", { tx: hash });
+        recordTx("open", hash);
       }
       saveChannelKey(me, other, channelKey);
       setStep("open");
@@ -99,7 +98,7 @@ export const useOpenChannel = () => {
       found++;
     });
     setRestored(found);
-    dive("find", { users: String(users!.length), channels: String(channels.length), found: String(found) });
+    recordStep("find", { users: String(users!.length), channels: String(channels.length), found: String(found) });
   };
 
   return { step, error, open, tx, restored, restore };
