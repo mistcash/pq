@@ -54,3 +54,14 @@ func Assign(userKey []byte, channelKey fr.Element, seed []byte) (*OpenChannel, n
 	}
 	return a, ct, nil
 }
+
+// DecryptChannelKey decrypts ct with the User Key of senderKey. A Channel to someone else decrypts
+// to junk, so check the result against the Channel Key Hash.
+func DecryptChannelKey(senderKey fr.Element, ct native.Ciphertext) (channelKey fr.Element) {
+	_, sk := UserKeys(senderKey)
+	u, v := native.UnpackCiphertext(ct)
+	pt := native.DecryptUV(sk, u, v)
+	slices.Reverse(pt)
+	channelKey.SetBytes(pt)
+	return
+}
