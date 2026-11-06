@@ -22,6 +22,12 @@ const prompt = async (run: () => Promise<Credential | null>) => {
 
 const challenge = () => crypto.getRandomValues(new Uint8Array(32));
 
+/** Why this browser can't make a passkey pqmsg can use, or nothing if it can, or can't tell until it tries. */
+export const passkeyProblem = async () =>
+  !window.PublicKeyCredential || (await PublicKeyCredential.getClientCapabilities?.())?.["extension:prf"] === false
+    ? UNSUPPORTED
+    : undefined;
+
 /** Your passkey's 32-byte PRF output, after a tap. `ids` limits which passkeys may answer. */
 export const passkeyOutput = async (ids?: BufferSource[]): Promise<Hex> => {
   const credential = await prompt(() =>

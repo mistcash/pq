@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PROGRESS } from "./Chat";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
@@ -9,6 +9,7 @@ import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useSenderKey } from "~~/hooks/useSenderKey";
 import { loadCrypto } from "~~/utils/crypto";
 import { friendlyMessage } from "~~/utils/friendly";
+import { passkeyProblem } from "~~/utils/passkey";
 import { notification } from "~~/utils/scaffold-eth";
 
 const FRIENDS = ["0x01", "0x02", "0x05"].map(n => n.padEnd(42, "0"));
@@ -20,6 +21,9 @@ export const Register = () => {
   const { writeContractAsync, isMining } = useScaffoldWriteContract({ contractName: "PqMsg" });
   const [step, setStep] = useState<"start" | "passkey">();
   const { join: newSenderKey } = useSenderKey(setStep);
+  const [problem, setProblem] = useState<string>();
+  // Says so up front when this browser can't make the passkey Join needs.
+  useEffect(() => void passkeyProblem().then(setProblem, () => undefined), []);
 
   const join = async () => {
     setStep("start");
@@ -55,12 +59,12 @@ export const Register = () => {
           {step
             ? PROGRESS[step]
             : address
-              ? "Join so people can find you and message you."
+              ? (problem ?? "Join so people can find you and message you.")
               : "Tiny private messages, from you to anyone."}
         </p>
       </div>
       {address ? (
-        <button className="btn btn-primary btn-lg btn-block" disabled={!!step || isMining} onClick={join}>
+        <button className="btn btn-primary btn-lg btn-block" disabled={!!step || isMining || !!problem} onClick={join}>
           {step || isMining ? <span className="loading loading-dots" /> : "Join"}
         </button>
       ) : (
