@@ -268,6 +268,35 @@ const BEATS: Beat[] = [
       </div>
     ),
   },
+  {
+    kicker: "Demo",
+    title: "Let's watch it prove, live.",
+    lines: ["Open DevTools, say hi, and catch the worker at work."],
+    visual: (
+      <ol className="mx-auto max-w-xl m-0 flex flex-col gap-3 rounded-3xl border-2 bg-base-200 p-6 sm:p-8 text-left sm:text-xl">
+        {[
+          <>
+            Open DevTools <kbd className="kbd kbd-sm">F12</kbd>
+          </>,
+          <>
+            Console: <Hex>pqmsg prover on the GPU</Hex> <span className="opacity-60">(or CPU)</span>
+          </>,
+          <>Performance → Record</>,
+          <>Pick someone, tap “Say hi 👋”</>,
+          <>
+            The worker track: <Hex>pqmsg load</Hex> <Hex>pqmsg prove</Hex>
+          </>,
+        ].map((step, i) => (
+          <li key={i}>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" className="checkbox checkbox-primary" />
+              <span className="leading-9">{step}</span>
+            </label>
+          </li>
+        ))}
+      </ol>
+    ),
+  },
 ];
 
 /** How pqmsg works, under the app: one full-screen beat per cue of the talk. */
