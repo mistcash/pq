@@ -28,6 +28,22 @@ A Fixed Sender submits Channel openings and messages, so the chain shows only it
 
 Deep dive mode (🤿 in the header) explains each step as it happens: what ran in the browser, the circuit and on-chain, the values involved (secrets hidden until tapped), and what to watch out for. It's a sidebar on desktop and sits below the page on phones.
 
+## By the numbers
+
+| | |
+| --- | --- |
+| 🔑 User Key | 800 bytes, a Kyber512 public key |
+| ✉️ Message | up to 62 bytes, stored as 2 Ciphertext Elements |
+| 📦 Encrypted Channel Key | 37 field elements, packing 768 uncompressed Kyber coefficients |
+| 🧮 Opening circuit | 49,223 R1CS constraints, 38 public inputs |
+| 🧾 Opening proof | 384 bytes, Groth16 on BN254 |
+| ⏱️ Proving | about 8 s on the CPU, in the browser; WebGPU takes over where it can |
+| ⛽ Gas | opening a Channel well over 1M, a message about 240k |
+| 🚀 Deploy | 17.3M gas on Sepolia: Verifier 12.0M, PqMsg 5.4M |
+| 📥 One-time download | 42 MB: `pqmsg.wasm` 15 MB, proving key 22 MB, constraint system 5 MB |
+| 🛡️ Kyber hardness | ≥ 112 bits classical core-SVP, NIST level 1 |
+| 🧪 Tests | 15 Foundry, 33 Go |
+
 ## CROPS
 
 pqmsg leads with **privacy**: only a Channel's two ends can read it, even with a future quantum computer, and the chain never shows who is talking to whom.
