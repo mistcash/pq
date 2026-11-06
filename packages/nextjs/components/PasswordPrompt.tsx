@@ -12,7 +12,9 @@ const usePasswordRequest = create<{ ask?: PasswordRequest }>(() => ({}));
 
 /** Asks for the Password that, with your wallet's signature, makes your Sender Key. New Users pick one. */
 export const askPassword = (isNew: boolean) =>
-  new Promise<string>((resolve, reject) =>
+  new Promise<string>((resolve, reject) => {
+    // One sheet at a time: a new request cancels the one before, so no caller waits forever.
+    usePasswordRequest.getState().ask?.resolve();
     usePasswordRequest.setState({
       ask: {
         isNew,
@@ -22,8 +24,8 @@ export const askPassword = (isNew: boolean) =>
             ? resolve(password.normalize("NFC"))
             : reject(new FriendlyError("Your password unlocks your chats. Try again?")),
       },
-    }),
-  );
+    });
+  });
 
 /** The password sheet, shown while `askPassword` waits. */
 export const PasswordPrompt = () => {
