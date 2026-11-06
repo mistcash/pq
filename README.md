@@ -24,6 +24,10 @@ Contract stores:
 2. Channels array: each Channel's Channel Key Hash, Encrypted Channel Key and Encrypted Sender.
 3. Messages: hashmap of Message ID to the two Ciphertext Elements.
 
+It emits `Registered(user)`, `ChannelOpened(channelKeyHash)` and `Posted(messageId)`, each indexed.
+
+The app links each Channel opening and message sent from your browser to its transaction on Etherscan, which shows only the Fixed Sender calling PqMsg.
+
 ## Design
 
 See `DESIGN.md`.
@@ -49,7 +53,7 @@ Locally, `yarn chain`, `yarn deploy` and `yarn start` run everything on anvil, w
 | PqMsg | [`0xF4a1628850B5C030801002A7e10436699Dd4933C`](https://sepolia.etherscan.io/address/0xF4a1628850B5C030801002A7e10436699Dd4933C) |
 | Verifier | [`0x5184F86dB5c85DB386554F2Cbfe232412741C5d3`](https://sepolia.etherscan.io/address/0x5184F86dB5c85DB386554F2Cbfe232412741C5d3) |
 
-The owner is `0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C`. Both were deployed in blocks 12075350 and 12075351. The transactions are in `packages/foundry/broadcast/Deploy.s.sol/11155111/`.
+The owner is `0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C`. Both were deployed in blocks 12075350 and 12075351. The transactions are in `packages/foundry/broadcast/Deploy.s.sol/11155111/`. This deployment predates the events; they arrive with the next PqMsg deploy.
 
 ### Swapping the Verifier
 
