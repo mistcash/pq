@@ -81,8 +81,10 @@ export const useOpenChannel = () => {
 
   /** Finds every Channel you opened from your signature alone (ADR-0002), and caches each Channel Key. */
   const restore = async (me: Address) => {
+    setStep("start");
     const crypto = await loadCrypto();
     const key = await senderKey(me);
+    setStep("prove");
     const { data: users } = await getUsers({ throwOnError: true });
     const { data: channels } = await getChannels({ throwOnError: true });
     const hashes = new Set(channels!.map((channel: { channelKeyHash: bigint }) => channel.channelKeyHash));

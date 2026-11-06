@@ -11,7 +11,7 @@ import type { Joining } from "~~/hooks/useJoinChannel";
 import { type OpenStep, useOpenChannel } from "~~/hooks/useOpenChannel";
 import { joinLink, loadChannelKey } from "~~/utils/channels";
 
-const PROGRESS: Record<Exclude<OpenStep, "open">, string> = {
+export const PROGRESS: Record<Exclude<OpenStep, "open">, string> = {
   start: "Getting ready…",
   sign: "Sign in your wallet to unlock your secret key.",
   check: "Once more, so we know your wallet always signs the same way.",

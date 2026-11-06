@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { PROGRESS } from "./Chat";
 import type { Address } from "viem";
 import { ArrowPathIcon, CheckIcon } from "@heroicons/react/24/outline";
 import type { useOpenChannel } from "~~/hooks/useOpenChannel";
 import { notification } from "~~/utils/scaffold-eth";
 
-type Props = { me: Address } & ReturnType<typeof useOpenChannel>;
+type Props = { me: Address } & Pick<ReturnType<typeof useOpenChannel>, "step" | "restored" | "restore">;
 
 /** Brings back the chats you started with one signature. Ones you received come back through their links. */
-export const Restore = ({ me, restored, restore }: Props) => {
+export const Restore = ({ me, step, restored, restore }: Props) => {
   const [restoring, setRestoring] = useState(false);
 
   const tap = async () => {
@@ -24,7 +25,9 @@ export const Restore = ({ me, restored, restore }: Props) => {
 
   return (
     <div className="flex flex-col items-center text-center gap-2 mt-6">
-      <span className="text-base-content/70">New phone or browser?</span>
+      <span className="text-base-content/70">
+        {restoring && step !== "open" ? PROGRESS[step ?? "start"] : "New phone or browser?"}
+      </span>
       {restored === undefined ? (
         <button className="btn btn-soft btn-primary btn-lg btn-block rounded-full" disabled={restoring} onClick={tap}>
           {restoring ? <span className="loading loading-dots" /> : <ArrowPathIcon className="h-5 w-5" />}

@@ -17,7 +17,7 @@ const Home: NextPage = () => {
   const { address } = useAccount();
   const { data: key } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "keys", args: [address] });
   const [other, setOther] = useState<Address>();
-  const opening = useOpenChannel();
+  const { step, restored, restore } = useOpenChannel();
   const { joining, join, leave } = useJoinChannel(key ? address : undefined);
   const [pastedKey, setPastedKey] = useState("");
   const person = joining?.from ?? other;
@@ -49,7 +49,7 @@ const Home: NextPage = () => {
             }}
           />
           <PasteKey value={pastedKey} onChange={setPastedKey} />
-          <Restore me={address} {...opening} />
+          <Restore me={address} step={step} restored={restored} restore={restore} />
         </>
       )}
     </div>
