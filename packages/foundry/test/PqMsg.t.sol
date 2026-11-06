@@ -68,6 +68,13 @@ contract PqMsgTest is Test {
         assertEq(pqMsg.users(1), bob);
     }
 
+    function testRegisterEmitsRegistered() public {
+        vm.expectEmit(address(pqMsg));
+        emit PqMsg.Registered(alice);
+        vm.prank(alice);
+        pqMsg.register(key(42));
+    }
+
     function testRegisterRejectsUserKeyNot800Bytes() public {
         vm.expectRevert(PqMsg.BadUserKey.selector);
         vm.prank(alice);

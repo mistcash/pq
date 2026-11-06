@@ -30,6 +30,9 @@ contract PqMsg is Ownable {
     /// Messages by Message ID; all zeros means no message.
     mapping(uint256 => Message) public messages;
 
+    /// A User registered or replaced their User Key.
+    event Registered(address indexed user);
+
     error BadUserKey();
     error MessageIdUsed();
     error ZeroCiphertext();
@@ -46,6 +49,7 @@ contract PqMsg is Ownable {
         if (key.length != 800) revert BadUserKey();
         if (userKeys[msg.sender].length == 0) users.push(msg.sender);
         userKeys[msg.sender] = key;
+        emit Registered(msg.sender);
     }
 
     function getUsers() external view returns (address[] memory) {
