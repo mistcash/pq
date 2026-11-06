@@ -24,10 +24,13 @@ export const useMessages = (channelKey: Hex) => {
         const id = crypto.messageId(channelKey, i);
         const [c1, c2] = (await pqMsg!.read.messages([BigInt(id)])) as readonly [bigint, bigint];
         if (!c1 && !c2) return read;
+        const [ciphertext1, ciphertext2] = [toHex(c1), toHex(c2)];
         read.push({
-          text: crypto.decrypt(channelKey, i, toHex(c1), toHex(c2)),
+          text: crypto.decrypt(channelKey, i, ciphertext1, ciphertext2),
           tx: localStorage.getItem(txStorageKey(id)) ?? undefined,
         });
+        const messageKey = crypto.messageKey(channelKey, i);
+        recordStep("read", { messageIndex: String(i), messageKey, messageId: id, ciphertext1, ciphertext2 });
       }
     },
   });
