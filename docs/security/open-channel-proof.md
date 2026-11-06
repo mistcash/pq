@@ -77,14 +77,22 @@ Recipient anonymity also rests on MLWE: Encrypted Channel Keys look random, so t
 
 ### Key derivation
 
-This is the biggest gap. The Sender Key is Poseidon2 of a wallet signature over a fixed message, and ADR-0002 requires the wallet to sign deterministically. `register` is sent from the User's own wallet, so their secp256k1 public key is on-chain. A quantum attacker can:
+Before #45, the Sender Key was Poseidon2 of a wallet signature over a fixed message, which ADR-0002 required to be deterministic. `register` puts the wallet's secp256k1 public key on-chain, so a quantum attacker could recover its private key, sign the message again, and rebuild every key the User has: "harvest now, decrypt later" against every User.
 
-1. recover the wallet's private key with Shor's algorithm,
-2. sign the fixed message again, getting the same signature,
-3. derive the Sender Key, then the User Key's secret key and every Channel Key the User opened,
-4. read every message to and from that User, all of which stay on-chain.
+#45 makes the Sender Key from a passkey instead (ADR-0004):
 
-So "harvest now, decrypt later" works against every User: confidentiality is only as post-quantum as secp256k1.
+```text
+prfOutput  = HMAC-SHA-256(the passkey's PRF secret, SHA-256("WebAuthn PRF" ‖ 0x00 ‖ "pqmsg: derive Sender Key v2"))
+Sender Key = Poseidon2(prfOutput[0:31], prfOutput[31:32] ‖ 0…)
+```
+
+That closes the gap for past messages. The PRF secret is 256 bits, never leaves the passkey, and nothing on-chain depends on it except through Poseidon2 and Kyber. HMAC-SHA-256 keeps about 128 bits against Grover. pqmsg never publishes the passkey's public key, and the PRF secret doesn't depend on it anyway. On its way to the browser, the PRF output is encrypted under an ECDH shared secret ([Yubico](https://developers.yubico.com/Passkeys/Passkey_concepts/Security_key_capabilities/Pseudo-Random_Function_PRF_Support.html)). Cross-device sign-in wraps that in a Noise tunnel that also mixes in a secret from the QR code ([Firefox](https://searchfox.org/firefox-main/source/security/manager/ssl/nsICtapCableHandshake.idl)), so recording the network isn't enough.
+
+What's left:
+
+- **The wallet can still replace the User Key.** `register` overwrites, and only the wallet authorizes it. Once a quantum attacker recovers the wallet's key, they can register their own User Key, and Channels opened to that User afterwards are encrypted to the attacker. Past Channels stay safe, and the User notices, since their passkey stops unlocking. #45 leaves this open.
+- **Synced passkeys copy the PRF secret through their provider.** Apple and Google say their sync is end-to-end encrypted, but we found no documentation that it's post-quantum, so a stored or recorded copy is a possible future target. A security key that doesn't sync avoids this.
+- **The page sees the PRF output**, as it saw the signature before, so a compromised frontend could take the Sender Key.
 
 ### Poseidon2
 
