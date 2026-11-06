@@ -9,7 +9,7 @@ import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
 
-export type OpenStep = "start" | "sign" | "check" | "lookup" | "prove" | "send" | "confirm" | "open";
+export type OpenStep = "start" | "passkey" | "lookup" | "prove" | "send" | "confirm" | "open";
 
 /** Lets the current step render before proving blocks the page. */
 const painted = () => new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve)));
@@ -24,18 +24,20 @@ export const useOpenChannel = () => {
   const { data: pqMsg } = useScaffoldContract({ contractName: "PqMsg" });
   const getChannels = useChannels();
   const fixedSender = useFixedSender();
-  const senderKey = useSenderKey(setStep);
+  const { unlock } = useSenderKey(setStep);
 
   const open = async (me: Address, other: Address) => {
     setStep("start");
     setError(undefined);
     startAnonRpc();
     try {
+      // Before anything else, while the tap still counts: Safari only shows passkey prompts straight after one.
+      const senderKey = await unlock(me);
       const crypto = loadCrypto();
       const { data: users } = await getUsers({ throwOnError: true });
       const index = users!.indexOf(other);
       if (index < 0) throw new FriendlyError("They haven't joined pqmsg yet. Ask them to join first!");
-      const channelKey = (await crypto).channelKey(await senderKey(me), index);
+      const channelKey = (await crypto).channelKey(senderKey, index);
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
       if (!(await getChannels()).some(channel => channel.channelKeyHash === BigInt(channelKeyHash))) {
         // Reading their User Key directly would tell the RPC server who you're about to message.
@@ -69,11 +71,11 @@ export const useOpenChannel = () => {
     }
   };
 
-  /** Finds every Channel from or to you with one signature (ADR-0002), and caches each Channel Key. */
+  /** Finds every Channel from or to you with one passkey tap (ADR-0004), and caches each Channel Key. */
   const restore = async (me: Address) => {
     setStep("start");
+    const key = await unlock(me);
     const crypto = await loadCrypto();
-    const key = await senderKey(me);
     setStep("prove");
     const { data: users } = await getUsers({ throwOnError: true });
     const channels = await getChannels();

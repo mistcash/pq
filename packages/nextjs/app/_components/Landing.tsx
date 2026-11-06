@@ -125,15 +125,12 @@ const BEATS: Beat[] = [
   },
   {
     kicker: "Keys",
-    title: "One signature unlocks everything.",
-    lines: [
-      "Your wallet signs one fixed message, and every key grows from it.",
-      "Nothing to back up beyond the wallet.",
-    ],
+    title: "One passkey unlocks everything.",
+    lines: ["You make a passkey when you join, and every key grows from it.", "Nothing to back up beyond the passkey."],
     tags: ["H = Poseidon2", "User Key = Kyber512"],
     visual: (
       <div className="flex flex-col items-center max-w-2xl mx-auto">
-        <Hex>✍️ wallet signature</Hex>
+        <Hex>🔑 passkey&apos;s PRF output</Hex>
         <Edge label="H" />
         <Node
           name="Sender Key"
@@ -331,6 +328,7 @@ const BEATS: Beat[] = [
             items: [
               ["The key exchange", "Kyber512, built on lattices."],
               ["Every hash and pad", "Poseidon2."],
+              ["The Sender Key", "From your passkey, which no public key gives away."],
             ],
           },
           {
@@ -343,8 +341,8 @@ const BEATS: Beat[] = [
                 "A quantum attacker could forge Groth16 Channel openings. That breaks integrity only: the proof still hides the recipient.",
               ],
               [
-                "The Sender Key",
-                "It comes from an ECDSA wallet signature, so whoever recovers the wallet key from its public key can re-derive it.",
+                "Who can replace a User Key",
+                "Your wallet can, so whoever recovers its key from its public key could swap in theirs and read Channels opened to you after that.",
               ],
             ],
           },
@@ -373,7 +371,7 @@ const BEATS: Beat[] = [
         <span className="hidden sm:block absolute inset-x-[10%] top-10 -z-10 border-t-2 border-dashed" />
         {(
           [
-            [KeyIcon, "A post-quantum root secret", "so the Sender Key stops resting on ECDSA"],
+            [KeyIcon, "A User Key only you can replace", "so the wallet alone can't swap it"],
             [LockClosedIcon, "ML-KEM", "the standardized Kyber"],
             [UserGroupIcon, "A multi-party setup ceremony", "no single trusted party"],
             [CheckBadgeIcon, "Message authentication", "so tampering shows"],
