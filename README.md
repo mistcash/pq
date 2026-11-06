@@ -1,6 +1,6 @@
 # pq
 
-[![Lint](https://github.com/mistcash/pqmsg/actions/workflows/lint.yaml/badge.svg)](https://github.com/mistcash/pqmsg/actions/workflows/lint.yaml)
+[![Lint](https://github.com/mistcash/pq/actions/workflows/lint.yaml/badge.svg)](https://github.com/mistcash/pq/actions/workflows/lint.yaml)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENCE)
 [![Network: Sepolia](https://img.shields.io/badge/network-Sepolia-627EEA?logo=ethereum)](DEPLOY.md#sepolia-deployment)
 ![Key exchange: Kyber512](https://img.shields.io/badge/key%20exchange-Kyber512-6f42c1)
