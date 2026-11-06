@@ -1,9 +1,10 @@
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import type { Hex } from "viem";
+import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { fetchChannels } from "~~/utils/arkiv";
 
-export type Channel = { channelKeyHash: bigint; encryptedChannelKey: readonly bigint[]; encryptedSender: bigint };
-
-/** Fetches every Channel on-chain, to look up whether a Channel is open or find the ones opened to you. */
+/** Fetches every Channel, its hash from PqMsg and its data from Arkiv, to look one up or find the ones opened to you. */
 export const useChannels = () => {
   const { refetch } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getChannels" });
-  return async () => (await refetch({ throwOnError: true })).data as readonly Channel[];
+  const { data: pqMsg } = useScaffoldContract({ contractName: "PqMsg" });
+  return async () => fetchChannels(pqMsg!.address, (await refetch({ throwOnError: true })).data as readonly Hex[]);
 };
