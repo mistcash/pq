@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   11155111: {
     Verifier: {
-      address: "0x56d42ba891fdc1f3367018f789ae964207499633",
+      address: "0x5e6a8b5de890297931f9ac77ff7c2bb5db7fc295",
       abi: [
         {
           type: "function",
@@ -101,10 +101,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 12079574,
+      deployedOnBlock: 12079710,
     },
     PqMsg: {
-      address: "0x83ba93654cac7a6f9489e81c89f4aaa48d755c52",
+      address: "0xfbf7e8e3cc9c6c641f23ab5be6cabc919a8af515",
       abi: [
         {
           type: "constructor",
@@ -357,6 +357,12 @@ const deployedContracts = {
               indexed: true,
               internalType: "uint256",
             },
+            {
+              name: "channelHash",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
           ],
           anonymous: false,
         },
@@ -402,6 +408,12 @@ const deployedContracts = {
               indexed: true,
               internalType: "address",
             },
+            {
+              name: "userKeyHash",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
           ],
           anonymous: false,
         },
@@ -444,7 +456,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 12079575,
+      deployedOnBlock: 12079711,
     },
   },
 } as const;
