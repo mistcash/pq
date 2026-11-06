@@ -1,3 +1,0 @@
-# The Sender Key mixes in a Password, so a quantum attacker can't re-derive it
-
-A wallet signature alone (ADR-0002) falls to a quantum attacker: registering puts the wallet's public key on-chain, and a recovered private key re-signs the fixed message deterministically (#44). So the Sender Key also hashes in the Password, stretched by Argon2id, the one hash outside Poseidon2 (ADR-0001) because a password needs a memory-hard function. We chose it over a passkey's PRF output (browser support, tied to the site's domain) and a recovery phrase (a backup chore), at the cost of offline guessing against the on-chain User Key, so Passwords need at least 12 characters. There's no reset, and changing the derivation orphans every Channel.
