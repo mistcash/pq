@@ -72,7 +72,7 @@ func main() {
 			encryptedSender, err2 := element(a[1])
 			return toHex(circuits.DecryptSender(channelKey, encryptedSender)), errors.Join(err, err2)
 		}),
-		// loadProver(ccs, pk) reads the constraint system and proving key once, for prove, and resolves to whether it uses the GPU.
+		// loadProver(ccs, pk) reads the constraint system and proving key once, for prove on the CPU.
 		"loadProver": async(func(a []js.Value) (any, error) {
 			cs, key := groth16.NewCS(ecc.BN254), groth16.NewProvingKey(ecc.BN254)
 			if _, err := cs.ReadFrom(bytes.NewReader(bytesOf(a[0]))); err != nil {
@@ -83,8 +83,12 @@ func main() {
 				return nil, err
 			}
 			ccs, pk = cs, key
-			// On the GPU when the page installed gnark's WebGPU bridge (gnark-webgpu.js), else on the CPU.
-			gpu = js.Global().Get("gnarkGroth16WebGPU").Truthy() && webgpu.Prepare(pk) == nil
+			return nil, nil
+		}),
+		// useGPU() moves the loaded prover to the GPU, once the page installed gnark's WebGPU bridge (gnark-webgpu.js),
+		// and resolves to whether it did. Not while a proof runs.
+		"useGPU": async(func(a []js.Value) (any, error) {
+			gpu = pk != nil && js.Global().Get("gnarkGroth16WebGPU").Truthy() && webgpu.Prepare(pk) == nil
 			return gpu, nil
 		}),
 		// prove(userKey, channelKey) resolves to { proof, channelKeyHash, encryptedChannelKey }, ready for the contract.
