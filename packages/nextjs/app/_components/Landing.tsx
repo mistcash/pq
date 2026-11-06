@@ -19,7 +19,7 @@ const BOB = "0x05".padEnd(42, "0");
 const FIXED_SENDER = "0xf1".padEnd(42, "0");
 
 const Hex = ({ children }: { children: ReactNode }) => (
-  <code className="rounded-full bg-primary/10 text-primary px-3 py-1 text-sm">{children}</code>
+  <code className="rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">{children}</code>
 );
 
 const Arrow = ({ label }: { label?: string }) => (
