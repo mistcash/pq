@@ -32,9 +32,7 @@ contract PqMsg is Ownable {
 
     /// A User registered or replaced their User Key.
     event Registered(address indexed user);
-    /// A Channel was opened under its Channel Key Hash.
     event ChannelOpened(uint256 indexed channelKeyHash);
-    /// A message was posted under its Message ID.
     event Posted(uint256 indexed messageId);
 
     error BadUserKey();
