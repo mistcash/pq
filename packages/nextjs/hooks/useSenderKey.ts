@@ -1,49 +1,30 @@
 import type { Address, Hex } from "viem";
-import { useSignMessage } from "wagmi";
-import { askPassword } from "~~/components/PasswordPrompt";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError } from "~~/utils/friendly";
+import { createPasskey, passkeyOutput } from "~~/utils/passkey";
 
-const SIGN_MESSAGE = "pqmsg: derive Sender Key v1";
 /** Sender Keys live in memory only, for this page session (ADR-0002). */
 const senderKeys = new Map<Address, Hex>();
 
-export type UnlockStep = "password" | "sign" | "check";
+export type UnlockStep = "passkey";
 
 /**
- * Gets your Sender Key from your Password and a wallet signature, asking once more the first time to check the wallet
- * signs alike. Once you've joined, a Password that doesn't give back your User Key is refused (ADR-0004).
+ * Gets your Sender Key from your passkey, which Join makes (ADR-0004). Once you've joined, a passkey whose Sender Key
+ * doesn't give back your User Key is refused.
  */
 export const useSenderKey = (onStep: (step: UnlockStep) => void) => {
-  const { signMessageAsync } = useSignMessage();
   const { data: pqMsg } = useScaffoldContract({ contractName: "PqMsg" });
 
-  const signTwiceFirstTime = async (me: Address) => {
-    onStep("sign");
-    const signature = await signMessageAsync({ account: me, message: SIGN_MESSAGE });
-    const checked = `pqmsg:signs-alike:${me}`;
-    if (!localStorage.getItem(checked)) {
-      onStep("check");
-      if ((await signMessageAsync({ account: me, message: SIGN_MESSAGE })) !== signature) {
-        throw new FriendlyError(
-          "Your wallet signed the same thing two different ways, so it can't keep your chats. Try another wallet.",
-        );
-      }
-      localStorage.setItem(checked, "1");
-    }
-    return signature;
-  };
-
-  /** Only Join passes `isNew`: a lagging read must never skip the Password check. */
+  /** Only Join passes `isNew`: a lagging read must never skip the check. */
   return async (me: Address, isNew = false) => {
     if (!senderKeys.has(me)) {
-      onStep("password");
-      const password = await askPassword(isNew);
+      onStep("passkey");
+      const output = isNew ? await createPasskey(me) : await passkeyOutput();
       const crypto = await loadCrypto();
-      const senderKey = crypto.senderKey(await signTwiceFirstTime(me), password);
+      const senderKey = crypto.senderKey(output);
       if (!isNew && crypto.userKey(senderKey) !== (await pqMsg!.read.userKeys([me]))) {
-        throw new FriendlyError("That's not your password. Try again?");
+        throw new FriendlyError("That passkey is for another wallet. Pick the one named after this wallet.");
       }
       senderKeys.set(me, senderKey);
     }
