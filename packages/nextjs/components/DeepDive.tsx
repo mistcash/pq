@@ -15,11 +15,11 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
   {
     step: "unlock",
     title: "Join & unlock",
-    what: "A wallet signature makes your Sender Key, the secret behind your User Key and every Channel you open. Joining puts your User Key, the public half of a key pair made from it, on-chain.",
+    what: "Your passkey makes your Sender Key, the secret behind your User Key and every Channel you open. Joining puts your User Key, the public half of a key pair made from it, on-chain from your wallet.",
     notes: [
       [
         "Browser",
-        "Your wallet signs a fixed message, twice the first time to check it always signs the same way, and Poseidon2 hashes the signature into your Sender Key. H(Sender Key, tag) seeds a Kyber512 key pair. It all runs in Go, compiled to WASM.",
+        "Join makes a passkey named after your wallet. Each session, one tap gives its PRF output, 32 bytes from a secret that never leaves the passkey, and Poseidon2 hashes them into your Sender Key. H(Sender Key, tag) seeds a Kyber512 key pair. It all runs in Go, compiled to WASM.",
       ],
       [
         "Chain",
@@ -27,7 +27,7 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
       ],
       [
         "Watch out",
-        "Your Sender Key lives only in this tab's memory. But your wallet's public key is on-chain now, so a future quantum computer could recover your wallet's key from it, re-sign, and re-derive every key you have (#44).",
+        "Your Sender Key lives only in this tab's memory, and no public key reveals your passkey's secret, so a quantum computer can't re-derive it. But lose the passkey and your chats are gone, it only works on this site's domain, and whoever controls your wallet could register a new User Key and read Channels opened to you after that.",
       ],
     ],
   },
