@@ -331,6 +331,7 @@ const BEATS: Beat[] = [
             items: [
               ["The key exchange", "Kyber512, built on lattices."],
               ["Every hash and pad", "Poseidon2."],
+              ["The Sender Key", "From your passkey, which no public key gives away."],
             ],
           },
           {
@@ -343,8 +344,8 @@ const BEATS: Beat[] = [
                 "A quantum attacker could forge Groth16 Channel openings. That breaks integrity only: the proof still hides the recipient.",
               ],
               [
-                "The Sender Key",
-                "It comes from an ECDSA wallet signature, so whoever recovers the wallet key from its public key can re-derive it.",
+                "Who can replace a User Key",
+                "Your wallet can, so whoever recovers its key from its public key could swap in theirs and read Channels opened to you after that.",
               ],
             ],
           },
