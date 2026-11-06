@@ -70,7 +70,7 @@ contract PqMsgTest is Test {
 
     function testRegisterEmitsRegistered() public {
         vm.expectEmit(address(pqMsg));
-        emit PqMsg.Registered(alice);
+        emit PqMsg.Registered(alice, keccak256(key(42)));
         vm.prank(alice);
         pqMsg.register(key(42));
     }
@@ -91,7 +91,7 @@ contract PqMsgTest is Test {
 
     function testOpenChannelEmitsChannelOpened() public {
         vm.expectEmit(address(pqMsg));
-        emit PqMsg.ChannelOpened(channelKeyHash);
+        emit PqMsg.ChannelOpened(channelKeyHash, keccak256(abi.encode(channelKeyHash, encryptedChannelKey, uint256(7))));
         pqMsg.openChannel(channelKeyHash, encryptedChannelKey, 7, proof);
     }
 

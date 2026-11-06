@@ -23,9 +23,10 @@ contract PqMsg is Ownable {
     /// Messages by Message ID; all zeros means no message.
     mapping(uint256 => Message) public messages;
 
-    /// A User registered or replaced their User Key.
-    event Registered(address indexed user);
-    event ChannelOpened(uint256 indexed channelKeyHash);
+    /// A User registered or replaced their User Key, whose hash is `userKeyHash`.
+    event Registered(address indexed user, bytes32 userKeyHash);
+    /// A Channel opened; `channelHash` finds its data on Arkiv.
+    event ChannelOpened(uint256 indexed channelKeyHash, bytes32 channelHash);
     event Posted(uint256 indexed messageId);
 
     error BadUserKey();
@@ -42,9 +43,10 @@ contract PqMsg is Ownable {
 
     function register(bytes calldata key) external {
         if (key.length != 800) revert BadUserKey();
+        bytes32 userKeyHash = keccak256(key);
         if (userKeyHashes[msg.sender] == 0) users.push(msg.sender);
-        userKeyHashes[msg.sender] = keccak256(key);
-        emit Registered(msg.sender);
+        userKeyHashes[msg.sender] = userKeyHash;
+        emit Registered(msg.sender, userKeyHash);
     }
 
     function getUsers() external view returns (address[] memory) {
@@ -66,8 +68,9 @@ contract PqMsg is Ownable {
             input[i + 1] = encryptedChannelKey[i];
         }
         verifier.verifyProof(proof, input);
-        channels.push(keccak256(abi.encode(channelKeyHash, encryptedChannelKey, encryptedSender)));
-        emit ChannelOpened(channelKeyHash);
+        bytes32 channelHash = keccak256(abi.encode(channelKeyHash, encryptedChannelKey, encryptedSender));
+        channels.push(channelHash);
+        emit ChannelOpened(channelKeyHash, channelHash);
     }
 
     /// Every Channel's hash, against which the app checks the Channels it fetches from Arkiv.
