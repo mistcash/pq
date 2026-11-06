@@ -22,6 +22,11 @@ contract Verifier {
     /// curves, that pairing equation fails, or that the proof is not for the
     /// provided public input.
     error ProofInvalid();
+    /// The commitment is invalid
+    /// @dev This can mean that provided commitment points and/or proof of knowledge are not on their
+    /// curves, that pairing equation fails, or that the commitment and/or proof of knowledge is not for the
+    /// commitment key.
+    error CommitmentInvalid();
 
     // Addresses of precompiles
     uint256 constant PRECOMPILE_MODEXP = 0x05;
@@ -54,106 +59,119 @@ contract Verifier {
     uint256 constant EXP_SQRT_FP = 0xC19139CB84C680A6E14116DA060561765E05AA45A1C72A34F082305B61F3F52; // (P + 1) / 4;
 
     // Groth16 alpha point in G1
-    uint256 constant ALPHA_X = 15669992452430300716894460465967912957462066530591652484757061018850267547955;
-    uint256 constant ALPHA_Y = 7105533729727693972570349974345386066914228877293402848553237353969934648305;
+    uint256 constant ALPHA_X = 4769582543151598132235373713023642647852324850245682023430392533190764054359;
+    uint256 constant ALPHA_Y = 5474816063751509768366464980912714816557885026825699844383617759454808593423;
 
     // Groth16 beta point in G2 in powers of i
-    uint256 constant BETA_NEG_X_0 = 11423547868818342277404225075374593443605439446767716318606346697724608329702;
-    uint256 constant BETA_NEG_X_1 = 5583156580185906016650746300318848188462977900502276370267670239733206701317;
-    uint256 constant BETA_NEG_Y_0 = 115477930651324407804898481116941469766755824356749922146339136597045278606;
-    uint256 constant BETA_NEG_Y_1 = 7024780834806438537868013413085924511182300170211632870073554055388876420386;
+    uint256 constant BETA_NEG_X_0 = 14615686225152787044579092979819531740738054441253192968021116206359516155582;
+    uint256 constant BETA_NEG_X_1 = 4374912805685369467698252696983704127987604581539977800739989766370993221213;
+    uint256 constant BETA_NEG_Y_0 = 9898725878930128449091926938087461264159116493422620451866829220850460357372;
+    uint256 constant BETA_NEG_Y_1 = 8818139655799356638890413811395520531386749331924894699971149093366177912617;
 
     // Groth16 gamma point in G2 in powers of i
-    uint256 constant GAMMA_NEG_X_0 = 20595946375082621898663582284623881759616515619587975072295340010166897756556;
-    uint256 constant GAMMA_NEG_X_1 = 7648664113171376683474498872245987950266561790360380027505948300685693978962;
-    uint256 constant GAMMA_NEG_Y_0 = 12589784341024523772701297448815814699434866569056101492404567300732832952583;
-    uint256 constant GAMMA_NEG_Y_1 = 16304191113681638673747803507748551252913488781221203970935675921475350201561;
+    uint256 constant GAMMA_NEG_X_0 = 9016217993297434557522335201652417860253455783463193611037045537178203202968;
+    uint256 constant GAMMA_NEG_X_1 = 16246149834950555361094537895472170328284584426740439451264724872755187580507;
+    uint256 constant GAMMA_NEG_Y_0 = 20160512837175926878497383948692737606300608595622277792608178319594305660625;
+    uint256 constant GAMMA_NEG_Y_1 = 5491767978221084789566456189229638383725311938443983846709219125733611632058;
 
     // Groth16 delta point in G2 in powers of i
-    uint256 constant DELTA_NEG_X_0 = 17509385727917031841305877598483227716127777447550938396349988366993214822609;
-    uint256 constant DELTA_NEG_X_1 = 328752855166872824214585164669432097220918611846584109191846249425347601434;
-    uint256 constant DELTA_NEG_Y_0 = 19900532995855850998138252342445064684257902272342869021006459542594662508667;
-    uint256 constant DELTA_NEG_Y_1 = 1173036427418514019800442587799568166941855676167653235390126463913187892516;
+    uint256 constant DELTA_NEG_X_0 = 7654367163333941038330083243756106344149457707643411631430056157089391208114;
+    uint256 constant DELTA_NEG_X_1 = 12210441948492412240418998076706758199362575829411543026396268338500240972439;
+    uint256 constant DELTA_NEG_Y_0 = 2460557989123729269619061677476878958907326662630368720265748702116512385046;
+    uint256 constant DELTA_NEG_Y_1 = 5044720527953242330898853323052343353472638246967317508086156815860839957982;
+    // Pedersen G point in G2 in powers of i
+    uint256 constant PEDERSEN_G_X_0 = 14822670738073860147769568679547026992169396857168027492776711021586930805542;
+    uint256 constant PEDERSEN_G_X_1 = 3150751751739668829603503749501377580190807918476380393590723848992600265464;
+    uint256 constant PEDERSEN_G_Y_0 = 19252431080839568682354611624333933998751713566182236536300046276220224506798;
+    uint256 constant PEDERSEN_G_Y_1 = 250359852691460782657658588660376637456912912025249017892153218541269580114;
+
+    // Pedersen GSigmaNeg point in G2 in powers of i
+    uint256 constant PEDERSEN_GSIGMANEG_X_0 = 16516197058085908797184231696766892592868190448884502839670809919295891108980;
+    uint256 constant PEDERSEN_GSIGMANEG_X_1 = 3089161501292049353212625601017716063516106988860387213959661732039009846973;
+    uint256 constant PEDERSEN_GSIGMANEG_Y_0 = 18813381748852914927249809104498960671617779826723203936476747325422408096620;
+    uint256 constant PEDERSEN_GSIGMANEG_Y_1 = 8310801457873533853356508888722757339603087571430833575251924508027905081318;
 
     // Constant and public input points
-    uint256 constant CONSTANT_X = 13977889909137197909650641739513398008818026255121814857373239570266470152111;
-    uint256 constant CONSTANT_Y = 6162399392706408293634764624274157560089673782151486097579148177983519580434;
-    uint256 constant PUB_0_X = 18393362416138320903211224968928700119952514472384365395493348076412470064303;
-    uint256 constant PUB_0_Y = 14937548740166838271022534150728570501383863165081731429943552267632518473862;
-    uint256 constant PUB_1_X = 0;
-    uint256 constant PUB_1_Y = 0;
-    uint256 constant PUB_2_X = 0;
-    uint256 constant PUB_2_Y = 0;
-    uint256 constant PUB_3_X = 0;
-    uint256 constant PUB_3_Y = 0;
-    uint256 constant PUB_4_X = 0;
-    uint256 constant PUB_4_Y = 0;
-    uint256 constant PUB_5_X = 0;
-    uint256 constant PUB_5_Y = 0;
-    uint256 constant PUB_6_X = 0;
-    uint256 constant PUB_6_Y = 0;
-    uint256 constant PUB_7_X = 0;
-    uint256 constant PUB_7_Y = 0;
-    uint256 constant PUB_8_X = 0;
-    uint256 constant PUB_8_Y = 0;
-    uint256 constant PUB_9_X = 0;
-    uint256 constant PUB_9_Y = 0;
-    uint256 constant PUB_10_X = 0;
-    uint256 constant PUB_10_Y = 0;
-    uint256 constant PUB_11_X = 0;
-    uint256 constant PUB_11_Y = 0;
-    uint256 constant PUB_12_X = 0;
-    uint256 constant PUB_12_Y = 0;
-    uint256 constant PUB_13_X = 0;
-    uint256 constant PUB_13_Y = 0;
-    uint256 constant PUB_14_X = 0;
-    uint256 constant PUB_14_Y = 0;
-    uint256 constant PUB_15_X = 0;
-    uint256 constant PUB_15_Y = 0;
-    uint256 constant PUB_16_X = 0;
-    uint256 constant PUB_16_Y = 0;
-    uint256 constant PUB_17_X = 0;
-    uint256 constant PUB_17_Y = 0;
-    uint256 constant PUB_18_X = 0;
-    uint256 constant PUB_18_Y = 0;
-    uint256 constant PUB_19_X = 0;
-    uint256 constant PUB_19_Y = 0;
-    uint256 constant PUB_20_X = 0;
-    uint256 constant PUB_20_Y = 0;
-    uint256 constant PUB_21_X = 0;
-    uint256 constant PUB_21_Y = 0;
-    uint256 constant PUB_22_X = 0;
-    uint256 constant PUB_22_Y = 0;
-    uint256 constant PUB_23_X = 0;
-    uint256 constant PUB_23_Y = 0;
-    uint256 constant PUB_24_X = 0;
-    uint256 constant PUB_24_Y = 0;
-    uint256 constant PUB_25_X = 0;
-    uint256 constant PUB_25_Y = 0;
-    uint256 constant PUB_26_X = 0;
-    uint256 constant PUB_26_Y = 0;
-    uint256 constant PUB_27_X = 0;
-    uint256 constant PUB_27_Y = 0;
-    uint256 constant PUB_28_X = 0;
-    uint256 constant PUB_28_Y = 0;
-    uint256 constant PUB_29_X = 0;
-    uint256 constant PUB_29_Y = 0;
-    uint256 constant PUB_30_X = 0;
-    uint256 constant PUB_30_Y = 0;
-    uint256 constant PUB_31_X = 0;
-    uint256 constant PUB_31_Y = 0;
-    uint256 constant PUB_32_X = 0;
-    uint256 constant PUB_32_Y = 0;
-    uint256 constant PUB_33_X = 0;
-    uint256 constant PUB_33_Y = 0;
-    uint256 constant PUB_34_X = 0;
-    uint256 constant PUB_34_Y = 0;
-    uint256 constant PUB_35_X = 0;
-    uint256 constant PUB_35_Y = 0;
-    uint256 constant PUB_36_X = 0;
-    uint256 constant PUB_36_Y = 0;
-    uint256 constant PUB_37_X = 0;
-    uint256 constant PUB_37_Y = 0;
+    uint256 constant CONSTANT_X = 1010319289646695716437583067722137042330483782518203700484939852144780380710;
+    uint256 constant CONSTANT_Y = 17574704294921844378437488290616559024651416898932223433460866991392130471407;
+    uint256 constant PUB_0_X = 1658061169795750816449096097021238838969411148184233209504214403344829963327;
+    uint256 constant PUB_0_Y = 4853159522722675110593200685386997724593117192953250120128878667712909635645;
+    uint256 constant PUB_1_X = 3150708918548529917062895747419209633528027729205024038780303646469355449566;
+    uint256 constant PUB_1_Y = 20521155140161880810610868798069898120620919329323305120401464793614084032247;
+    uint256 constant PUB_2_X = 10778885367035032898926129894747744760484239757260752482809348539968108928794;
+    uint256 constant PUB_2_Y = 8793339220731181532309919897092055352111476590020501128001048319189501537978;
+    uint256 constant PUB_3_X = 3640567606344620054959975415921631419603875109217468924175130317634668367696;
+    uint256 constant PUB_3_Y = 5989721578412999163954907845932030641749400775019243317151183338331675730585;
+    uint256 constant PUB_4_X = 14913209288192906522580691252679629993844361265841141473960948778767656690799;
+    uint256 constant PUB_4_Y = 15441683600698059382744549181244168808037041143964357633178233222510037032616;
+    uint256 constant PUB_5_X = 21805319107132235975468661248753735751829521143627159698370997428892705250420;
+    uint256 constant PUB_5_Y = 8602899439188738799706581034313276142854362852919484690846924348097814460599;
+    uint256 constant PUB_6_X = 10590608955049214666450052720906351120196206563893265538197127635266403780333;
+    uint256 constant PUB_6_Y = 20830766130586775900197613883951733692953851198073346580517380806550473167821;
+    uint256 constant PUB_7_X = 7495587543798162809694397998741167594425574362033299382714852026280352635470;
+    uint256 constant PUB_7_Y = 14887311002378843727181362916697786733254974519562138877229285965577717651517;
+    uint256 constant PUB_8_X = 13884632028456036233543960730999067983472125045926026492800456438670906012379;
+    uint256 constant PUB_8_Y = 8684886399536828981208885780877497230566698458114809761511410978610944397242;
+    uint256 constant PUB_9_X = 17127774359929881564971811694635373016075455107701306641627033127658681588841;
+    uint256 constant PUB_9_Y = 16286217179131493464496591685665763872905920006582788409223953540518235217815;
+    uint256 constant PUB_10_X = 11814106954822786982637043401552434043889867362635722970862424699997930106664;
+    uint256 constant PUB_10_Y = 17203546368903090775748881096138482104294212257714080086886096205340768625418;
+    uint256 constant PUB_11_X = 20112896341044706894087097734992387982835247977332939244291940942960146378381;
+    uint256 constant PUB_11_Y = 17434982822103210611370012928427925631521276730607655712101287813430459429888;
+    uint256 constant PUB_12_X = 10953092433533908531182903587632608302565618594689130306576042640068687139273;
+    uint256 constant PUB_12_Y = 10448099601457792908909419916622622837721396018364992840795020446255594051261;
+    uint256 constant PUB_13_X = 7687212881060116904506621633504694389570740032694700894378876070074764558314;
+    uint256 constant PUB_13_Y = 20851780178477448874313547885476911525405114123355831610300771951690604710393;
+    uint256 constant PUB_14_X = 21465649595989819808613320381928703833293881465482934007436763177207526170346;
+    uint256 constant PUB_14_Y = 18580173635929641597402905198813491939725909071494414256786835699124190240695;
+    uint256 constant PUB_15_X = 14487851566158593213781617143180543368207830294478778256651422812745950995178;
+    uint256 constant PUB_15_Y = 16308707644883424952344794070200380221462168112345304528448367752556647124322;
+    uint256 constant PUB_16_X = 21390307575601842037361265253820901388421958353874513500878482255126002549748;
+    uint256 constant PUB_16_Y = 2849248512344273915574630621541527097907233819936464987708427566257239115483;
+    uint256 constant PUB_17_X = 7846515950581446307927104117148513441623102057100995085760133569036368740156;
+    uint256 constant PUB_17_Y = 20011490201660443642278743541553766019270043162249734179162614020521383728632;
+    uint256 constant PUB_18_X = 7377706962631225370013664092009651200349269564233293281437576728579468250043;
+    uint256 constant PUB_18_Y = 20947372536538199413433700577432634334827934638559785890492114925400605878810;
+    uint256 constant PUB_19_X = 5646000941445802375602330343403614591496170897127331425093135678228669727856;
+    uint256 constant PUB_19_Y = 16001037570685278028431656313479209813054693760164311089655098551856241359461;
+    uint256 constant PUB_20_X = 20555537961870081650958106886868793193604854804523629474275387181716999658753;
+    uint256 constant PUB_20_Y = 410433566747910845566474318768282525303102314245900497216533654122671697469;
+    uint256 constant PUB_21_X = 3553138960588170489955540550199902421914162171486211080227317292385719518419;
+    uint256 constant PUB_21_Y = 10601637749149916699621990353573551946969758262540146370164920013603725091387;
+    uint256 constant PUB_22_X = 4624767570741776914434345200888622129587363285119371176923265454990373869525;
+    uint256 constant PUB_22_Y = 14470813456682632515033334280509779085870651553093240730919115433627618224335;
+    uint256 constant PUB_23_X = 14954403844073197589619867780466502416428811547454304383061897907637343359667;
+    uint256 constant PUB_23_Y = 17855870505481291261501131086540420014891820429888693561431472567197034547326;
+    uint256 constant PUB_24_X = 6281735000183498416942938723311753342480776222298575583607353485332457227254;
+    uint256 constant PUB_24_Y = 6545247177896854063261738752084826960681830482541663369207570367479092538807;
+    uint256 constant PUB_25_X = 2810005748421209545139728646388146316177678990268520734239223895800513360128;
+    uint256 constant PUB_25_Y = 10818720782124461855699965826148281405622414403944325689988097798558904791648;
+    uint256 constant PUB_26_X = 17174822661872374452343410295870382048409771912333004593182343024133678017810;
+    uint256 constant PUB_26_Y = 5961865849098422099090920373455029696046990471996801746132096814314605222929;
+    uint256 constant PUB_27_X = 7197637645916238198836499858056912217445544500646528561746352221849696504615;
+    uint256 constant PUB_27_Y = 279398163651915627937692940579901213310711091696360991560449923659922191157;
+    uint256 constant PUB_28_X = 10132707922202627893056132362074060019658837031103911332985112500581937133003;
+    uint256 constant PUB_28_Y = 21194788307289865945135754137358644165967662214726496494161954945761170853746;
+    uint256 constant PUB_29_X = 13335520003311073543094564433755383980919723037723422962015210261873231120775;
+    uint256 constant PUB_29_Y = 9214831252443659925488426045902525691764481897648377551098606184143118150320;
+    uint256 constant PUB_30_X = 3618744670652558450046121964657721516069626490019729185186454423801198023157;
+    uint256 constant PUB_30_Y = 17530049410961948573263949640047949943892205972235669128718920297173558971675;
+    uint256 constant PUB_31_X = 8482293364730043487096229740178871904645600633162357339000622619954293632649;
+    uint256 constant PUB_31_Y = 7134791252691052817144733528893248155150683035734331204443602637918454522790;
+    uint256 constant PUB_32_X = 9737956422478337696692640745273668968600715155485140386304577210694509583618;
+    uint256 constant PUB_32_Y = 19790990040530095217678294945471357126810889411409504620623348463693378621641;
+    uint256 constant PUB_33_X = 14752326062633778468420401257060637520532479604353741938420821387687532280928;
+    uint256 constant PUB_33_Y = 9703803798163127311956541641688939457175986101647482632103555258497050610826;
+    uint256 constant PUB_34_X = 21303155361696543445117097520764784864199043177538498021092286246016889640971;
+    uint256 constant PUB_34_Y = 2536061215381783705080914227971558542641640398725913933527404693820978815323;
+    uint256 constant PUB_35_X = 10529328526808721228042889534216756869737322883544513352195323126320470134967;
+    uint256 constant PUB_35_Y = 5410299947471845271586491489921084713957647897189831011943805375950047967772;
+    uint256 constant PUB_36_X = 21643658337160816104430858893348777678147367817634167290956800019076166611134;
+    uint256 constant PUB_36_Y = 7042885671115628381531290068574505416641107418923896481696024849235249910798;
+    uint256 constant PUB_37_X = 7577292787726301103049352456665780088981518458230007712012709186490165289791;
+    uint256 constant PUB_37_Y = 6464685199544951136485468023552880087639597124086642881560724373596170145189;
+    uint256 constant PUB_38_X = 12890142098777900180422796114652484394042467808584358151612877026061275845225;
+    uint256 constant PUB_38_Y = 14313276092776870864072861630510558685304131366795906267046153912022461240302;
 
     /// Negation in Fp.
     /// @notice Returns a number x such that a + x = 0 in Fp.
@@ -428,9 +446,15 @@ contract Verifier {
     /// @notice Computes the multi-scalar-multiplication of the public input
     /// elements and the verification key including the constant term.
     /// @param input The public inputs. These are elements of the scalar field Fr.
+    /// @param publicCommitments public inputs generated from pedersen commitments.
+    /// @param commitments The Pedersen commitments from the proof.
     /// @return x The X coordinate of the resulting G1 point.
     /// @return y The Y coordinate of the resulting G1 point.
-    function publicInputMSM(uint256[38] calldata input)
+    function publicInputMSM(
+        uint256[38] calldata input,
+        uint256[1] memory publicCommitments,
+        uint256[2] memory commitments
+    )
     internal view returns (uint256 x, uint256 y) {
         // Note: The ECMUL precompile does not reject unreduced values, so we check this.
         // Note: Unrolling this loop does not cost much extra in code-size, the bulk of the
@@ -447,6 +471,9 @@ contract Verifier {
             let s
             mstore(f, CONSTANT_X)
             mstore(add(f, 0x20), CONSTANT_Y)
+            mstore(g, mload(commitments))
+            mstore(add(g, 0x20), mload(add(commitments, 0x20)))
+            success := and(success,  staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
             mstore(g, PUB_0_X)
             mstore(add(g, 0x20), PUB_0_Y)
             s :=  calldataload(input)
@@ -713,6 +740,13 @@ contract Verifier {
             success := and(success, lt(s, R))
             success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
             success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
+            mstore(g, PUB_38_X)
+            mstore(add(g, 0x20), PUB_38_Y)
+            s := mload(publicCommitments)
+            mstore(add(g, 0x40), s)
+            success := and(success, lt(s, R))
+            success := and(success, staticcall(gas(), PRECOMPILE_MUL, g, 0x60, g, 0x40))
+            success := and(success, staticcall(gas(), PRECOMPILE_ADD, f, 0x80, f, 0x40))
 
             x := mload(f)
             y := mload(add(f, 0x20))
@@ -729,11 +763,19 @@ contract Verifier {
     /// but does not verify the proof itself.
     /// @param proof The uncompressed Groth16 proof. Points (A, B, C) encoded as in EIP-197
     /// (256 bytes total).
+    /// Followed by Pedersen commitments (1 × 64 bytes) and proof of knowledge
+    /// (64 bytes) = 384 bytes total.
     /// @return compressed The compressed proof. Elements are in the same order as for
     /// verifyCompressedProof. I.e. points (A, B, C) in compressed format.
+    /// @return compressedCommitments compressed Pedersen commitments from the proof.
+    /// @return compressedCommitmentPok compressed proof of knowledge for the Pedersen commitments.
     function compressProof(bytes calldata proof)
-    public view returns (uint256[4] memory compressed) {
-        require(proof.length == 256, "invalid proof length");
+    public view returns (
+        uint256[4] memory compressed,
+        uint256[1] memory compressedCommitments,
+        uint256 compressedCommitmentPok
+    ) {
+        require(proof.length == 384, "invalid proof length");
         uint256 a0;
         uint256 a1;
         assembly ("memory-safe") {
@@ -757,6 +799,16 @@ contract Verifier {
             a1 := calldataload(add(proof.offset, 0xe0))
         }
         compressed[3] = compress_g1(a0, a1);
+        assembly ("memory-safe") {
+            a0 := calldataload(add(proof.offset, 0x100))
+            a1 := calldataload(add(proof.offset, 0x120))
+        }
+        compressedCommitments[0] = compress_g1(a0, a1);
+        assembly ("memory-safe") {
+            a0 := calldataload(add(proof.offset, 0x140))
+            a1 := calldataload(add(proof.offset, 0x160))
+        }
+        compressedCommitmentPok = compress_g1(a0, a1);
     }
 
     /// Verify a Groth16 proof with compressed points.
@@ -766,19 +818,70 @@ contract Verifier {
     /// proof was successfully verified.
     /// @param compressedProof the points (A, B, C) in compressed format
     /// matching the output of compressProof.
+    /// @param compressedCommitments compressed Pedersen commitments from the proof.
+    /// @param compressedCommitmentPok compressed proof of knowledge for the Pedersen commitments.
     /// @param input the public input field elements in the scalar field Fr.
     /// Elements must be reduced.
     function verifyCompressedProof(
         uint256[4] calldata compressedProof,
+        uint256[1] calldata compressedCommitments,
+        uint256 compressedCommitmentPok,
         uint256[38] calldata input
     ) public view {
+        uint256[1] memory publicCommitments;
+        uint256[2] memory commitments;
         uint256[24] memory pairings;
+        {
+            (commitments[0], commitments[1]) = decompress_g1(compressedCommitments[0]);
+            (uint256 Px, uint256 Py) = decompress_g1(compressedCommitmentPok);
+
+            uint256[] memory publicAndCommitmentCommitted;
+
+            publicCommitments[0] = uint256(
+                keccak256(
+                    abi.encodePacked(
+                        commitments[0],
+                        commitments[1],
+                        publicAndCommitmentCommitted
+                    )
+                )
+            ) % R;
+            // Commitments
+            pairings[ 0] = commitments[0];
+            pairings[ 1] = commitments[1];
+            pairings[ 2] = PEDERSEN_GSIGMANEG_X_1;
+            pairings[ 3] = PEDERSEN_GSIGMANEG_X_0;
+            pairings[ 4] = PEDERSEN_GSIGMANEG_Y_1;
+            pairings[ 5] = PEDERSEN_GSIGMANEG_Y_0;
+            pairings[ 6] = Px;
+            pairings[ 7] = Py;
+            pairings[ 8] = PEDERSEN_G_X_1;
+            pairings[ 9] = PEDERSEN_G_X_0;
+            pairings[10] = PEDERSEN_G_Y_1;
+            pairings[11] = PEDERSEN_G_Y_0;
+
+            // Verify pedersen commitments
+            bool success;
+            assembly ("memory-safe") {
+                let f := mload(0x40)
+
+                success := staticcall(gas(), PRECOMPILE_VERIFY, pairings, 0x180, f, 0x20)
+                success := and(success, mload(f))
+            }
+            if (!success) {
+                revert CommitmentInvalid();
+            }
+        }
 
         {
             (uint256 Ax, uint256 Ay) = decompress_g1(compressedProof[0]);
             (uint256 Bx0, uint256 Bx1, uint256 By0, uint256 By1) = decompress_g2(compressedProof[2], compressedProof[1]);
             (uint256 Cx, uint256 Cy) = decompress_g1(compressedProof[3]);
-            (uint256 Lx, uint256 Ly) = publicInputMSM(input);
+            (uint256 Lx, uint256 Ly) = publicInputMSM(
+                input,
+                publicCommitments,
+                commitments
+            );
 
             // Verify the pairing
             // Note: The precompile expects the F2 coefficients in big-endian order.
@@ -833,18 +936,64 @@ contract Verifier {
     /// proof was successfully verified.
     /// @param proof the serialized proof, containing the points (A, B, C) in EIP-197 format
     /// (256 bytes total).
+    /// Followed by Pedersen commitments (1 × 64 bytes) and proof of knowledge
+    /// (64 bytes) = 384 bytes total.
     /// @param input the public input field elements in the scalar field Fr.
     /// Elements must be reduced.
     function verifyProof(
         bytes calldata proof,
         uint256[38] calldata input
     ) public view {
-        require(proof.length == 256, "invalid proof length");
-        (uint256 x, uint256 y) = publicInputMSM(input);
+        require(proof.length == 384, "invalid proof length");
+        // Copy commitment points from proof bytes into memory for publicInputMSM
+        uint256[2] memory commitments;
+        assembly ("memory-safe") {
+            calldatacopy(commitments, add(proof.offset, 0x100), 64)
+        }
+
+        // HashToField
+        uint256[1] memory publicCommitments;
+        uint256[] memory publicAndCommitmentCommitted;
+
+        {
+            bytes memory hashInput = abi.encodePacked(
+                proof[0x100:0x140],
+                publicAndCommitmentCommitted
+            );
+            publicCommitments[0] = uint256(keccak256(hashInput)) % R;
+        }
+
+        // Verify pedersen commitments
+        bool success;
+        assembly ("memory-safe") {
+            let f := mload(0x40)
+
+            calldatacopy(f, add(proof.offset, 0x100), 0x40) // Copy first commitment
+            mstore(add(f, 0x40), PEDERSEN_GSIGMANEG_X_1)
+            mstore(add(f, 0x60), PEDERSEN_GSIGMANEG_X_0)
+            mstore(add(f, 0x80), PEDERSEN_GSIGMANEG_Y_1)
+            mstore(add(f, 0xa0), PEDERSEN_GSIGMANEG_Y_0)
+            calldatacopy(add(f, 0xc0), add(proof.offset, 0x140), 0x40) // Copy PoK
+            mstore(add(f, 0x100), PEDERSEN_G_X_1)
+            mstore(add(f, 0x120), PEDERSEN_G_X_0)
+            mstore(add(f, 0x140), PEDERSEN_G_Y_1)
+            mstore(add(f, 0x160), PEDERSEN_G_Y_0)
+
+            success := staticcall(gas(), PRECOMPILE_VERIFY, f, 0x180, f, 0x20)
+            success := and(success, mload(f))
+        }
+        if (!success) {
+            revert CommitmentInvalid();
+        }
+
+        (uint256 x, uint256 y) = publicInputMSM(
+            input,
+            publicCommitments,
+            commitments
+        );
 
         // Note: The precompile expects the F2 coefficients in big-endian order.
         // Note: The pairing precompile rejects unreduced values, so we won't check that here.
-        bool success;
         assembly ("memory-safe") {
             let f := mload(0x40) // Free memory pointer.
 
