@@ -16,8 +16,11 @@ export const askPassword = (isNew: boolean) =>
     usePasswordRequest.setState({
       ask: {
         isNew,
+        // NFC, so the same Password typed on another keyboard or OS gives the same Sender Key.
         resolve: password =>
-          password ? resolve(password) : reject(new FriendlyError("Your password unlocks your chats. Try again?")),
+          password
+            ? resolve(password.normalize("NFC"))
+            : reject(new FriendlyError("Your password unlocks your chats. Try again?")),
       },
     }),
   );
