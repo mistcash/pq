@@ -24,7 +24,9 @@ export const Register = () => {
   const join = async () => {
     setStep("start");
     try {
-      const userKey = (await loadCrypto()).userKey(await newSenderKey(address!));
+      // Before anything else, while the tap still counts: Safari only shows passkey prompts straight after one.
+      const senderKey = await newSenderKey(address!);
+      const userKey = (await loadCrypto()).userKey(senderKey);
       setStep(undefined);
       // The transactor shows its own errors.
       await writeContractAsync({ functionName: "register", args: [userKey], account: address }).catch(() => undefined);
