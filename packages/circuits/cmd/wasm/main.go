@@ -77,7 +77,8 @@ func main() {
 			if _, err := cs.ReadFrom(bytes.NewReader(bytesOf(a[0]))); err != nil {
 				return nil, err
 			}
-			if _, err := key.ReadFrom(bytes.NewReader(bytesOf(a[1]))); err != nil {
+			// The key ships with this wasm, so skip the 18 s of subgroup checks.
+			if _, err := key.UnsafeReadFrom(bytes.NewReader(bytesOf(a[1]))); err != nil {
 				return nil, err
 			}
 			ccs, pk = cs, key
