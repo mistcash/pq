@@ -4,6 +4,407 @@
  */
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
-const deployedContracts = {} as const;
+const deployedContracts = {
+  11155111: {
+    Verifier: {
+      address: "0x5184f86db5c85db386554f2cbfe232412741c5d3",
+      abi: [
+        {
+          type: "function",
+          name: "compressProof",
+          inputs: [
+            {
+              name: "proof",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [
+            {
+              name: "compressed",
+              type: "uint256[4]",
+              internalType: "uint256[4]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "verifyCompressedProof",
+          inputs: [
+            {
+              name: "compressedProof",
+              type: "uint256[4]",
+              internalType: "uint256[4]",
+            },
+            {
+              name: "input",
+              type: "uint256[38]",
+              internalType: "uint256[38]",
+            },
+          ],
+          outputs: [],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "verifyProof",
+          inputs: [
+            {
+              name: "proof",
+              type: "bytes",
+              internalType: "bytes",
+            },
+            {
+              name: "input",
+              type: "uint256[38]",
+              internalType: "uint256[38]",
+            },
+          ],
+          outputs: [],
+          stateMutability: "view",
+        },
+        {
+          type: "error",
+          name: "ProofInvalid",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "PublicInputNotInField",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 12075350,
+    },
+    PqMsg: {
+      address: "0xf4a1628850b5c030801002a7e10436699dd4933c",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [
+            {
+              name: "verifier_",
+              type: "address",
+              internalType: "contract Verifier",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "channels",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "channelKeyHash",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "encryptedSender",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getChannels",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "tuple[]",
+              internalType: "struct PqMsg.Channel[]",
+              components: [
+                {
+                  name: "channelKeyHash",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "encryptedChannelKey",
+                  type: "uint256[37]",
+                  internalType: "uint256[37]",
+                },
+                {
+                  name: "encryptedSender",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getUsers",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address[]",
+              internalType: "address[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "messages",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "ciphertext1",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "ciphertext2",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "openChannel",
+          inputs: [
+            {
+              name: "channelKeyHash",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "encryptedChannelKey",
+              type: "uint256[37]",
+              internalType: "uint256[37]",
+            },
+            {
+              name: "encryptedSender",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "proof",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "owner",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "post",
+          inputs: [
+            {
+              name: "messageId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "ciphertext1",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "ciphertext2",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "register",
+          inputs: [
+            {
+              name: "key",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "renounceOwnership",
+          inputs: [],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setVerifier",
+          inputs: [
+            {
+              name: "verifier_",
+              type: "address",
+              internalType: "contract Verifier",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "transferOwnership",
+          inputs: [
+            {
+              name: "newOwner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "userKeys",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "users",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "verifier",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract Verifier",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "OwnershipTransferred",
+          inputs: [
+            {
+              name: "previousOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "newOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "BadUserKey",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "MessageIdUsed",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "OwnableInvalidOwner",
+          inputs: [
+            {
+              name: "owner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OwnableUnauthorizedAccount",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "ZeroCiphertext",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 12075351,
+    },
+  },
+} as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;
