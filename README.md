@@ -1,6 +1,6 @@
 # pq
 
-Tiny private messages on Ethereum, with a post-quantum key exchange.
+Scalable, post-quantum cryptographic messaging for private payments and peer coordination.
 
 pq stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join.
 
