@@ -1,6 +1,8 @@
-import type { Address, Hex } from "viem";
+import { type Address, type Hex, keccak256 } from "viem";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
-import { recordStep } from "~~/services/store/deepDive";
+import { storeUserKey } from "~~/hooks/useFixedSender";
+import { recordEntity, recordStep } from "~~/services/store/deepDive";
+import { fetchUserKey } from "~~/utils/arkiv";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError } from "~~/utils/friendly";
 import { createPasskey, passkeyOutput } from "~~/utils/passkey";
@@ -19,7 +21,8 @@ export const useSenderKey = (onStep: (step: "passkey") => void) => {
     const crypto = await loadCrypto();
     const senderKey = crypto.senderKey(prfOutput);
     senderKeys.set(me, senderKey);
-    recordStep("unlock", { prfOutput, senderKey, userKey: crypto.userKey(senderKey) });
+    const userKey = crypto.userKey(senderKey);
+    recordStep("unlock", { prfOutput, senderKey, userKey, userKeyHash: keccak256(userKey) });
     return senderKey;
   };
 
@@ -31,11 +34,16 @@ export const useSenderKey = (onStep: (step: "passkey") => void) => {
       const crypto = await loadCrypto();
       const senderKey = crypto.senderKey(prfOutput);
       const userKey = crypto.userKey(senderKey);
-      if (userKey !== (await pqMsg!.read.userKeys([me]))) {
+      const userKeyHash = keccak256(userKey);
+      if (userKeyHash !== (await pqMsg!.read.userKeyHashes([me]))) {
         throw new FriendlyError("That passkey doesn't unlock this wallet. Pick the one you made when it joined.");
       }
       senderKeys.set(me, senderKey);
-      recordStep("unlock", { prfOutput, senderKey, userKey });
+      recordStep("unlock", { prfOutput, senderKey, userKey, userKeyHash });
+      // Stores your User Key again if it expired on Arkiv, or never got there, so people can still message you.
+      if (!(await fetchUserKey(pqMsg!.address, userKeyHash))) {
+        storeUserKey(me, userKey).then(entity => entity && recordEntity("unlock", entity), console.warn);
+      }
     }
     return senderKeys.get(me)!;
   };
