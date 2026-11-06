@@ -14,6 +14,7 @@ import { passkeyProblem } from "~~/utils/passkey";
 import { notification } from "~~/utils/scaffold-eth";
 
 const FRIENDS = ["0x01", "0x02", "0x05"].map(n => n.padEnd(42, "0"));
+const PERKS = ["🔒 Post-quantum", "🌍 On Ethereum", "🙈 The chain can't see who's talking"];
 
 /** Connect, then register with one tap and a new passkey, which makes your User Key. */
 export const Register = () => {
@@ -72,9 +73,18 @@ export const Register = () => {
           {step || isMining ? <span className="loading loading-dots" /> : "Join"}
         </button>
       ) : (
-        <button className="btn btn-primary btn-lg btn-block" onClick={openConnectModal}>
-          Connect wallet
-        </button>
+        <>
+          <button className="btn btn-primary btn-lg btn-block" onClick={openConnectModal}>
+            Connect wallet
+          </button>
+          <ul className="flex flex-wrap justify-center gap-2 m-0 p-0 text-sm">
+            {PERKS.map(perk => (
+              <li key={perk} className="rounded-full bg-base-200 px-3 py-1">
+                {perk}
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </div>
   );
