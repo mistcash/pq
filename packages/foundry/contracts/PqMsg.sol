@@ -18,19 +18,19 @@ contract PqMsg is Verifier {
 
     /// Users in registration order; a User's position is their User Index.
     address[] public users;
-    /// User Key of each User; zero means not registered.
-    mapping(address => uint256) public userKeys;
+    /// User Key of each User, a packed Kyber512 public key; empty means not registered.
+    mapping(address => bytes) public userKeys;
     Channel[] public channels;
     /// Messages by Message ID; all zeros means no message.
     mapping(uint256 => Message) public messages;
 
-    error ZeroUserKey();
+    error BadUserKey();
     error MessageIdUsed();
     error ZeroCiphertext();
 
-    function register(uint256 key) external {
-        if (key == 0) revert ZeroUserKey();
-        if (userKeys[msg.sender] == 0) users.push(msg.sender);
+    function register(bytes calldata key) external {
+        if (key.length != 800) revert BadUserKey();
+        if (userKeys[msg.sender].length == 0) users.push(msg.sender);
         userKeys[msg.sender] = key;
     }
 

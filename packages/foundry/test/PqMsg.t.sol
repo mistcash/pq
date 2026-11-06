@@ -17,11 +17,17 @@ contract PqMsgTest is Test {
         proof = vm.parseJsonBytes(json, ".proof");
     }
 
+    /// An 800-byte User Key starting with `b`.
+    function key(uint8 b) internal pure returns (bytes memory k) {
+        k = new bytes(800);
+        k[0] = bytes1(b);
+    }
+
     function testRegisterListsUserWithKey() public {
         vm.prank(alice);
-        pqMsg.register(42);
+        pqMsg.register(key(42));
 
-        assertEq(pqMsg.userKeys(alice), 42);
+        assertEq(pqMsg.userKeys(alice), key(42));
         assertEq(pqMsg.getUsers().length, 1);
         assertEq(pqMsg.users(0), alice);
     }
@@ -29,22 +35,22 @@ contract PqMsgTest is Test {
     function testRegisterAgainReplacesKeyAndKeepsUserIndex() public {
         address bob = makeAddr("bob");
         vm.prank(alice);
-        pqMsg.register(1);
+        pqMsg.register(key(1));
         vm.prank(bob);
-        pqMsg.register(2);
+        pqMsg.register(key(2));
         vm.prank(alice);
-        pqMsg.register(3);
+        pqMsg.register(key(3));
 
-        assertEq(pqMsg.userKeys(alice), 3);
+        assertEq(pqMsg.userKeys(alice), key(3));
         assertEq(pqMsg.getUsers().length, 2);
         assertEq(pqMsg.users(0), alice);
         assertEq(pqMsg.users(1), bob);
     }
 
-    function testRegisterRejectsZeroUserKey() public {
-        vm.expectRevert(PqMsg.ZeroUserKey.selector);
+    function testRegisterRejectsUserKeyNot800Bytes() public {
+        vm.expectRevert(PqMsg.BadUserKey.selector);
         vm.prank(alice);
-        pqMsg.register(0);
+        pqMsg.register(new bytes(799));
     }
 
     function testOpenChannel() public {
