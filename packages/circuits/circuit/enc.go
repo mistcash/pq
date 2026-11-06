@@ -7,6 +7,9 @@ func Encrypt(api frontend.API, f *F, AT *Mat, Th *Vec, msg [2]frontend.Variable,
 	var rh Vec
 	for i := range r {
 		rh[i] = NTT(f, &r[i])
+		for j := range rh[i] {
+			rh[i][j] = *f.Reduce(&rh[i][j]) // r̂ feeds K+1 DotHats: reduce once, not per use
+		}
 	}
 	for i := range u {
 		u[i] = DotHat(f, &AT[i], &rh)
