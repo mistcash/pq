@@ -51,7 +51,8 @@
     "verify": "yarn foundry:verify"
   },
   "resolutions": {
-    "@coinbase/cdp-sdk": "1.52.0"
+    "@coinbase/cdp-sdk": "1.52.0",
+    "@walletconnect/ethereum-provider@npm:2.21.1": "patch:@walletconnect/ethereum-provider@npm%3A2.21.1#~/.yarn/patches/@walletconnect-ethereum-provider-npm-2.21.1-ca668ac558.patch"
   },
   "devDependencies": {
     "husky": "~9.1.6",

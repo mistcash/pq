@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Chat } from "./_components/Chat";
+import { Landing } from "./_components/Landing";
 import { People } from "./_components/People";
 import { Register } from "./_components/Register";
 import { Restore } from "./_components/Restore";
@@ -22,18 +23,21 @@ const Home: NextPage = () => {
   useEffect(() => void startProver(), []);
 
   return (
-    <div className="w-full max-w-md mx-auto px-4 py-8">
-      {!address || !registered ? (
-        <Register />
-      ) : other ? (
-        <Chat key={other} me={address} other={other} onBack={() => setOther(undefined)} />
-      ) : (
-        <>
-          <People me={address} onPick={setOther} />
-          <Restore me={address} step={step} restored={restored} restore={restore} />
-        </>
-      )}
-    </div>
+    <>
+      <div className="w-full max-w-md mx-auto px-4 py-8">
+        {!address || !registered ? (
+          <Register />
+        ) : other ? (
+          <Chat key={other} me={address} other={other} onBack={() => setOther(undefined)} />
+        ) : (
+          <>
+            <People me={address} onPick={setOther} />
+            <Restore me={address} step={step} restored={restored} restore={restore} />
+          </>
+        )}
+      </div>
+      <Landing />
+    </>
   );
 };
 

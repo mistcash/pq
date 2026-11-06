@@ -14,6 +14,7 @@ export const PROGRESS: Record<Exclude<OpenStep, "open">, string> = {
   start: "Getting ready…",
   sign: "Sign in your wallet to unlock your secret key.",
   check: "Once more, so we know your wallet always signs the same way.",
+  lookup: "Quietly looking up their key…",
   prove: "Doing some secret math, right here in your browser…",
   send: "Sending it off. It's free!",
   confirm: "Almost there, making sure it landed…",
