@@ -17,7 +17,7 @@ A User's permanent position in the list of registered Users.
 _Avoid_: recipient index, user id
 
 **Sender Key**:
-A User's private secret, from which their User Key and every Channel Key they open are derived.
+A User's private secret, made from their passkey, from which their User Key and every Channel Key they open are derived.
 _Avoid_: root key, master key, User Key
 
 **Channel**:
