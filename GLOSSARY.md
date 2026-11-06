@@ -9,7 +9,7 @@ A wallet address that has registered a User Key.
 _Avoid_: member, account
 
 **User Key**:
-The public value a User registers; a placeholder until channel key encryption exists.
+The Kyber512 public key a User registers, derived from their Sender Key; Channel Keys opened to them are encrypted to it.
 _Avoid_: registration key, public key
 
 **User Index**:
@@ -17,7 +17,7 @@ A User's permanent position in the list of registered Users.
 _Avoid_: recipient index, user id
 
 **Sender Key**:
-A User's private secret, from which every Channel Key they open is derived.
+A User's private secret, from which their User Key and every Channel Key they open are derived.
 _Avoid_: root key, master key, User Key
 
 **Channel**:
@@ -29,8 +29,16 @@ The secret shared by a Channel's two ends, from which all its Message Keys deriv
 _Avoid_: master key, session key
 
 **Channel Key Hash**:
-The public hash of a Channel Key, which is all the chain stores about a Channel's key.
+The public hash of a Channel Key, against which a recipient checks a Channel Key they decrypted.
 _Avoid_: public parameter, commitment
+
+**Encrypted Channel Key**:
+A Channel's Channel Key encrypted to its recipient's User Key, as 37 field elements on-chain.
+_Avoid_: channel ciphertext
+
+**Encrypted Sender**:
+The User Index of a Channel's sender, padded with a hash of the Channel Key, so only the Channel's two ends can read it.
+_Avoid_: sender, from
 
 **Fixed Sender**:
 The single account that submits Channel openings and messages on users' behalf, standing in for a future relayer.
