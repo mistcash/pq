@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type DiveStep = "unlock" | "open" | "send" | "find";
+export type DiveStep = "unlock" | "open" | "send" | "read" | "find";
 
 /**
  * Every value the deep dive shows, in order, with where it lives: a "secret" key (hidden until you tap it), something

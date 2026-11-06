@@ -13,11 +13,11 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
   {
     step: "unlock",
     title: "Join & unlock",
-    what: "Your Password and a wallet signature make your Sender Key, the one secret every other key comes from. Joining puts the public half of a key pair made from it, your User Key, on-chain.",
+    what: "Your Password and a wallet signature make your Sender Key, the secret behind your User Key and every Channel you open. Joining puts your User Key, the public half of a key pair made from it, on-chain.",
     notes: [
       [
         "Browser",
-        "Argon2id stretches your Password with 64 MiB of memory, salted with the signature. Poseidon2 hashes both into your Sender Key, which seeds a Kyber512 key pair. It all runs in Go, compiled to WASM.",
+        "Argon2id stretches your Password with 64 MiB of memory, salted with the signature, and Poseidon2 hashes both into your Sender Key. H(Sender Key, tag) seeds a Kyber512 key pair. It all runs in Go, compiled to WASM.",
       ],
       [
         "Chain",
@@ -25,22 +25,22 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
       ],
       [
         "Watch out",
-        "Your Sender Key lives only in this tab's memory, and your Password is never stored or sent. There's no reset. Your wallet's public key is on-chain now, and your Password is what stops a future quantum computer from re-deriving your keys from it.",
+        "Your Sender Key lives only in this tab's memory, and your Password is never stored or sent. There's no reset. Your wallet's public key is on-chain now, so only a strong Password stops a future quantum computer from re-deriving your keys: anyone with your signature can test guesses against your User Key.",
       ],
     ],
   },
   {
     step: "open",
     title: "Say hi",
-    what: "Your browser makes a Channel Key just for them, encrypts it to their User Key, and proves the encryption is honest without saying who it's for.",
+    what: "Your browser makes a Channel Key just for them, encrypts it to their User Key, and proves the encryption is well formed without saying who it's for.",
     notes: [
       [
         "Browser",
-        "Channel Key = H(Sender Key, their User Index). Kyber512, which is post-quantum, encrypts it to their User Key, and a Groth16 proof is made right here.",
+        "Channel Key = H(Sender Key, their User Index). Kyber512, which is post-quantum, encrypts it to their User Key, and a Groth16 proof is made right here. The Channel Key is also saved, unencrypted, in this browser's storage.",
       ],
       [
         "Circuit",
-        "Proves the Encrypted Channel Key encrypts the Channel Key behind the Channel Key Hash. Their User Key is a private input, so the proof doesn't reveal whose key it was.",
+        "Proves the Encrypted Channel Key is a Kyber512 encryption of the Channel Key behind the Channel Key Hash. The key it's encrypted to is a private input, so the proof can't say whose it was, or promise it was theirs.",
       ],
       [
         "Chain",
@@ -48,14 +48,14 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
       ],
       [
         "Watch out",
-        "Fetching their User Key asks your RPC provider for it by address, so the provider could tell who you're about to message. The Fixed Sender is our server: it can't read anything, but it sees your IP and when you send. The Groth16 setup is dev-only, and Groth16 isn't post-quantum, so whoever ran the setup, or a quantum computer, could forge proofs. That allows junk Channels, not reading yours.",
+        "Fetching their User Key asks the app's RPC provider for it by address, so the provider could tell who you're about to message. The Fixed Sender is our server: it can't read anything, but it sees your IP and timing, and could alter or drop what you send. Anyone can post a Channel nobody can open, and forging proofs adds little to that: whoever ran the dev-only setup, PqMsg's owner by swapping the Verifier, or a quantum computer could.",
       ],
     ],
   },
   {
     step: "send",
     title: "Send",
-    what: "Each message gets its own Message Key. Hashes of it hide the message's two halves, and it's filed under a Message ID that nobody else can link to your Channel.",
+    what: "Each message gets its own Message Key. Hashes of it hide the message's two halves, and it's filed under a Message ID that can't be linked to your Channel without the Channel Key.",
     notes: [
       [
         "Browser",
@@ -66,7 +66,26 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
         "Chain",
         "The Fixed Sender calls post(Message ID, Ciphertext Elements), so your address isn't on it. They stay in a public mapping forever.",
       ],
-      ["Watch out", "Hash-and-add is a simple one-time pad from Poseidon2, not a standard authenticated cipher."],
+      [
+        "Watch out",
+        "Poseidon2 makes a keystream that's added to each half, with nothing to authenticate it, so whoever relays a message, like the Fixed Sender, could shift what it says without anyone noticing. It also sees your IP with each message, so it could link them together.",
+      ],
+    ],
+  },
+  {
+    step: "read",
+    title: "Read",
+    what: "Your browser walks a Channel's Message IDs from Message Index 0 until one has nothing stored, and takes the same hashes back off to read each message.",
+    notes: [
+      [
+        "Browser",
+        "For each Message Index it works out the Message ID, reads its Ciphertext Elements, and subtracts H(Message Key, 1 or 2) to get the two halves back.",
+      ],
+      ["Chain", "It only reads."],
+      [
+        "Watch out",
+        "Each read asks the app's RPC provider for a specific Message ID, so it could link a Channel's messages together, and to your IP.",
+      ],
     ],
   },
   {
@@ -76,12 +95,12 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
     notes: [
       [
         "Browser",
-        "It rebuilds your Channel Key for each User Index and looks for its hash. Then it decrypts every Encrypted Channel Key with your Kyber512 secret key. Only Channels opened to you give back a Channel Key that matches, and their Encrypted Sender says who opened them.",
+        "It rebuilds your Channel Key for each User Index and looks for its hash. Then it decrypts every Encrypted Channel Key with your Kyber512 secret key. Only Channels opened to you give back a Channel Key that matches, and their Encrypted Sender says who claims to have opened them.",
       ],
       ["Chain", "It only reads, and it downloads every User and Channel, so the reads don't say which ones are yours."],
       [
         "Watch out",
-        "Reading messages asks for specific Message IDs, so your RPC provider could tie those reads to your IP. Found Channel Keys are kept unencrypted in this browser's storage.",
+        "Nothing proves who opened a Channel to you: the Encrypted Sender is outside the proof, so anyone can claim to be anyone. Found Channel Keys are kept unencrypted in this browser's storage.",
       ],
     ],
   },
