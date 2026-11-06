@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { type Hex, keccak256 } from "viem";
+import { useAccount } from "wagmi";
 import { TxLink } from "~~/components/TxLink";
 import { type DiveStep, type DiveValues, VALUES, useDeepDive } from "~~/services/store/deepDive";
 
@@ -129,6 +130,11 @@ export const DeepDiveToggle = () => {
 /** What each step did under the hood, with this session's real values: a sidebar on desktop, below the page on phones. */
 export const DeepDive = () => {
   const { on, steps } = useDeepDive();
+  const { address } = useAccount();
+  // Values recorded for one wallet shouldn't sit beside another's.
+  useEffect(() => {
+    useDeepDive.setState({ steps: {} });
+  }, [address]);
   if (!on) return null;
 
   return (
