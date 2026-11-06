@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   11155111: {
     Verifier: {
-      address: "0x5184f86db5c85db386554f2cbfe232412741c5d3",
+      address: "0x56d42ba891fdc1f3367018f789ae964207499633",
       abi: [
         {
           type: "function",
@@ -25,6 +25,16 @@ const deployedContracts = {
               type: "uint256[4]",
               internalType: "uint256[4]",
             },
+            {
+              name: "compressedCommitments",
+              type: "uint256[1]",
+              internalType: "uint256[1]",
+            },
+            {
+              name: "compressedCommitmentPok",
+              type: "uint256",
+              internalType: "uint256",
+            },
           ],
           stateMutability: "view",
         },
@@ -36,6 +46,16 @@ const deployedContracts = {
               name: "compressedProof",
               type: "uint256[4]",
               internalType: "uint256[4]",
+            },
+            {
+              name: "compressedCommitments",
+              type: "uint256[1]",
+              internalType: "uint256[1]",
+            },
+            {
+              name: "compressedCommitmentPok",
+              type: "uint256",
+              internalType: "uint256",
             },
             {
               name: "input",
@@ -66,6 +86,11 @@ const deployedContracts = {
         },
         {
           type: "error",
+          name: "CommitmentInvalid",
+          inputs: [],
+        },
+        {
+          type: "error",
           name: "ProofInvalid",
           inputs: [],
         },
@@ -76,10 +101,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 12075350,
+      deployedOnBlock: 12079574,
     },
     PqMsg: {
-      address: "0xf4a1628850b5c030801002a7e10436699dd4933c",
+      address: "0x83ba93654cac7a6f9489e81c89f4aaa48d755c52",
       abi: [
         {
           type: "constructor",
@@ -104,14 +129,9 @@ const deployedContracts = {
           ],
           outputs: [
             {
-              name: "channelKeyHash",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "encryptedSender",
-              type: "uint256",
-              internalType: "uint256",
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
             },
           ],
           stateMutability: "view",
@@ -123,25 +143,8 @@ const deployedContracts = {
           outputs: [
             {
               name: "",
-              type: "tuple[]",
-              internalType: "struct PqMsg.Channel[]",
-              components: [
-                {
-                  name: "channelKeyHash",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "encryptedChannelKey",
-                  type: "uint256[37]",
-                  internalType: "uint256[37]",
-                },
-                {
-                  name: "encryptedSender",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-              ],
+              type: "bytes32[]",
+              internalType: "bytes32[]",
             },
           ],
           stateMutability: "view",
@@ -295,7 +298,7 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "userKeys",
+          name: "userKeyHashes",
           inputs: [
             {
               name: "",
@@ -306,8 +309,8 @@ const deployedContracts = {
           outputs: [
             {
               name: "",
-              type: "bytes",
-              internalType: "bytes",
+              type: "bytes32",
+              internalType: "bytes32",
             },
           ],
           stateMutability: "view",
@@ -346,6 +349,19 @@ const deployedContracts = {
         },
         {
           type: "event",
+          name: "ChannelOpened",
+          inputs: [
+            {
+              name: "channelKeyHash",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
           name: "OwnershipTransferred",
           inputs: [
             {
@@ -356,6 +372,32 @@ const deployedContracts = {
             },
             {
               name: "newOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "Posted",
+          inputs: [
+            {
+              name: "messageId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "Registered",
+          inputs: [
+            {
+              name: "user",
               type: "address",
               indexed: true,
               internalType: "address",
@@ -402,7 +444,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 12075351,
+      deployedOnBlock: 12079575,
     },
   },
 } as const;
