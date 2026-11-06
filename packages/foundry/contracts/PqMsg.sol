@@ -5,7 +5,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { Verifier } from "./Verifier.sol";
 
 /// pqmsg: Channels and messages stored publicly on-chain.
-contract PqMsg is Verifier, Ownable {
+contract PqMsg is Ownable {
     struct Channel {
         uint256 channelKeyHash;
         /// The Channel Key encrypted to the recipient's User Key: Kyber512 u‖v, 21 12-bit coefficients per element.
@@ -20,6 +20,8 @@ contract PqMsg is Verifier, Ownable {
         uint256 ciphertext2;
     }
 
+    /// Checks openChannel proofs; the owner replaces it when the circuit changes.
+    Verifier public verifier;
     /// Users in registration order; a User's position is their User Index.
     address[] public users;
     /// User Key of each User, a packed Kyber512 public key; empty means not registered.
@@ -32,7 +34,13 @@ contract PqMsg is Verifier, Ownable {
     error MessageIdUsed();
     error ZeroCiphertext();
 
-    constructor() Ownable(msg.sender) { }
+    constructor(Verifier verifier_) Ownable(msg.sender) {
+        verifier = verifier_;
+    }
+
+    function setVerifier(Verifier verifier_) external onlyOwner {
+        verifier = verifier_;
+    }
 
     function register(bytes calldata key) external {
         if (key.length != 800) revert BadUserKey();
@@ -56,7 +64,7 @@ contract PqMsg is Verifier, Ownable {
         for (uint256 i; i < 37; i++) {
             input[i + 1] = encryptedChannelKey[i];
         }
-        this.verifyProof(proof, input);
+        verifier.verifyProof(proof, input);
         channels.push(Channel(channelKeyHash, encryptedChannelKey, encryptedSender));
     }
 
