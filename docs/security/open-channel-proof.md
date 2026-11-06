@@ -101,3 +101,10 @@ The Sender Key, User Key seed, Channel Keys, Message Keys, Message IDs and messa
 ## Overall
 
 The proof gives integrity and some friction against spam, not confidentiality. Confidentiality comes from Kyber512 at about 112 bits of core-SVP hardness, capped by the secp256k1-derived Sender Key. pqmsg isn't post-quantum end to end yet.
+
+## Fixes, by impact
+
+1. **A Sender Key the wallet key can't recompute.** Mix in a secret the wallet doesn't hold, such as a random seed the User backs up. This trades away ADR-0002's "nothing to back up".
+2. **Bind the User Key in the circuit.** Commit to registered User Keys, for example with a Merkle root of their hashes as a public input, and prove membership; the recipient stays hidden. One system-wide matrix A, as circuit constants, would make this cheaper by leaving only t̂ to commit. Either changes User Keys, so it would orphan existing Channels (ADR-0002).
+3. **Prove the Encrypted Sender, and have `openChannel` refuse a Channel Key Hash it already has.**
+4. **Compress the Encrypted Channel Key** (d_u = 10, d_v = 4) to get back to 118 bits, at the cost of proving the compression.
