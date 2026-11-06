@@ -1,47 +1,28 @@
 "use client";
 
 import { type ReactNode, useEffect } from "react";
-import { short } from "./People";
 import {
   ArrowRightIcon,
   ArrowUpIcon,
-  BoltIcon,
-  CheckBadgeIcon,
-  CheckIcon,
+  BanknotesIcon,
   ChevronDownIcon,
-  ClockIcon,
   CodeBracketIcon,
-  CpuChipIcon,
   EyeIcon,
-  KeyIcon,
   LockClosedIcon,
-  LockOpenIcon,
-  PaperAirplaneIcon,
-  ShieldCheckIcon,
-  UserGroupIcon,
-  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Avatar } from "~~/components/Avatar";
 
-type Beat = { kicker: string; title: string; lines: string[]; tags?: string[]; visual: ReactNode; dark?: boolean };
+type Beat = { kicker: string; title: string; lines: string[]; tags?: string[]; visual: ReactNode };
 
 // Two of the friends on the Register card.
 const ALICE = "0x01".padEnd(42, "0");
 const BOB = "0x05".padEnd(42, "0");
-const FIXED_SENDER = "0xf1".padEnd(42, "0");
-const PQMSG = "0xF4a1628850B5C030801002A7e10436699Dd4933C";
-const VERIFIER = "0x5184F86dB5c85DB386554F2Cbfe232412741C5d3";
 
 const Hex = ({ children }: { children: ReactNode }) => (
   <code className="rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">{children}</code>
 );
 
-const Arrow = ({ label }: { label?: string }) => (
-  <div className="flex sm:flex-col items-center gap-2 text-sm opacity-60">
-    <ArrowRightIcon className="size-8 rotate-90 sm:rotate-0" />
-    {label}
-  </div>
-);
+const Arrow = () => <ArrowRightIcon className="size-8 opacity-60 rotate-90 sm:rotate-0" />;
 
 const Person = ({ address, says, mine }: { address: string; says: string; mine?: boolean }) => (
   <div className="flex sm:flex-col items-center gap-3">
@@ -54,336 +35,102 @@ const Person = ({ address, says, mine }: { address: string; says: string; mine?:
   </div>
 );
 
-const Node = ({ name, note, className = "" }: { name: string; note?: string; className?: string }) => (
-  <div className={`rounded-2xl border-2 bg-base-100 px-4 py-1.5 leading-tight ${className}`}>
-    <p className="m-0 font-semibold sm:text-lg">{name}</p>
-    {note && <p className="m-0 text-xs sm:text-sm opacity-70">{note}</p>}
+/** A payment or message on its way, as anyone watching the chain sees it. */
+const Public = ({ children }: { children: ReactNode }) => (
+  <div className="flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed p-5">
+    {children}
+    <span className="opacity-70">from ? to ?</span>
   </div>
 );
 
-/** A line down from one key to the next, labelled with how it's derived. */
-const Edge = ({ label }: { label: string }) => (
-  <div className="flex flex-col items-center font-mono text-xs sm:text-sm text-primary before:h-2 before:w-0.5 before:bg-base-300 after:h-2 after:w-0.5 after:bg-base-300">
-    {label}
-  </div>
+const Row = ({ children }: { children: ReactNode }) => (
+  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">{children}</div>
 );
 
+/** About a minute, one beat per line of the walkthrough. */
 const BEATS: Beat[] = [
   {
-    kicker: "Public",
-    title: "Everything on Ethereum is public, forever.",
-    lines: ["Harvest now, decrypt later:", "what's encrypted on-chain today, a future quantum computer can read."],
+    kicker: "Pay",
+    title: "Pay anyone privately, with MIST.cash.",
+    lines: [
+      "MIST.cash keeps who paid whom off the chain.",
+      "To collect, your friend just needs the payment's claiming key.",
+    ],
     visual: (
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-        <figure className="flex flex-col items-center gap-3 m-0">
-          <div className="relative isolate flex gap-4">
-            <span className="absolute inset-x-4 top-1/2 h-1 -z-10 bg-base-300" />
-            {["0x7f3a", "0x91c4", "0x2be0"].map(hex => (
-              <div key={hex} className="flex flex-col items-center gap-2 rounded-2xl border-2 bg-base-100 p-3 sm:p-5">
-                <LockClosedIcon className="size-6 sm:size-10 text-primary" />
-                <code className="text-xs sm:text-base">{hex}…</code>
-              </div>
-            ))}
-          </div>
-          <figcaption className="opacity-70">Stored today</figcaption>
-        </figure>
-        <Arrow label="years later" />
-        <figure className="flex flex-col items-center gap-3 m-0">
-          <div className="flex items-center gap-3 rounded-3xl bg-neutral text-neutral-content px-5 py-4 sm:py-6 text-xl sm:text-2xl">
-            <LockOpenIcon className="size-8 text-warning" />
-            “lunch at 1? 🍜”
-          </div>
-          <figcaption className="opacity-70">Read by a quantum computer</figcaption>
-        </figure>
-      </div>
+      <Row>
+        <Person address={ALICE} says="100 USDC 💸" mine />
+        <Arrow />
+        <Public>
+          <b>MIST.cash</b>
+          <Hex>100 USDC</Hex>
+        </Public>
+        <Arrow />
+        <Person address={BOB} says="🔑 ?" />
+      </Row>
     ),
   },
   {
-    kicker: "pq",
-    title: "pq: tiny private messages, on-chain.",
+    kicker: "Hand-off",
+    title: "pq passes them the key, privately.",
     lines: [
-      "62-byte messages, stored in plain sight.",
-      "Only the two ends can read them, and the chain doesn't show who's talking to whom.",
+      "Send the claiming key in a pq message, stored on-chain.",
+      "Only your friend can open it, and the chain can't tell it's for them.",
     ],
-    tags: ["Kyber512 key exchange", "lattice-based", "Sepolia"],
     visual: (
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-        <Person address={ALICE} says="lunch at 1? 🍜" mine />
+      <Row>
+        <Person address={ALICE} says="🔑 claiming key" mine />
         <Arrow />
-        <div className="flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed p-5">
+        <Public>
           <span className="flex items-center gap-2 opacity-70">
             <EyeIcon className="size-5" /> On-chain, for all to see
           </span>
           <Hex>0x4be1…a07c</Hex>
           <Hex>0x09a7…77e2</Hex>
-          <span className="opacity-70">from ? to ?</span>
-        </div>
+        </Public>
         <Arrow />
-        <Person address={BOB} says="lunch at 1? 🍜" />
-      </div>
+        <Person address={BOB} says="claimed! 🎉" />
+      </Row>
     ),
   },
   {
-    kicker: "Keys",
-    title: "One passkey unlocks everything.",
-    lines: ["You make a passkey when you join, and every key grows from it.", "Nothing to back up beyond the passkey."],
-    tags: ["H = Poseidon2", "User Key = Kyber512"],
-    visual: (
-      <div className="flex flex-col items-center max-w-2xl mx-auto">
-        <Hex>🔑 passkey&apos;s PRF output</Hex>
-        <Edge label="H" />
-        <Node
-          name="Sender Key"
-          note="never leaves your browser"
-          className="bg-neutral text-neutral-content border-neutral"
-        />
-        <span className="h-2 w-0.5 bg-base-300" />
-        <span className="w-1/2 h-3 border-2 border-b-0 rounded-t-xl" />
-        <div className="grid grid-cols-2 w-full">
-          <div className="flex flex-col items-center px-1">
-            <Edge label="H(·, tag)" />
-            <Node name="User Key" note="a Kyber512 key pair" />
-            <Edge label="public half" />
-            <Hex>on-chain</Hex>
-          </div>
-          <div className="flex flex-col items-center px-1">
-            <Edge label="H(·, their User Index)" />
-            <Node name="Channel Key" note="one per recipient" />
-            <Edge label="H(·, Message Index)" />
-            <Node name="Message Key" note="one per message" />
-            <span className="h-3 w-0.5 bg-base-300" />
-            <div className="flex flex-wrap justify-center gap-1">
-              {["Message ID", "pad", "pad"].map((name, i) => (
-                <Node key={i} name={name} note={`H(·, ${i})`} className="px-2!" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    kicker: "Channels",
-    title: "Saying hi hides the key inside a lattice.",
+    kicker: "Easy",
+    title: "One passkey, and free to send.",
     lines: [
-      "Your Channel Key is locked to their User Key, with a zero-knowledge proof.",
-      "The chain never learns who it's for: they find it by trying every Channel.",
+      "A passkey makes all your keys: one tap, nothing to back up.",
+      "pq posts each message for you: no gas, and your address stays off it.",
     ],
-    tags: ["Kyber512", "Groth16 on BN254", "the User Key is a private input"],
     visual: (
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-        <Person address={ALICE} says="hi 👋" mine />
-        <Arrow />
-        <div className="flex flex-col gap-3 rounded-3xl border-2 bg-base-100 p-5 text-left">
-          <span className="flex items-center justify-between gap-4">
-            Channel Key Hash <Hex>0x1f9c…</Hex>
-          </span>
-          <span>
-            Encrypted Channel Key <span className="text-sm opacity-60">· 37 field elements</span>
-            <span className="grid grid-cols-[repeat(13,auto)] gap-1 w-fit mt-2">
-              {Array.from({ length: 37 }, (_, i) => (
-                <i key={i} className="size-3 rounded-sm bg-primary" style={{ opacity: (((i * 5) % 7) + 3) / 10 }} />
-              ))}
-            </span>
-          </span>
-          <span className="flex items-center justify-between gap-4">
-            Encrypted Sender <Hex>0x8d02…</Hex>
-          </span>
-          <span className="flex items-center gap-2 rounded-full bg-success px-3 py-1">
-            <ShieldCheckIcon className="size-5" /> Proof checks out. To: ?
-          </span>
-        </div>
-        <Arrow />
-        <div className="flex sm:flex-col items-center gap-3">
-          <Avatar address={BOB} size={80} />
-          <ul className="flex flex-col gap-1 m-0 p-0 text-left">
-            {[1, 2, 3].map(n => (
-              <li
-                key={n}
-                className={`flex items-center gap-2 rounded-full px-3 py-1 ${n === 3 ? "bg-success" : "bg-base-100 opacity-60"}`}
-              >
-                {n === 3 ? <CheckIcon className="size-5" /> : <XMarkIcon className="size-5" />} Channel {n}
-                {n === 3 && <Avatar address={ALICE} size={24} />}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-  {
-    kicker: "Messages",
-    title: "Messages: hash and add.",
-    lines: [
-      "Each half of your message gets a secret pad added, then goes on-chain.",
-      "A Fixed Sender posts it, so your address isn't on it.",
-    ],
-    tags: ["2 × 31 bytes", "pad n = H(Message Key, n)", "Message ID = H(Message Key, 0)"],
-    visual: (
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-        <div className="grid grid-cols-[repeat(5,auto)] items-center gap-2 sm:gap-3 text-lg sm:text-xl">
-          {[
-            ["lunch at 1?", "0x5c1e…"],
-            ["my treat 🍜", "0x83fa…"],
-          ].map(([half, element], i) => (
-            <div key={half} className="contents">
-              <span className="rounded-3xl bg-primary text-primary-content px-4 py-2">{half}</span>+
-              <span className="rounded-full border-2 border-dashed px-3 py-1">pad {i + 1}</span>=<Hex>{element}</Hex>
-            </div>
-          ))}
-        </div>
-        <Arrow />
-        <div className="flex flex-col items-center gap-3 rounded-3xl border-2 bg-base-100 p-5">
-          <span>
-            stored under <Hex>Message ID 0x3e07…</Hex>
-          </span>
-          <span className="flex items-center gap-2 opacity-70">
-            posted by <Avatar address={FIXED_SENDER} size={32} /> the Fixed Sender
-          </span>
-        </div>
-      </div>
-    ),
-  },
-  {
-    kicker: "Prover",
-    title: "The proof is made in your browser, on your GPU.",
-    lines: ["No server ever sees your keys.", "No GPU? The CPU takes over, in about 8 s."],
-    tags: ["Go → WASM", "Web Worker", "gnark's WebGPU bridge"],
-    visual: (
-      <div className="mx-auto max-w-3xl rounded-3xl border-2 bg-base-100 text-left overflow-hidden">
-        <div className="flex items-center gap-2 border-b-2 px-5 py-3">
-          {[1, 2, 3].map(n => (
-            <span key={n} className="size-3 rounded-full bg-base-300" />
-          ))}
-          <span className="ml-2 text-sm opacity-60">pq</span>
-        </div>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 p-6">
-          <Node name="Page" note="starts the prover on load" />
-          <Arrow />
-          <Node name="Web Worker" note="Go prover, as WASM" />
-          <Arrow />
-          <div className="flex flex-col gap-2">
-            <span className="flex items-center gap-2 rounded-2xl bg-primary text-primary-content px-4 py-2">
-              <BoltIcon className="size-6" /> GPU <span className="text-sm opacity-80">MSMs + NTT</span>
-            </span>
-            <span className="flex items-center gap-2 rounded-2xl bg-base-200 px-4 py-2">
-              <CpuChipIcon className="size-6" /> CPU <span className="text-sm opacity-70">fallback, ~8 s</span>
-            </span>
-          </div>
-        </div>
-        <p className="m-0 border-t-2 px-5 py-3 text-sm opacity-70">
-          Back to the CPU when there&apos;s no WebGPU, GPU setup takes over 10 s, or a GPU proof fails.
-        </p>
-      </div>
-    ),
-  },
-  {
-    kicker: "Demo",
-    title: "Let's watch it prove, live.",
-    lines: ["Open DevTools, say hi, and catch the worker at work."],
-    visual: (
-      <ol className="mx-auto max-w-xl m-0 flex flex-col gap-3 rounded-3xl border-2 bg-base-200 p-6 sm:p-8 text-left sm:text-xl">
+      <ul className="m-0 p-0 grid grid-cols-3 gap-3 sm:gap-6 max-w-2xl mx-auto">
         {[
-          <>
-            Open DevTools <kbd className="kbd kbd-sm">F12</kbd>
-          </>,
-          <>
-            Console: <Hex>pqmsg prover on the GPU</Hex> <span className="opacity-60">(or CPU)</span>
-          </>,
-          <>Performance → Record</>,
-          <>Pick someone, tap “Say hi 👋”</>,
-          <>
-            The worker track: <Hex>pqmsg load</Hex> <Hex>pqmsg prove</Hex>
-          </>,
-        ].map((step, i) => (
-          <li key={i}>
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-primary mt-1.5" />
-              <span className="leading-9">{step}</span>
-            </label>
+          ["🔑", "One passkey"],
+          ["⛽", "No gas"],
+          ["🙈", "No address"],
+        ].map(([emoji, name]) => (
+          <li key={name} className="flex flex-col items-center gap-2 rounded-3xl border-2 bg-base-100 p-4 sm:p-6">
+            <span className="text-4xl sm:text-5xl">{emoji}</span>
+            <b className="sm:text-lg leading-tight">{name}</b>
           </li>
         ))}
-      </ol>
+      </ul>
     ),
   },
   {
-    kicker: "Edges",
-    title: "Honest about the edges.",
-    lines: ["Post-quantum where it counts today, and clear about where it isn't yet."],
-    tags: [
-      "Channel Keys cached in browser storage",
-      "no message authentication tag",
-      "single-party Groth16 setup, dev only",
-      "no forward secrecy",
-      "testnet prototype, not audited",
+    kicker: "Lasting",
+    title: "Private now, and for years to come.",
+    lines: [
+      "Keys travel with Kyber, a post-quantum scheme, so messages stay private for years.",
+      "It all runs in your browser, and your keys never leave it.",
     ],
-    dark: true,
+    tags: ["Kyber512", "zero-knowledge proofs", "Poseidon2"],
     visual: (
-      <div className="grid sm:grid-cols-2 gap-4 text-left">
-        {[
-          {
-            Icon: ShieldCheckIcon,
-            heading: "Post-quantum today",
-            color: "text-success border-success/40",
-            items: [
-              ["The key exchange", "Kyber512, built on lattices."],
-              ["Every hash and pad", "Poseidon2."],
-              ["The Sender Key", "From your passkey, which no public key gives away."],
-            ],
-          },
-          {
-            Icon: ClockIcon,
-            heading: "Not yet",
-            color: "text-warning border-warning/40",
-            items: [
-              [
-                "Proof soundness",
-                "A quantum attacker could forge Groth16 Channel openings. That breaks integrity only: the proof still hides the recipient.",
-              ],
-              [
-                "Who can replace a User Key",
-                "Your wallet can, so whoever recovers its key from its public key could swap in theirs and read Channels opened to you after that.",
-              ],
-            ],
-          },
-        ].map(({ Icon, heading, color, items }) => (
-          <div key={heading} className={`flex flex-col gap-4 rounded-3xl border-2 bg-white/5 p-6 ${color}`}>
-            <h3 className="flex items-center gap-2 text-2xl font-semibold m-0">
-              <Icon className="size-7" /> {heading}
-            </h3>
-            {items.map(([name, note]) => (
-              <p key={name} className="m-0 text-neutral-content sm:text-lg">
-                <b className="block">{name}</b>
-                <span className="opacity-70">{note}</span>
-              </p>
-            ))}
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    kicker: "Next",
-    title: "What's next.",
-    lines: ["Closing the edges, one by one."],
-    visual: (
-      <ol className="relative isolate m-0 p-0 grid grid-cols-2 sm:grid-cols-5 gap-x-3 gap-y-6">
-        <span className="hidden sm:block absolute inset-x-[10%] top-10 -z-10 border-t-2 border-dashed" />
-        {(
-          [
-            [KeyIcon, "A User Key only you can replace", "so the wallet alone can't swap it"],
-            [LockClosedIcon, "ML-KEM", "the standardized Kyber"],
-            [UserGroupIcon, "A multi-party setup ceremony", "no single trusted party"],
-            [CheckBadgeIcon, "Message authentication", "so tampering shows"],
-            [PaperAirplaneIcon, "A real relayer", "in place of the Fixed Sender"],
-          ] as const
-        ).map(([Icon, name, note]) => (
-          <li key={name} className="flex flex-col items-center gap-2 last:col-span-2 sm:last:col-span-1">
+      <ol className="relative isolate w-fit mx-auto m-0 p-0 flex gap-6 sm:gap-16">
+        <span className="absolute inset-x-8 sm:inset-x-10 top-8 sm:top-10 -z-10 border-t-2 border-dashed" />
+        {["today", "in 10 years", "in 20 years"].map(when => (
+          <li key={when} className="flex flex-col items-center gap-2">
             <span className="grid place-items-center size-16 sm:size-20 rounded-full bg-primary text-primary-content">
-              <Icon className="size-8 sm:size-10" />
+              <LockClosedIcon className="size-8 sm:size-10" />
             </span>
-            <b className="sm:text-lg leading-tight">{name}</b>
-            <span className="text-sm sm:text-base opacity-70">{note}</span>
+            {when}
           </li>
         ))}
       </ol>
@@ -392,7 +139,7 @@ const BEATS: Beat[] = [
   {
     kicker: "Try it",
     title: "Your turn: say hi.",
-    lines: ["It's live on Sepolia, right at the top of this page."],
+    lines: ["It's live on Sepolia, right at the top of this page.", "Curious how? Turn on 🤿 Deep dive, up top."],
     visual: (
       <div className="flex flex-col items-center gap-8">
         <a href="#top" className="btn btn-primary btn-lg sm:btn-xl rounded-full px-8">
@@ -400,25 +147,20 @@ const BEATS: Beat[] = [
         </a>
         <div className="flex flex-wrap justify-center gap-3">
           {[
-            { name: "GitHub", note: "mistcash/pqmsg", href: "https://github.com/mistcash/pqmsg" },
-            { name: "PqMsg", address: PQMSG },
-            { name: "Verifier", address: VERIFIER },
-          ].map(({ name, note, href, address }) => (
+            { Icon: CodeBracketIcon, name: "GitHub", note: "mistcash/pq", href: "https://github.com/mistcash/pq" },
+            { Icon: BanknotesIcon, name: "MIST.cash", note: "private payments", href: "https://mist.cash" },
+          ].map(({ Icon, name, note, href }) => (
             <a
               key={name}
-              href={href ?? `https://sepolia.etherscan.io/address/${address}`}
+              href={href}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-3 rounded-full border-2 bg-base-100 py-2 pl-2 pr-5 text-left leading-tight hover:border-primary transition-colors"
             >
-              {address ? (
-                <Avatar address={address} size={44} />
-              ) : (
-                <CodeBracketIcon className="size-11 rounded-full bg-neutral p-2.5 text-neutral-content" />
-              )}
+              <Icon className="size-11 rounded-full bg-neutral p-2.5 text-neutral-content" />
               <span>
                 <b className="block">{name}</b>
-                <span className="text-sm opacity-70">{note ?? short(address!)}</span>
+                <span className="text-sm opacity-70">{note}</span>
               </span>
             </a>
           ))}
@@ -466,18 +208,18 @@ export const HowItWorks = () => (
   </a>
 );
 
-/** How pq works, under the app: one full-screen beat per cue of the talk. */
+/** How pq works, under the app: a one-minute walkthrough, one full-screen beat per cue. */
 export const Landing = () => (
   <div>
     <ArrowKeys />
-    {BEATS.map(({ kicker, title, lines, tags, visual, dark }, i) => (
+    {BEATS.map(({ kicker, title, lines, tags, visual }, i) => (
       <section
         key={kicker}
         id={`beat-${i + 1}`}
-        className={`snap-start min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center gap-8 px-4 py-10 text-center ${dark ? "bg-neutral text-neutral-content" : i % 2 ? "bg-base-200" : "bg-base-100"}`}
+        className={`snap-start min-h-[calc(100svh-4rem)] flex flex-col items-center justify-center gap-8 px-4 py-10 text-center ${i % 2 ? "bg-base-200" : "bg-base-100"}`}
       >
         <div className="flex flex-col items-center gap-4 max-w-5xl">
-          <span className={`font-semibold tracking-wide ${dark ? "text-success" : "text-primary"}`}>
+          <span className="font-semibold tracking-wide text-primary">
             {String(i + 1).padStart(2, "0")} · {kicker}
           </span>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] text-balance m-0">{title}</h2>
