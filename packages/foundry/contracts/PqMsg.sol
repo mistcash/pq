@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { Verifier } from "./Verifier.sol";
 
 /// pqmsg: Channels and messages stored publicly on-chain.
-contract PqMsg is Verifier {
+contract PqMsg is Verifier, Ownable {
     struct Channel {
         uint256 channelKeyHash;
         /// The Channel Key encrypted to the recipient's User Key: Kyber512 u‖v, 21 12-bit coefficients per element.
@@ -30,6 +31,8 @@ contract PqMsg is Verifier {
     error BadUserKey();
     error MessageIdUsed();
     error ZeroCiphertext();
+
+    constructor() Ownable(msg.sender) { }
 
     function register(bytes calldata key) external {
         if (key.length != 800) revert BadUserKey();
