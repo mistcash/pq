@@ -1,11 +1,14 @@
 import type { ReactNode } from "react";
+import { short } from "./People";
 import {
   ArrowRightIcon,
+  ArrowUpIcon,
   BoltIcon,
   CheckBadgeIcon,
   CheckIcon,
   ChevronDownIcon,
   ClockIcon,
+  CodeBracketIcon,
   CpuChipIcon,
   EyeIcon,
   KeyIcon,
@@ -24,6 +27,8 @@ type Beat = { kicker: string; title: string; lines: string[]; tags?: string[]; v
 const ALICE = "0x01".padEnd(42, "0");
 const BOB = "0x05".padEnd(42, "0");
 const FIXED_SENDER = "0xf1".padEnd(42, "0");
+const PQMSG = "0xF4a1628850B5C030801002A7e10436699Dd4933C";
+const VERIFIER = "0x5184F86dB5c85DB386554F2Cbfe232412741C5d3";
 
 const Hex = ({ children }: { children: ReactNode }) => (
   <code className="rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">{children}</code>
@@ -382,6 +387,43 @@ const BEATS: Beat[] = [
           </li>
         ))}
       </ol>
+    ),
+  },
+  {
+    kicker: "Try it",
+    title: "Your turn: say hi.",
+    lines: ["It's live on Sepolia, right at the top of this page."],
+    visual: (
+      <div className="flex flex-col items-center gap-8">
+        <a href="#top" className="btn btn-primary btn-lg sm:btn-xl rounded-full px-8">
+          Say hi 👋 <ArrowUpIcon className="size-5" />
+        </a>
+        <div className="flex flex-wrap justify-center gap-3">
+          {[
+            { name: "GitHub", note: "mistcash/pqmsg", href: "https://github.com/mistcash/pqmsg" },
+            { name: "PqMsg", address: PQMSG },
+            { name: "Verifier", address: VERIFIER },
+          ].map(({ name, note, href, address }) => (
+            <a
+              key={name}
+              href={href ?? `https://sepolia.etherscan.io/address/${address}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-3 rounded-full border-2 bg-base-100 py-2 pl-2 pr-5 text-left leading-tight hover:border-primary transition-colors"
+            >
+              {address ? (
+                <Avatar address={address} size={44} />
+              ) : (
+                <CodeBracketIcon className="size-11 rounded-full bg-neutral p-2.5 text-neutral-content" />
+              )}
+              <span>
+                <b className="block">{name}</b>
+                <span className="text-sm opacity-70">{note ?? short(address!)}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
     ),
   },
 ];
