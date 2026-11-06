@@ -1,11 +1,13 @@
 package circuit_test
 
 import (
+	"bytes"
 	"crypto/rand"
 	"testing"
 
 	"github.com/cloudflare/circl/pke/kyber/kyber512/math"
 	"github.com/consensys/gnark-crypto/ecc"
+	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/std/math/emulated"
 	"github.com/consensys/gnark/test"
@@ -41,7 +43,7 @@ func TestEncrypt(t *testing.T) {
 	rand.Read(ks)
 	rand.Read(seed)
 	rand.Read(pt)
-	pk, _ := math.NewKeyPair(ks)
+	pk, sk := math.NewKeyPair(ks)
 	r, e1, e2 := native.Noise(seed)
 	u, v := native.EncryptUV(pk, pt, r, e1, e2)
 	msg := native.MsgOf(pt)
@@ -52,6 +54,18 @@ func TestEncrypt(t *testing.T) {
 	}
 	if err := test.IsSolved(&encCircuit{}, &w, ecc.BN254.ScalarField()); err != nil {
 		t.Fatal(err)
+	}
+	wit, err := frontend.NewWitness(&w, ecc.BN254.ScalarField())
+	if err != nil {
+		t.Fatal(err)
+	}
+	vec := wit.Vector().(fr.Vector)
+	var uv [math.K + 1]math.Poly // U, V are the last fields, one limb per El
+	for i, x := range vec[len(vec)-len(uv)*math.N:] {
+		uv[i/math.N][i%math.N] = int16(x.Uint64())
+	}
+	if got := native.DecryptUV(sk, math.Vec(uv[:math.K]), uv[math.K]); !bytes.Equal(got, pt) {
+		t.Fatalf("got %x, want %x", got, pt)
 	}
 	v[0] = (v[0] + 1) % math.Q
 	w.V = native.PolyOf(v, false)
