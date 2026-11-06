@@ -99,8 +99,8 @@ The Sender Key, User Key seed, Channel Keys, Message Keys, Message IDs and messa
 
 ### Outside the proof
 
-- **Sender misattribution by replay.** The proof doesn't cover the Encrypted Sender, which is the sender's User Index + H(Channel Key, tag), so adding δ to it shifts the User Index it decrypts to. Anyone can resubmit an open Channel with Encrypted Sender + δ. [`restore`](../../packages/nextjs/hooks/useOpenChannel.ts#L84) then files the same Channel Key under User Index s + δ, and the recipient sees the Channel as from the wrong User.
-- **Message ID squatting.** `post` accepts any unused Message ID from anyone. Someone who sees a pending `post` can front-run it with the same Message ID and junk, and the message is lost.
+- **Sender misattribution by replay.** The proof doesn't cover the Encrypted Sender, which is the sender's User Index + H(Channel Key, tag), so adding δ to it shifts the User Index it decrypts to. Anyone can resubmit an open Channel with Encrypted Sender + δ. [`restore`](../../packages/nextjs/hooks/useOpenChannel.ts#L84) then also files the same Channel Key under User Index s + δ, if that User exists. The recipient sees the Channel as from both Users, and it can overwrite a genuine Channel from User s + δ. The attacker doesn't know s, so they can shift the sender but can't choose them.
+- **Message ID squatting.** `post` accepts any unused Message ID from anyone. Someone who sees a pending `post` can front-run it with the same Message ID and junk. The real `post` reverts, and both ends see the junk as a garbled message, since nothing authenticates it. A resend goes to the next Message Index, so the attacker can keep doing this.
 - **No CCA security.** User Keys are static and long-lived, and pqmsg uses CPA encryption without the Fujisaki–Okamoto transform. If a recipient's reaction to a Channel ever becomes observable (auto-replies, read receipts), known key-mismatch attacks on CPA Kyber can recover their secret key. Since the proof accepts any Encrypted Channel Key, crafting those queries costs only gas.
 
 ## Overall
