@@ -162,7 +162,7 @@ const Value = ({ name, value }: { name: keyof typeof VALUES; value: string }) =>
     <div className="flex flex-col gap-1 min-w-0">
       <dt className="flex items-center justify-between gap-2 text-sm font-semibold">
         {label}
-        <span className={`badge badge-sm badge-soft ${where === "secret" ? "badge-warning" : ""}`}>
+        <span className={`badge badge-sm ${where === "secret" ? "badge-warning" : "badge-soft"}`}>
           {where === "secret" && shown ? "🔒 don't share" : WHERE[where]}
         </span>
       </dt>
