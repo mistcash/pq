@@ -4,7 +4,7 @@ To open a Channel, the app needs the recipient's User Key, which it reads from P
 
 ## How
 
-- `utils/anonRpc.ts` starts Nox, Anon-RPC's Sphinx mixnet, as soon as you tap to open a Channel, so it boots while you sign. Nox's specifier contract, [`0x3513…7A9A`](https://sepolia.etherscan.io/address/0x35133267A8F7EC35046a83DCA0f4Ca8A6e1b7A9A) on Sepolia, pins the hash of Nox's worker code. The harness checks the code against it, then runs it in a sandboxed iframe.
+- `utils/anonRpc.ts` starts Nox, Anon-RPC's Sphinx mixnet, as soon as you tap to open a Channel, so it boots while you unlock with your passkey. Nox's specifier contract, [`0x3513…7A9A`](https://sepolia.etherscan.io/address/0x35133267A8F7EC35046a83DCA0f4Ca8A6e1b7A9A) on Sepolia, pins the hash of Nox's worker code. The harness checks the code against it, then runs it in a sandboxed iframe.
 - `anonRead` gives viem Nox's `fetch`, so the `eth_call` travels through Nox's entry, mix and exit nodes. TLS to the RPC runs inside the worker, so the RPC server sees an exit node instead of you, and the exit node can't read the call.
 - `hooks/useOpenChannel.ts` reads the User Key this way, showing "Quietly looking up their key…" meanwhile.
 
