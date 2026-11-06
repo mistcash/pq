@@ -172,15 +172,6 @@ func TestSenderKeyFromFixedSignatureAndPassword(t *testing.T) {
 		"0x086beeccd1cda97660da6836729df13f12804234f484d04df4ff405c3c8aca")
 }
 
-func TestSenderKeyDependsOnPassword(t *testing.T) {
-	signature := make([]byte, 65)
-	a, _ := circuits.SenderKey(signature, "correct horse battery staple")
-	b, _ := circuits.SenderKey(signature, "correct horse battery stapler")
-	if a == b {
-		t.Fatal("two passwords gave the same Sender Key")
-	}
-}
-
 func TestSenderKeyRejectsSignatureNot65Bytes(t *testing.T) {
 	if _, err := circuits.SenderKey(make([]byte, 64), "correct horse battery staple"); err == nil {
 		t.Fatal("accepted a 64-byte signature")

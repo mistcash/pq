@@ -78,8 +78,8 @@ func hash(elements ...fr.Element) fr.Element {
 }
 
 // SenderKey returns H of a 65-byte wallet signature, zero-padded and split into three 31-byte big-endian chunks, and of
-// the password stretched by Argon2id with RFC 9106's second recommended parameters, salted with the signature. A
-// quantum attacker can re-sign from the wallet's public key, but still needs the password (ADR-0004).
+// the Password stretched by Argon2id with RFC 9106's second recommended parameters, salted with the signature. A
+// quantum attacker can re-sign from the wallet's public key, but still needs the Password (ADR-0004).
 func SenderKey(signature []byte, password string) (fr.Element, error) {
 	if len(signature) != 65 {
 		return fr.Element{}, errors.New("signature must be 65 bytes")
