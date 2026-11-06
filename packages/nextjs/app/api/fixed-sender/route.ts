@@ -11,14 +11,14 @@ const chain = scaffoldConfig.targetNetworks[0];
 const ANVIL_KEY = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
 const key = process.env.FIXED_SENDER_PRIVATE_KEY || (chain.id === hardhat.id ? ANVIL_KEY : undefined);
 
-const is = (value: unknown, bytes: number): value is Hex => isHex(value) && size(value) === bytes;
+const isHexOfSize = (value: unknown, bytes: number): value is Hex => isHex(value) && size(value) === bytes;
 
 /** Builds the contract call for a typed open-Channel or post request, and for nothing else. */
 const callFor = ({ type, channelKeyHash, proof, messageId, ciphertext1, ciphertext2 }: any) => {
-  if (type === "openChannel" && is(channelKeyHash, 32) && is(proof, 256)) {
+  if (type === "openChannel" && isHexOfSize(channelKeyHash, 32) && isHexOfSize(proof, 256)) {
     return { functionName: "openChannel", args: [BigInt(channelKeyHash), "0x", proof] };
   }
-  if (type === "post" && is(messageId, 32) && is(ciphertext1, 32) && is(ciphertext2, 32)) {
+  if (type === "post" && isHexOfSize(messageId, 32) && isHexOfSize(ciphertext1, 32) && isHexOfSize(ciphertext2, 32)) {
     return { functionName: "post", args: [BigInt(messageId), BigInt(ciphertext1), BigInt(ciphertext2)] };
   }
 };
