@@ -69,6 +69,14 @@ There are no ephemeral keys. The one random input is the Kyber encryption noise:
 
 It doesn't show whose key it was encrypted to. The Kyber public key is a private input (ADR-0003), so the chain never learns the recipient, and a sender who encrypts to the wrong key only breaks their own Channel. The Encrypted Sender is outside the proof, so it doesn't prove who opened the Channel either.
 
+### Code map
+
+| Path | What's there |
+| --- | --- |
+| `packages/circuits` | The circuit (`circuits.go`, `circuit/`), Kyber in plain Go (`kyber.go`, `native/`), the browser module (`cmd/wasm`) and the setup (`cmd/artifacts`) |
+| `packages/foundry` | `PqMsg.sol`, and `Verifier.sol`, generated from the circuit |
+| `packages/nextjs` | The app; `public/circuits/` holds `pqmsg.wasm`, the prover worker, the proving key and gnark's WebGPU runtime |
+
 ## Design
 
 See `DESIGN.md`.
