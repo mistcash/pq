@@ -1,5 +1,12 @@
 # pqmsg
 
+[![Lint](https://github.com/mistcash/pqmsg/actions/workflows/lint.yaml/badge.svg)](https://github.com/mistcash/pqmsg/actions/workflows/lint.yaml)
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENCE)
+[![Network: Sepolia](https://img.shields.io/badge/network-Sepolia-627EEA?logo=ethereum)](DEPLOY.md#sepolia-deployment)
+![Key exchange: Kyber512](https://img.shields.io/badge/key%20exchange-Kyber512-6f42c1)
+![Proof: Groth16 on BN254](https://img.shields.io/badge/proof-Groth16%20on%20BN254-0e8a16)
+![Status: unaudited prototype](https://img.shields.io/badge/status-unaudited%20prototype-orange)
+
 Tiny private messages on Ethereum, with a post-quantum key exchange.
 
 pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join.
