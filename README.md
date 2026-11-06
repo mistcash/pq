@@ -8,7 +8,7 @@ Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`.
 
 ## PHASE 1 - registration and message sending
 
-Set up with Scaffold-ETH 2 using Foundry (`npx create-eth@latest -s foundry`), plus a gnark circuit in Go. Scripts compile the circuit, run a dev-only Groth16 setup on BN254, export the Solidity verifier, and build a WASM prover for the frontend. Every hash is gnark's standard Poseidon2 (ADR-0001). It deploys to Sepolia, with anvil for local development.
+Set up with Scaffold-ETH 2 using Foundry (`npx create-eth@latest -s foundry`), plus a gnark circuit in Go. Scripts compile the circuit, run a dev-only Groth16 setup on BN254, export the Solidity verifier, and build a WASM prover for the frontend. Every hash is gnark's standard Poseidon2 (ADR-0001), except Argon2id stretching the Password (ADR-0004). It deploys to Sepolia, with anvil for local development.
 
 The flow is,
 1. Users connect their wallet and register a User Key, a Kyber512 public key derived from their Sender Key, which comes from a wallet signature and a Password they pick (ADR-0002, ADR-0004).
