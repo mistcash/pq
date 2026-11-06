@@ -54,11 +54,11 @@ The circuit mirrors round-3 Kyber512's CPAPKE.Enc, which is ML-KEM-512's K-PKE.E
 
 - SampleNTT (Alg. 7): Â isn't expanded from ρ.
 - ByteDecode₁₂ (Alg. 6) of the User Key, and any binding to a registered User Key: t̂ is free.
-- SamplePolyCBD and PRF (Alg. 8): the noise isn't derived from a seed.
+- SamplePolyCBD (Alg. 8) and PRF: the noise isn't derived from a seed.
 - Compress and ByteEncode (Alg. 5): Encrypted Channel Keys are uncompressed.
 - The KEM layer (Alg. 16–21): Encaps, Decaps, the Fujisaki–Okamoto transform, implicit rejection and H(ek). pqmsg uses K-PKE alone, so it's only CPA-secure.
 - K-PKE.Decrypt (Alg. 15): recipients decrypt natively, and nothing proves it.
-- K-PKE.KeyGen's (Alg. 13) domain separator: User Keys come from round-3 Kyber key generation, G(seed) rather than G(d‖k). `register` checks only a User Key's length, not FIPS 203 §7.2's encapsulation key check. Neither weakens security, but User Keys aren't byte-compatible with ML-KEM-512's.
+- K-PKE.KeyGen's (Alg. 13) domain separator: User Keys come from round-3 Kyber key generation, G(seed) rather than G(d‖k). `register` does FIPS 203 §7.2's type check (the length) but not its modulus check. Neither weakens security. User Keys use ML-KEM-512's encoding, but ML-KEM-512.KeyGen wouldn't produce the same User Key from the same seed.
 
 ## Security by layer
 
