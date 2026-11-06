@@ -26,7 +26,8 @@ type Props = { me: Address; other: Address; joining?: Joining; onBack: () => voi
 export const Chat = ({ me, other, joining, onBack }: Props) => {
   const { step, error, open } = useOpenChannel();
   const { copyToClipboard, isCopiedToClipboard } = useCopyToClipboard();
-  const canShare = "share" in navigator;
+  // The share sheet suits touch devices; elsewhere copying is simpler.
+  const canShare = "share" in navigator && matchMedia("(pointer: coarse)").matches;
   const yours = loadChannelKey(me, other);
   const theirs = loadChannelKey(other, me);
   const busy =
