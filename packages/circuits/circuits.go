@@ -77,7 +77,7 @@ func hash(elements ...fr.Element) fr.Element {
 }
 
 // SenderKey returns H of a passkey's 32-byte PRF output, zero-padded and split into two 31-byte big-endian chunks. The
-// PRF secret never leaves the passkey, and unlike a wallet's key, no public key reveals it (ADR-0004).
+// PRF secret never leaves the passkey, and no public key reveals it (ADR-0004).
 func SenderKey(prfOutput []byte) (fr.Element, error) {
 	if len(prfOutput) != 32 {
 		return fr.Element{}, errors.New("passkey output must be 32 bytes")
