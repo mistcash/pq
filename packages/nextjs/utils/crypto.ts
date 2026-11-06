@@ -5,7 +5,14 @@ export type Crypto = {
   senderKey: (signature: Hex) => Hex;
   channelKey: (senderKey: Hex, userIndex: number) => Hex;
   channelKeyHash: (channelKey: Hex) => Hex;
+  /** The packed Kyber512 public key to register. */
+  userKey: (senderKey: Hex) => Hex;
   prove: (channelKey: Hex) => { proof: Hex; channelKeyHash: Hex };
+  /** Junk if the Channel isn't to you, so check its Channel Key Hash. */
+  decryptChannelKey: (senderKey: Hex, encryptedChannelKey: Hex[]) => Hex;
+  encryptSender: (channelKey: Hex, senderIndex: number) => Hex;
+  /** The sender's User Index as hex; a huge number if junk. */
+  decryptSender: (channelKey: Hex, encryptedSender: Hex) => Hex;
   messageId: (channelKey: Hex, messageIndex: number) => Hex;
   /** Throws if the message is over 62 bytes. */
   encrypt: (channelKey: Hex, messageIndex: number, message: string) => [Hex, Hex];
@@ -37,7 +44,11 @@ const load = async (): Promise<Crypto> => {
     senderKey: call("senderKey"),
     channelKey: call("channelKey"),
     channelKeyHash: call("channelKeyHash"),
+    userKey: call("userKey"),
     prove: channelKey => call("prove")(ccs, pk, channelKey),
+    decryptChannelKey: call("decryptChannelKey"),
+    encryptSender: call("encryptSender"),
+    decryptSender: call("decryptSender"),
     messageId: call("messageId"),
     encrypt: call("encrypt"),
     decrypt: call("decrypt"),
