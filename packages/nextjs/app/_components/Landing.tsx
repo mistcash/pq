@@ -16,6 +16,7 @@ type Beat = { kicker: string; title: string; lines: string[]; tags?: string[]; v
 // Two of the friends on the Register card.
 const ALICE = "0x01".padEnd(42, "0");
 const BOB = "0x05".padEnd(42, "0");
+const FIXED_SENDER = "0xf1".padEnd(42, "0");
 
 const Hex = ({ children }: { children: ReactNode }) => (
   <code className="rounded-full bg-primary/10 text-primary px-3 py-1 text-sm">{children}</code>
@@ -195,6 +196,39 @@ const BEATS: Beat[] = [
               </li>
             ))}
           </ul>
+        </div>
+      </div>
+    ),
+  },
+  {
+    kicker: "Messages",
+    title: "Messages: hash and add.",
+    lines: [
+      "Each half of your message gets a secret pad added, then goes on-chain.",
+      "A Fixed Sender posts it, so your address isn't on it.",
+    ],
+    tags: ["2 × 31 bytes", "pad n = H(Message Key, n)", "Message ID = H(Message Key, 0)"],
+    visual: (
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+        <div className="grid grid-cols-[repeat(5,auto)] items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+          {[
+            ["lunch at 1?", "0x5c1e…"],
+            ["my treat 🍜", "0x83fa…"],
+          ].map(([half, element], i) => (
+            <div key={half} className="contents">
+              <span className="rounded-3xl bg-primary text-primary-content px-4 py-2">{half}</span>+
+              <span className="rounded-full border-2 border-dashed px-3 py-1">pad {i + 1}</span>=<Hex>{element}</Hex>
+            </div>
+          ))}
+        </div>
+        <Arrow />
+        <div className="flex flex-col items-center gap-3 rounded-3xl border-2 bg-base-100 p-5">
+          <span>
+            stored under <Hex>Message ID 0x3e07…</Hex>
+          </span>
+          <span className="flex items-center gap-2 opacity-70">
+            posted by <Avatar address={FIXED_SENDER} size={32} /> the Fixed Sender
+          </span>
         </div>
       </div>
     ),
