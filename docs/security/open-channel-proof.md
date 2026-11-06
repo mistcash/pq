@@ -32,7 +32,7 @@ We checked this with `test.IsSolved`. The forged witness satisfies `OpenChannel`
 
 So the proof only ensures:
 
-1. **The opener knows the Channel Key behind the Channel Key Hash.** Nobody can open a Channel under a Channel Key Hash they can't open, except by replaying an existing opening: `openChannel` accepts duplicates, and only the Fixed Sender's route refuses them.
+1. **The opener knows the Channel Key behind the Channel Key Hash.** Nobody can open a Channel under a Channel Key Hash whose Channel Key they don't know, except by replaying an existing opening: `openChannel` accepts duplicates, and only the Fixed Sender's route refuses them.
 2. **The Encrypted Channel Key is well formed:** 768 coefficients, each below q, 21 to a field element.
 3. **Nothing private leaks.** Groth16 is perfectly zero-knowledge, so the proof hides the Channel Key, the User Key and the noise, even from a quantum adversary.
 
@@ -94,7 +94,7 @@ The Sender Key, User Key seed, Channel Keys, Message Keys, Message IDs and messa
 
 - The setup is dev-only and single-party (`groth16.Setup` in `cmd/artifacts`), so whoever ran it could forge proofs.
 - Soundness is classical only: BN254 gives about 100 bits, and Shor breaks it.
-- A forged proof adds little, given how little the circuit checks: it lets someone open a Channel under a Channel Key Hash they can't open.
+- A forged proof adds little, given how little the circuit checks: it lets someone open a Channel under a Channel Key Hash whose Channel Key they don't know.
 - Zero-knowledge is perfect, so it holds against quantum adversaries too.
 
 ### Outside the proof
