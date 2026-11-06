@@ -4,7 +4,7 @@ import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-
 import { useChannels } from "~~/hooks/useChannels";
 import { useFixedSender } from "~~/hooks/useFixedSender";
 import { useSenderKey } from "~~/hooks/useSenderKey";
-import { recordStep, recordTx } from "~~/services/store/deepDive";
+import { recordEntity, recordStep, recordTx } from "~~/services/store/deepDive";
 import { anonRead, startAnonRpc } from "~~/utils/anonRpc";
 import { fetchUserKey } from "~~/utils/arkiv";
 import { saveChannelKey } from "~~/utils/channels";
@@ -78,7 +78,10 @@ export const useOpenChannel = () => {
         setStep("send");
         const hash = await fixedSender(
           { type: "openChannel", channelKeyHash, encryptedChannelKey, encryptedSender, proof },
-          () => setStep("confirm"),
+          entity => {
+            setStep("confirm");
+            if (entity) recordEntity("open", entity);
+          },
         );
         setTx(hash);
         recordTx("open", hash);
