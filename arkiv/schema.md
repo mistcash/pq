@@ -32,20 +32,24 @@ Ownership doesn't make the data trustworthy, and pqmsg doesn't rely on it: anyon
 
 After 182 days (`ExpirationTime.fromDays(182)`, 7,862,400 two-second blocks), just under Rabdi's longest lifetime of 7,884,000 blocks. We wanted a year; see `friction.md`.
 
-- **A User Key** comes back the next time its owner unlocks pqmsg: `hooks/useSenderKey.ts` checks Arkiv, and asks the Fixed Sender to store the key again if it's gone. A key nobody has unlocked for six months belongs to someone who isn't reading their messages.
-- **A Channel** isn't stored again yet. Its two ends cache the Channel Key in their browsers, so they keep chatting, but **Find my chats** on a new browser can't find a Channel that has expired. Re-storing it on each message is next.
+Nothing renews an entity yet. Next:
 
-## The queries the app runs
+- **A User Key** will come back the next time its owner unlocks pqmsg: the app checks Arkiv and, if the key is gone, asks the Fixed Sender to store it again. A key nobody has unlocked for six months belongs to someone who isn't reading their messages.
+- **A Channel** will be stored again as its ends message. Until then, its two ends keep chatting from the Channel Key cached in their browsers, but **Find my chats** on a new browser can't find a Channel that has expired.
+
+## The queries pqmsg runs
+
+The Fixed Sender's queries are live. The app's reads come with the app's move to Arkiv, the next change after this one.
 
 | Where | Filter | Why |
 | --- | --- | --- |
-| `fetchUserKey` before opening a Channel, and on unlock | `arkiv.schema = pqmsg.userKey AND pqmsg = <PqMsg> AND hash = <User Key Hash>` | One User Key, by the hash read from PqMsg over Anon-RPC |
-| `fetchChannels` to check a Channel is open, and in **Find my chats** | `arkiv.schema = pqmsg.channel AND pqmsg = <PqMsg>`, 100 per page | Every Channel, so the download doesn't say which ones are yours |
+| `fetchUserKey`, in the Fixed Sender before storing a User Key, and in the app before opening a Channel (next) | `arkiv.schema = pqmsg.userKey AND pqmsg = <PqMsg> AND hash = <User Key Hash>` | One User Key, by the hash read from PqMsg over Anon-RPC |
+| The app, to check a Channel is open, and in **Find my chats** (next) | `arkiv.schema = pqmsg.channel AND pqmsg = <PqMsg>`, 100 per page | Every Channel, so the download doesn't say which ones are yours |
 | The Fixed Sender before opening a Channel | `arkiv.schema = pqmsg.channel AND pqmsg = <PqMsg> AND channelKeyHash = <Channel Key Hash>` | Refuses a replayed proof rather than pay for it again |
 
 Try it, for every entity of the Sepolia PqMsg:
 
 ```sh
 curl -s https://rpc.rabdi.db-chain.testnet.arkiv.network -H 'content-type: application/json' \
-  -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"arkiv_query\",\"params\":[\"pqmsg = str('0x83ba93654cac7a6f9489e81c89f4aaa48d755c52')\",{\"limit\":100}]}"
+  -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"arkiv_query\",\"params\":[\"pqmsg = str('0xfbf7e8e3cc9c6c641f23ab5be6cabc919a8af515')\",{\"limit\":100,\"select\":{\"owner\":true,\"attributes\":true}}]}"
 ```
