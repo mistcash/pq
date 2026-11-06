@@ -52,8 +52,10 @@ export const useOpenChannel = () => {
       const crypto = loadCrypto();
       let channelKey = loadChannelKey(me, other);
       if (!channelKey) {
-        const { data: users } = await getUsers();
-        channelKey = (await crypto).channelKey(await senderKey(me), users!.indexOf(other));
+        const { data: users } = await getUsers({ throwOnError: true });
+        const index = users!.indexOf(other);
+        if (index < 0) throw new Error("They haven't joined pqmsg yet. Ask them to join first!");
+        channelKey = (await crypto).channelKey(await senderKey(me), index);
       }
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
       const { data: channels } = await getChannels();

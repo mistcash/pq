@@ -11,12 +11,16 @@ const NO_MATCH = "Hmm, that key doesn't open any chat. Maybe a bit got lost when
 /** Joins the Channel someone opened to you, once its Channel Key matches a Channel on-chain. */
 export const useJoinChannel = (me?: Address) => {
   const [joining, setJoining] = useState<Joining>();
+  const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
   const { refetch: getChannels } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getChannels" });
 
   const join = async (from: Address, channelKey: string) => {
     setJoining({ from });
     try {
       if (!isHex(channelKey) || size(channelKey) !== 32) throw new Error(NO_MATCH);
+      const { data: users } = await getUsers({ throwOnError: true });
+      if (!users!.includes(from))
+        throw new Error("That link isn't from anyone on pqmsg. Maybe a bit got lost when copying?");
       const channelKeyHash = BigInt((await loadCrypto()).channelKeyHash(channelKey));
       const { data: channels } = await getChannels({ throwOnError: true });
       if (!channels!.some((channel: { channelKeyHash: bigint }) => channel.channelKeyHash === channelKeyHash)) {
