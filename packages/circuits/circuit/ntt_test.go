@@ -32,3 +32,23 @@ func TestNTT(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+type invNTTCircuit struct{ A circuit.Poly }
+
+func (c *invNTTCircuit) Define(api frontend.API) error {
+	f, err := emulated.NewField[circuit.Params](api)
+	if err != nil {
+		return err
+	}
+	p := circuit.NTT(f, &c.A)
+	p = circuit.InvNTT(f, &p)
+	assertEq(f, &p, &c.A)
+	return nil
+}
+
+func TestInvNTT(t *testing.T) {
+	w := invNTTCircuit{native.PolyOf(randPoly(), false)}
+	if err := test.IsSolved(&invNTTCircuit{}, &w, ecc.BN254.ScalarField()); err != nil {
+		t.Fatal(err)
+	}
+}
