@@ -5,7 +5,7 @@ import { useFixedSender } from "~~/hooks/useFixedSender";
 import { loadCrypto } from "~~/utils/crypto";
 
 /** Where this browser keeps the hash of a message it sent, to link it on the block explorer. */
-const txKey = (messageId: Hex) => `pqmsg:tx:${messageId}`;
+const txStorageKey = (messageId: Hex) => `pqmsg:tx:${messageId}`;
 
 /** A Channel's messages, decrypted in order, and sending the next one through the Fixed Sender. */
 export const useMessages = (channelKey: Hex) => {
@@ -25,7 +25,7 @@ export const useMessages = (channelKey: Hex) => {
         if (!c1 && !c2) return read;
         read.push({
           text: crypto.decrypt(channelKey, i, toHex(c1), toHex(c2)),
-          tx: localStorage.getItem(txKey(id)) ?? undefined,
+          tx: localStorage.getItem(txStorageKey(id)) ?? undefined,
         });
       }
     },
@@ -37,7 +37,8 @@ export const useMessages = (channelKey: Hex) => {
     const crypto = await loadCrypto();
     const [ciphertext1, ciphertext2] = crypto.encrypt(channelKey, index, message);
     const messageId = crypto.messageId(channelKey, index);
-    localStorage.setItem(txKey(messageId), await fixedSender({ type: "post", messageId, ciphertext1, ciphertext2 }));
+    const hash = await fixedSender({ type: "post", messageId, ciphertext1, ciphertext2 });
+    localStorage.setItem(txStorageKey(messageId), hash);
     await refetch();
   };
 
