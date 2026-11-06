@@ -18,7 +18,7 @@ export const Register = () => {
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { writeContractAsync, isMining } = useScaffoldWriteContract({ contractName: "PqMsg" });
-  const [step, setStep] = useState<"start" | "sign" | "check">();
+  const [step, setStep] = useState<"start" | "password" | "sign" | "check">();
   const senderKey = useSenderKey(setStep);
 
   const join = async () => {

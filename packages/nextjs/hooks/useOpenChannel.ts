@@ -8,7 +8,7 @@ import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
 
-export type OpenStep = "start" | "sign" | "check" | "prove" | "send" | "confirm" | "open";
+export type OpenStep = "start" | "password" | "sign" | "check" | "prove" | "send" | "confirm" | "open";
 
 /** Lets the current step render before proving blocks the page. */
 const painted = () => new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve)));

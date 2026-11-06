@@ -12,6 +12,7 @@ import { loadChannelKey } from "~~/utils/channels";
 
 export const PROGRESS: Record<Exclude<OpenStep, "open">, string> = {
   start: "Getting ready…",
+  password: "Your password, please.",
   sign: "Sign in your wallet to unlock your secret key.",
   check: "Once more, so we know your wallet always signs the same way.",
   prove: "Doing some secret math, right here in your browser…",

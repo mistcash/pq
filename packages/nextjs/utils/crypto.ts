@@ -2,7 +2,7 @@ import type { Hex } from "viem";
 
 /** The Go crypto module (packages/circuits/cmd/wasm). All hashing happens there, never in JavaScript (ADR-0001). */
 export type Crypto = {
-  senderKey: (signature: Hex) => Hex;
+  senderKey: (signature: Hex, password: string) => Hex;
   channelKey: (senderKey: Hex, userIndex: number) => Hex;
   channelKeyHash: (channelKey: Hex) => Hex;
   /** The packed Kyber512 public key to register. */

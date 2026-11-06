@@ -1,5 +1,7 @@
 import type { Address, Hex } from "viem";
 import { useSignMessage } from "wagmi";
+import { askPassword } from "~~/components/PasswordPrompt";
+import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError } from "~~/utils/friendly";
 
@@ -7,9 +9,13 @@ const SIGN_MESSAGE = "pqmsg: derive Sender Key v1";
 /** Sender Keys live in memory only, for this page session (ADR-0002). */
 const senderKeys = new Map<Address, Hex>();
 
-/** Gets your Sender Key from a wallet signature, asking once more the first time to check the wallet signs alike. */
-export const useSenderKey = (onStep: (step: "sign" | "check") => void) => {
+/**
+ * Gets your Sender Key from your password and a wallet signature, asking once more the first time to check the wallet
+ * signs alike. Once you've joined, a password that doesn't give back your User Key is refused (ADR-0004).
+ */
+export const useSenderKey = (onStep: (step: "password" | "sign" | "check") => void) => {
   const { signMessageAsync } = useSignMessage();
+  const { data: pqMsg } = useScaffoldContract({ contractName: "PqMsg" });
 
   const signTwiceFirstTime = async (me: Address) => {
     onStep("sign");
@@ -28,7 +34,17 @@ export const useSenderKey = (onStep: (step: "sign" | "check") => void) => {
   };
 
   return async (me: Address) => {
-    if (!senderKeys.has(me)) senderKeys.set(me, (await loadCrypto()).senderKey(await signTwiceFirstTime(me)));
+    if (!senderKeys.has(me)) {
+      const userKey = (await pqMsg!.read.userKeys([me])) as Hex;
+      onStep("password");
+      const password = await askPassword(userKey === "0x");
+      const crypto = await loadCrypto();
+      const senderKey = crypto.senderKey(await signTwiceFirstTime(me), password);
+      if (userKey !== "0x" && crypto.userKey(senderKey) !== userKey) {
+        throw new FriendlyError("That's not your password. Try again?");
+      }
+      senderKeys.set(me, senderKey);
+    }
     return senderKeys.get(me)!;
   };
 };
