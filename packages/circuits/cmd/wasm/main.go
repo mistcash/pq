@@ -119,6 +119,29 @@ func main() {
 			}
 			return map[string]any{"u": us, "v": coeffs(v)}, nil
 		}),
+		// kyberDecrypt(sk, u, v) returns pt, with u and v as from kyberEncrypt.
+		"kyberDecrypt": fn(func(a []js.Value) (any, error) {
+			skb, err := hexBytes(a[0], math.PrivateKeySize)
+			if err != nil {
+				return nil, err
+			}
+			if n := a[1].Length(); n != math.K {
+				return nil, fmt.Errorf("want %d polys, got %d", math.K, n)
+			}
+			var u math.Vec
+			for i := range u {
+				if u[i], err = poly(a[1].Index(i)); err != nil {
+					return nil, err
+				}
+			}
+			v, err := poly(a[2])
+			if err != nil {
+				return nil, err
+			}
+			var sk math.SK
+			sk.Unpack(skb)
+			return "0x" + hex.EncodeToString(native.DecryptUV(&sk, u, v)), nil
+		}),
 	})
 	select {}
 }
@@ -156,6 +179,16 @@ func coeffs(p math.Poly) []any {
 		c[i] = x
 	}
 	return c
+}
+
+func poly(v js.Value) (p math.Poly, err error) {
+	if n := v.Length(); n != math.N {
+		return p, fmt.Errorf("want %d coefficients, got %d", math.N, n)
+	}
+	for i := range p {
+		p[i] = int16(v.Index(i).Int())
+	}
+	return
 }
 
 // hexBytes decodes 0x-hex of exactly n bytes: circl slices unchecked, and a panic kills the module.
