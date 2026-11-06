@@ -16,15 +16,16 @@ import { useOpenChannel } from "~~/hooks/useOpenChannel";
 const Home: NextPage = () => {
   const { address } = useAccount();
   const { data: key } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "userKeys", args: [address] });
+  const registered = !!key && key !== "0x";
   const [other, setOther] = useState<Address>();
   const { step, restored, restore } = useOpenChannel();
-  const { joining, join, leave } = useJoinChannel(key ? address : undefined);
+  const { joining, join, leave } = useJoinChannel(registered ? address : undefined);
   const [pastedKey, setPastedKey] = useState("");
   const person = joining?.from ?? other;
 
   return (
     <div className="w-full max-w-md mx-auto px-4 py-8">
-      {!address || !key ? (
+      {!address || !registered ? (
         <Register />
       ) : person ? (
         <Chat
