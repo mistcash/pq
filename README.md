@@ -141,9 +141,30 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 - **The proving key is read without subgroup checks** (`UnsafeReadFrom`), which saves 18 s. It's served from the same origin as `pqmsg.wasm`, so anyone able to swap it could swap the prover too.
 - **Metadata.** Registering is public. The RPC provider sees which Message IDs a browser polls, and the Fixed Sender sees the IP address behind each Channel opening and message.
 
-## Design
+## Run locally
 
-See `DESIGN.md`.
+You need Node 20.18.3 or later, Yarn through Corepack, and Foundry. Go 1.26 is needed only to rebuild the circuit; its built files are committed.
+
+```sh
+yarn install
+yarn chain    # anvil, in its own terminal
+yarn deploy   # the Verifier and PqMsg, on anvil
+yarn start    # the app, at http://localhost:3000
+```
+
+On anvil, an anvil account is the Fixed Sender, so there's nothing else to set up.
+
+To change the circuit, run `yarn circuits:build`. It runs a fresh setup, so it regenerates `Verifier.sol` and the proving key together, and you redeploy afterwards. `sh packages/circuits/build.sh wasm` rebuilds only the WASM and the WebGPU bundle, and keeps the setup.
+
+## Test
+
+```sh
+yarn test                                 # PqMsg, with a real proof
+(cd packages/circuits && go test ./...)   # the circuit's proofs and rejections, Kyber, the hashes
+yarn next:lint && yarn next:check-types
+```
+
+CI runs only the lint and type checks so far.
 
 ## Deploy to Sepolia
 
