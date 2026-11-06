@@ -1,21 +1,38 @@
 "use client";
 
+import { useState } from "react";
+import { PROGRESS } from "./Chat";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { hexToBigInt, toHex } from "viem";
 import { useAccount } from "wagmi";
 import { Avatar } from "~~/components/Avatar";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { useSenderKey } from "~~/hooks/useSenderKey";
+import { loadCrypto } from "~~/utils/crypto";
+import { friendlyMessage } from "~~/utils/friendly";
+import { notification } from "~~/utils/scaffold-eth";
 
 const FRIENDS = ["0x01", "0x02", "0x05"].map(n => n.padEnd(42, "0"));
 
-/** A random non-zero User Key; a placeholder until Channel Key encryption exists. */
-const randomUserKey = () => hexToBigInt(toHex(crypto.getRandomValues(new Uint8Array(32)))) || 1n;
-
-/** Connect, then register with one tap. */
+/** Connect, then register with one tap and a signature, which unlocks your User Key. */
 export const Register = () => {
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { writeContractAsync, isMining } = useScaffoldWriteContract({ contractName: "PqMsg" });
+  const [step, setStep] = useState<"start" | "sign" | "check">();
+  const senderKey = useSenderKey(setStep);
+
+  const join = async () => {
+    setStep("start");
+    try {
+      const userKey = (await loadCrypto()).userKey(await senderKey(address!));
+      setStep(undefined);
+      // The transactor shows its own errors.
+      await writeContractAsync({ functionName: "register", args: [userKey] }).catch(() => undefined);
+    } catch (e) {
+      notification.error(friendlyMessage(e));
+    }
+    setStep(undefined);
+  };
 
   return (
     <div className="card bg-base-100 border border-base-300 p-8 items-center text-center gap-5">
@@ -33,16 +50,16 @@ export const Register = () => {
       <div>
         <h1 className="text-4xl font-bold m-0">{address ? "Hi, it's you!" : "pqmsg"}</h1>
         <p className="text-lg text-base-content/70 mb-0">
-          {address ? "Join so people can find you and message you." : "Tiny private messages, from you to anyone."}
+          {step
+            ? PROGRESS[step]
+            : address
+              ? "Join so people can find you and message you."
+              : "Tiny private messages, from you to anyone."}
         </p>
       </div>
       {address ? (
-        <button
-          className="btn btn-primary btn-lg btn-block"
-          disabled={isMining}
-          onClick={() => writeContractAsync({ functionName: "register", args: [randomUserKey()] })}
-        >
-          {isMining ? <span className="loading loading-dots" /> : "Join"}
+        <button className="btn btn-primary btn-lg btn-block" disabled={!!step || isMining} onClick={join}>
+          {step || isMining ? <span className="loading loading-dots" /> : "Join"}
         </button>
       ) : (
         <button className="btn btn-primary btn-lg btn-block" onClick={openConnectModal}>
