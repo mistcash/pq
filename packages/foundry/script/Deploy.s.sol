@@ -16,9 +16,5 @@ contract DeployScript is ScaffoldETHDeploy {
         // Add new deployments here when needed
 
         new DeployPqMsg().run();
-
-        // Deploy another contract
-        // DeployMyContract myContract = new DeployMyContract();
-        // myContract.run();
     }
 }

@@ -8,9 +8,10 @@ import { loadChannelKey } from "~~/utils/channels";
 
 export const short = (address: string) => `${address.slice(0, 6)}…${address.slice(-4)}`;
 
-/** Every registered User, with your own avatar up top. Tap someone to open a Channel to them. */
+/** Every registered User, with your own avatar up top. Tap someone to chat with them. */
 export const People = ({ me, onPick }: { me: Address; onPick: (user: Address) => void }) => {
   const { data: users } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
+  const chatting = (user: Address) => loadChannelKey(me, user) ?? loadChannelKey(user, me);
 
   return (
     <div className="flex flex-col gap-6">
@@ -25,7 +26,7 @@ export const People = ({ me, onPick }: { me: Address; onPick: (user: Address) =>
         <h2 className="text-xl font-semibold m-0 px-5 pt-5 pb-2">
           People <span className="text-base-content/70 font-normal">{users?.length}</span>
         </h2>
-        {users && users.length > 1 && !users.some((user: Address) => loadChannelKey(me, user)) && (
+        {users && users.length > 1 && !users.some(chatting) && (
           <p className="text-base-content/70 m-0 px-5 pb-2">No chats yet. Tap someone to say hi!</p>
         )}
         {users ? (
@@ -40,7 +41,7 @@ export const People = ({ me, onPick }: { me: Address; onPick: (user: Address) =>
                   <Avatar address={user} size={48} />
                   <span className="font-medium truncate">{short(user)}</span>
                   {user === me && <span className="badge badge-primary ml-auto">you</span>}
-                  {loadChannelKey(me, user) && (
+                  {chatting(user) && (
                     <span className="badge badge-primary badge-soft ml-auto">
                       <ChatBubbleOvalLeftEllipsisIcon className="h-4 w-4" /> chatting
                     </span>

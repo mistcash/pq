@@ -1,9 +1,12 @@
 import { useState } from "react";
 import type { Address, Hex } from "viem";
-import { usePublicClient, useSignMessage } from "wagmi";
+import { useSignMessage } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
-import { loadChannelKey, saveChannelKey } from "~~/utils/channels";
+import { useChannelKeyHashes } from "~~/hooks/useChannelKeyHashes";
+import { useFixedSender } from "~~/hooks/useFixedSender";
+import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
+import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
 
 export type OpenStep = "start" | "sign" | "check" | "prove" | "send" | "confirm" | "open";
 
@@ -20,9 +23,9 @@ export const useOpenChannel = () => {
   const [error, setError] = useState<string>();
   const [restored, setRestored] = useState<number>();
   const { signMessageAsync } = useSignMessage();
-  const publicClient = usePublicClient();
   const { refetch: getUsers } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getUsers" });
-  const { refetch: getChannels } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "getChannels" });
+  const channelKeyHashes = useChannelKeyHashes();
+  const fixedSender = useFixedSender();
 
   const signTwiceFirstTime = async (me: Address) => {
     setStep("sign");
@@ -31,7 +34,7 @@ export const useOpenChannel = () => {
     if (!localStorage.getItem(checked)) {
       setStep("check");
       if ((await signMessageAsync({ message: SIGN_MESSAGE })) !== signature) {
-        throw new Error(
+        throw new FriendlyError(
           "Your wallet signed the same thing two different ways, so it can't keep your chats. Try another wallet.",
         );
       }
@@ -50,43 +53,33 @@ export const useOpenChannel = () => {
     setError(undefined);
     try {
       const crypto = loadCrypto();
-      let channelKey = loadChannelKey(me, other);
-      if (!channelKey) {
-        const { data: users } = await getUsers();
-        channelKey = (await crypto).channelKey(await senderKey(me), users!.indexOf(other));
-      }
+      const { data: users } = await getUsers({ throwOnError: true });
+      const index = users!.indexOf(other);
+      if (index < 0) throw new FriendlyError("They haven't joined pqmsg yet. Ask them to join first!");
+      const channelKey = (await crypto).channelKey(await senderKey(me), index);
       const channelKeyHash = (await crypto).channelKeyHash(channelKey);
-      const { data: channels } = await getChannels();
-      if (!channels!.some((channel: { channelKeyHash: bigint }) => channel.channelKeyHash === BigInt(channelKeyHash))) {
+      if (!(await channelKeyHashes()).has(BigInt(channelKeyHash))) {
         setStep("prove");
         await painted();
         const { proof } = (await crypto).prove(channelKey);
         setStep("send");
-        const response = await fetch("/api/fixed-sender", {
-          method: "POST",
-          body: JSON.stringify({ type: "openChannel", channelKeyHash, proof }),
-        });
-        const { hash, error } = await response.json();
-        if (error) throw new Error(error);
-        setStep("confirm");
-        if ((await publicClient!.waitForTransactionReceipt({ hash })).status !== "success") {
-          throw new Error("The chain said no. Try again?");
-        }
+        await fixedSender({ type: "openChannel", channelKeyHash, proof }, () => setStep("confirm"));
       }
       saveChannelKey(me, other, channelKey);
       setStep("open");
-    } catch (e: any) {
-      setError(e.shortMessage ?? e.message);
+    } catch (e) {
+      setError(friendlyMessage(e));
     }
   };
 
   /** Finds every Channel you opened from your signature alone (ADR-0002), and caches each Channel Key. */
   const restore = async (me: Address) => {
+    setStep("start");
     const crypto = await loadCrypto();
     const key = await senderKey(me);
+    setStep("prove");
     const { data: users } = await getUsers({ throwOnError: true });
-    const { data: channels } = await getChannels({ throwOnError: true });
-    const hashes = new Set(channels!.map((channel: { channelKeyHash: bigint }) => channel.channelKeyHash));
+    const hashes = await channelKeyHashes();
     let found = 0;
     users!.forEach((user: Address, j: number) => {
       const channelKey = crypto.channelKey(key, j);

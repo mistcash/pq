@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Hex, toHex } from "viem";
-import { usePublicClient } from "wagmi";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
+import { useFixedSender } from "~~/hooks/useFixedSender";
 import { loadCrypto } from "~~/utils/crypto";
 
 /** A Channel's messages, decrypted in order, and sending the next one through the Fixed Sender. */
 export const useMessages = (channelKey: Hex) => {
   const { data: pqMsg } = useScaffoldContract({ contractName: "PqMsg" });
-  const publicClient = usePublicClient();
+  const fixedSender = useFixedSender();
   const { data, refetch, isFetching } = useQuery({
     queryKey: ["messages", channelKey],
     enabled: !!pqMsg,
@@ -30,15 +30,7 @@ export const useMessages = (channelKey: Hex) => {
     const index = (await refetch({ throwOnError: true })).data!.length;
     const crypto = await loadCrypto();
     const [ciphertext1, ciphertext2] = crypto.encrypt(channelKey, index, message);
-    const response = await fetch("/api/fixed-sender", {
-      method: "POST",
-      body: JSON.stringify({ type: "post", messageId: crypto.messageId(channelKey, index), ciphertext1, ciphertext2 }),
-    });
-    const { hash, error } = await response.json();
-    if (error) throw new Error(error);
-    if ((await publicClient!.waitForTransactionReceipt({ hash })).status !== "success") {
-      throw new Error("The chain said no. Try again?");
-    }
+    await fixedSender({ type: "post", messageId: crypto.messageId(channelKey, index), ciphertext1, ciphertext2 });
     await refetch();
   };
 
