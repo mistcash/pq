@@ -39,7 +39,7 @@ export const useOpenChannel = () => {
         const userKey = (await pqMsg!.read.userKeys([other])) as Hex;
         setStep("prove");
         await painted();
-        const { proof, encryptedChannelKey } = (await crypto).prove(userKey, channelKey);
+        const { proof, encryptedChannelKey } = await (await crypto).prove(userKey, channelKey);
         // Tells them who opened it, readable only with the Channel Key.
         const encryptedSender = (await crypto).encryptSender(channelKey, users!.indexOf(me));
         setStep("send");

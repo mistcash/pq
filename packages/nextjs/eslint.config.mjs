@@ -5,7 +5,7 @@ import prettierPlugin from "eslint-plugin-prettier";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  globalIgnores(["public/circuits/wasm_exec.js"]),
+  globalIgnores(["public/circuits/wasm_exec.js", "public/circuits/gnark-webgpu.js"]),
   ...nextCoreWebVitals,
   ...nextTypescript,
   prettierConfig,

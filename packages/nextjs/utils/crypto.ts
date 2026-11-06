@@ -8,7 +8,7 @@ export type Crypto = {
   /** The packed Kyber512 public key to register. */
   userKey: (senderKey: Hex) => Hex;
   /** Encrypts `channelKey` to `userKey` as the 37-element Encrypted Channel Key, and proves it. */
-  prove: (userKey: Hex, channelKey: Hex) => { proof: Hex; channelKeyHash: Hex; encryptedChannelKey: Hex[] };
+  prove: (userKey: Hex, channelKey: Hex) => Promise<{ proof: Hex; channelKeyHash: Hex; encryptedChannelKey: Hex[] }>;
   /** Junk if the Channel isn't to you, so check its Channel Key Hash. */
   decryptChannelKey: (senderKey: Hex, encryptedChannelKey: Hex[]) => Hex;
   encryptSender: (channelKey: Hex, senderIndex: number) => Hex;
@@ -22,8 +22,6 @@ export type Crypto = {
 
 let loading: Promise<Crypto> | undefined;
 
-const bytes = async (path: string) => new Uint8Array(await (await fetch(path)).arrayBuffer());
-
 const load = async (): Promise<Crypto> => {
   await new Promise((onload, onerror) =>
     document.head.append(
@@ -33,7 +31,6 @@ const load = async (): Promise<Crypto> => {
   const go = new (window as any).Go();
   const { instance } = await WebAssembly.instantiateStreaming(fetch("/circuits/pqmsg.wasm"), go.importObject);
   go.run(instance);
-  const [ccs, pk] = await Promise.all([bytes("/circuits/openChannel.ccs"), bytes("/circuits/openChannel.pk")]);
   const call =
     (name: string) =>
     (...args: unknown[]) => {
@@ -46,7 +43,7 @@ const load = async (): Promise<Crypto> => {
     channelKey: call("channelKey"),
     channelKeyHash: call("channelKeyHash"),
     userKey: call("userKey"),
-    prove: (userKey, channelKey) => call("prove")(ccs, pk, userKey, channelKey),
+    prove,
     decryptChannelKey: call("decryptChannelKey"),
     encryptSender: call("encryptSender"),
     decryptSender: call("decryptSender"),
@@ -55,6 +52,24 @@ const load = async (): Promise<Crypto> => {
     decrypt: call("decrypt"),
   };
 };
+
+let prover: Worker | undefined;
+
+/** Starts the prover in a Web Worker, which loads its keys at once so a proof doesn't wait for them. */
+export const startProver = () => (prover ??= new Worker("/circuits/prover.js"));
+
+const prove: Crypto["prove"] = (userKey, channelKey) =>
+  new Promise((resolve, reject) => {
+    const { port1, port2 } = new MessageChannel();
+    port1.onmessage = ({ data: { result, error } }) => {
+      if (!error) return resolve(result);
+      // Starts afresh next time, in case loading failed.
+      prover?.terminate();
+      prover = undefined;
+      reject(new Error(error));
+    };
+    startProver().postMessage({ userKey, channelKey }, [port2]);
+  });
 
 /** Loads the crypto module once per page, trying again next time if it fails. */
 export const loadCrypto = () =>
