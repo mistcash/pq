@@ -26,7 +26,7 @@ Contract stores:
 
 It emits `Registered(user)`, `ChannelOpened(channelKeyHash)` and `Posted(messageId)`, each indexed.
 
-The app links each Channel opening and message sent from your browser to its transaction on Etherscan, which shows only the Fixed Sender calling PqMsg.
+Right after you open a Channel, and under each message you sent from this browser, the app links the transaction on Etherscan, which shows only the Fixed Sender calling PqMsg.
 
 ## Design
 
