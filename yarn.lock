@@ -19,6 +19,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anon-rpc/browser-harness@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@anon-rpc/browser-harness@npm:0.4.0"
+  dependencies:
+    "@anon-rpc/harness-core": "npm:0.4.0"
+    "@kpstreams/webrtc-client": "npm:^0.2.1"
+    "@noble/hashes": "npm:^1.5.0"
+  checksum: 10/137ca4e9dada948c267059ee7d6914cd903933d0717dd289b04cc1fd6b310511863742c3ab0c6480e322a9ccc66f8ca94f75740b4f475f99cbb1405db9ee31e8
+  languageName: node
+  linkType: hard
+
+"@anon-rpc/harness-core@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@anon-rpc/harness-core@npm:0.4.0"
+  dependencies:
+    "@noble/hashes": "npm:^1.5.0"
+  checksum: 10/56d5c794f830d1f60e82467c092ef522cbe107c4089574d90c638e4e6a3b6ba3ed1afe5f321dc242016eb7c47203b9b61f37f805575cddb0f335e5e8a45e80ca
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/code-frame@npm:7.29.7"
@@ -2216,6 +2236,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@kpstreams/core@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@kpstreams/core@npm:0.2.1"
+  checksum: 10/102cc6104041be5ae8bfb291f016e2558dd09a41efad6c1951a426ef4dc9da34760a8fbcd6c04ec902436f1fe3eaf2465a87dc3d78d08818b874f36bca4232ba
+  languageName: node
+  linkType: hard
+
+"@kpstreams/webrtc-client@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@kpstreams/webrtc-client@npm:0.2.1"
+  dependencies:
+    "@kpstreams/core": "npm:^0.2.1"
+  checksum: 10/bed9502a6e8e7540524035280ae3b9b7d65baee5b73a76618a243106f1e278d8c4bd47eb8d297f7839037a48b6bc65b1cb31b68c7ba87fa7fa6987dc27e8097e
+  languageName: node
+  linkType: hard
+
 "@leichtgewicht/ip-codec@npm:^2.0.4":
   version: 2.0.5
   resolution: "@leichtgewicht/ip-codec@npm:2.0.5"
@@ -3904,6 +3940,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@se-2/nextjs@workspace:packages/nextjs"
   dependencies:
+    "@anon-rpc/browser-harness": "npm:0.4.0"
     "@heroicons/react": "npm:~2.2.0"
     "@rainbow-me/rainbowkit": "npm:2.2.11"
     "@react-native-async-storage/async-storage": "npm:~2.2.0"
