@@ -28,6 +28,10 @@ contract PqMsgTest is Test {
         k[0] = bytes1(b);
     }
 
+    function testDeployerOwns() public view {
+        assertEq(pqMsg.owner(), address(this));
+    }
+
     function testRegisterListsUserWithKey() public {
         vm.prank(alice);
         pqMsg.register(key(42));
