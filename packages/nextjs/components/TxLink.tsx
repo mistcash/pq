@@ -2,7 +2,7 @@ import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { getBlockExplorerTxLink } from "~~/utils/scaffold-eth";
 
-/** Links a transaction this browser sent on the block explorer, to see how little it gives away. Nothing on a local chain. */
+/** Links a transaction on the block explorer, to see how little it gives away. Nothing on a local chain. */
 export const TxLink = ({ hash, className = "" }: { hash?: string; className?: string }) => {
   const { targetNetwork } = useTargetNetwork();
   const href = hash && getBlockExplorerTxLink(targetNetwork.id, hash);
