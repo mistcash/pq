@@ -4,6 +4,7 @@ import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-
 import { useChannels } from "~~/hooks/useChannels";
 import { useFixedSender } from "~~/hooks/useFixedSender";
 import { type UnlockStep, useSenderKey } from "~~/hooks/useSenderKey";
+import { dive } from "~~/services/store/deepDive";
 import { saveChannelKey } from "~~/utils/channels";
 import { loadCrypto } from "~~/utils/crypto";
 import { FriendlyError, friendlyMessage } from "~~/utils/friendly";
@@ -39,15 +40,28 @@ export const useOpenChannel = () => {
         const userKey = (await pqMsg!.read.userKeys([other])) as Hex;
         setStep("prove");
         await painted();
+        const started = performance.now();
         const { proof, encryptedChannelKey } = (await crypto).prove(userKey, channelKey);
+        const provingTime = `${((performance.now() - started) / 1000).toFixed(1)} s`;
         // Tells them who opened it, readable only with the Channel Key.
         const encryptedSender = (await crypto).encryptSender(channelKey, users!.indexOf(me));
+        dive("open", {
+          userIndex: String(index),
+          channelKey,
+          channelKeyHash,
+          encryptedChannelKey: encryptedChannelKey.join(" "),
+          encryptedSender,
+          proof,
+          provingTime,
+          tx: undefined,
+        });
         setStep("send");
         const hash = await fixedSender(
           { type: "openChannel", channelKeyHash, encryptedChannelKey, encryptedSender, proof },
           () => setStep("confirm"),
         );
         setTx(hash);
+        dive("open", { tx: hash });
       }
       saveChannelKey(me, other, channelKey);
       setStep("open");
