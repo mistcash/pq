@@ -1,14 +1,14 @@
-# pqmsg
+# pq
 
 Tiny private messages on Ethereum, with a post-quantum key exchange.
 
-pqmsg stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join.
+pq stores every message publicly on-chain, yet only the two ends of a conversation can read it, and the chain doesn't show who is talking to whom. Each conversation's key travels encrypted with Kyber512, a lattice-based scheme designed to resist quantum computers, and a zero-knowledge proof made in your browser shows it was encrypted correctly. Every key comes from one passkey, made when you join.
 
-**Why it matters.** Whatever goes on a public chain stays there forever. Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists. pqmsg is a working testbed for private messaging on a public chain without that expiry date, and it's explicit about the parts that aren't post-quantum yet (see [Security considerations](#security-considerations)).
+**Why it matters.** Whatever goes on a public chain stays there forever. Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists. pq is a working testbed for private messaging on a public chain without that expiry date, and it's explicit about the parts that aren't post-quantum yet (see [Security considerations](#security-considerations)).
 
 Status: Phase 1, on the Sepolia testnet. A research prototype, not audited.
 
-Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`. What the OpenChannel proof checks, and how post-quantum pqmsg is, is in `docs/security/open-channel-proof.md`.
+Terms are defined in `GLOSSARY.md`; key decisions are in `docs/adr/`. What the OpenChannel proof checks, and how post-quantum pq is, is in `docs/security/open-channel-proof.md`.
 
 ## How it works
 
@@ -33,12 +33,12 @@ Deep dive mode (🤿 in the header) explains each step as it happens: what ran i
 
 ## CROPS
 
-pqmsg leads with **privacy**: only a Channel's two ends can read it, even with a future quantum computer, and the chain never shows who is talking to whom.
+pq leads with **privacy**: only a Channel's two ends can read it, even with a future quantum computer, and the chain never shows who is talking to whom.
 
 - **Censorship resistant.** PqMsg has no allowlist, and its owner can only swap the Verifier. The Fixed Sender can refuse to send, but `openChannel` and `post` take calls from any wallet, at the cost of showing who sent them.
 - **Open source.** MIT-licensed. Everything builds from this repo: `yarn circuits:build` builds the circuit, Verifier and WASM prover, `yarn deploy` the contracts, and `yarn start` the app.
 - **Private.** The chain shows only the Fixed Sender opening Channels and posting ciphertexts (ADR-0003). The RPC server sees your address and which messages you read, but not whom you open a Channel to, as their User Key comes over Anon-RPC (`docs/anon-rpc.md`). The app has no trackers or analytics.
-- **Secure.** Channel Keys are encrypted to Kyber512 keys, with a Groth16 proof that each encryption is well formed, though its setup is dev-only. Your Sender Key, kept only in memory, comes from a passkey that only answers pqmsg's own domain. Channel Keys stay in this browser's storage unencrypted, and "Find my chats" restores them.
+- **Secure.** Channel Keys are encrypted to Kyber512 keys, with a Groth16 proof that each encryption is well formed, though its setup is dev-only. Your Sender Key, kept only in memory, comes from a passkey that only answers pq's own domain. Channel Keys stay in this browser's storage unencrypted, and "Find my chats" restores them.
 
 ## Architecture
 
@@ -117,7 +117,7 @@ The other User finds the Channel by tapping **Find my chats**.
 
 ## Security considerations
 
-pqmsg aims to let only a Channel's two ends read its messages, and to keep who talks to whom off the chain: the recipient is a private input to the proof, the sender is encrypted, and the Fixed Sender submits both. It's a testnet prototype and hasn't been audited. This is where it falls short today.
+pq aims to let only a Channel's two ends read its messages, and to keep who talks to whom off the chain: the recipient is a private input to the proof, the sender is encrypted, and the Fixed Sender submits both. It's a testnet prototype and hasn't been audited. This is where it falls short today.
 
 ### What is post-quantum, and what isn't yet
 
@@ -134,7 +134,7 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 ### Keys, and where they live
 
 - **No ephemeral keys.** Every key comes from the Sender Key, by design (ADR-0002), so there's no forward secrecy and no re-keying. A leaked Sender Key exposes every Channel its User opened and every Channel opened to them, since their User Key comes from it too.
-- **Passkeys are tied to pqmsg's domain.** Another site can't ask yours for its PRF output. But pqmsg on a new domain would need new passkeys, and losing yours loses every Channel (ADR-0004).
+- **Passkeys are tied to pq's domain.** Another site can't ask yours for its PRF output. But pq on a new domain would need new passkeys, and losing yours loses every Channel (ADR-0004).
 - **Sender Keys stay in memory** for the page's lifetime and are never sent anywhere.
 - **Channel Keys are cached unencrypted in `localStorage`**, so anyone who can run script in this browser profile (an XSS bug, an extension) or open it can read your chats. **Find my chats** rebuilds them from one passkey tap, so they could live in memory instead. The app doesn't set a Content Security Policy yet.
 
