@@ -1,5 +1,14 @@
 import type { ReactNode } from "react";
-import { ArrowRightIcon, ChevronDownIcon, EyeIcon, LockClosedIcon, LockOpenIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  EyeIcon,
+  LockClosedIcon,
+  LockOpenIcon,
+  ShieldCheckIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { Avatar } from "~~/components/Avatar";
 
 type Beat = { kicker: string; title: string; lines: string[]; tags?: string[]; visual: ReactNode; dark?: boolean };
@@ -137,6 +146,55 @@ const BEATS: Beat[] = [
               ))}
             </div>
           </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    kicker: "Channels",
+    title: "Saying hi hides the key inside a lattice.",
+    lines: [
+      "Your Channel Key is locked to their User Key, with a zero-knowledge proof.",
+      "The chain never learns who it's for: they find it by trying every Channel.",
+    ],
+    tags: ["Kyber512", "Groth16 on BN254", "the User Key is a private input"],
+    visual: (
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+        <Person address={ALICE} says="hi 👋" mine />
+        <Arrow />
+        <div className="flex flex-col gap-3 rounded-3xl border-2 bg-base-100 p-5 text-left">
+          <span className="flex items-center justify-between gap-4">
+            Channel Key Hash <Hex>0x1f9c…</Hex>
+          </span>
+          <span>
+            Encrypted Channel Key <span className="text-sm opacity-60">· 37 field elements</span>
+            <span className="grid grid-cols-[repeat(13,auto)] gap-1 w-fit mt-2">
+              {Array.from({ length: 37 }, (_, i) => (
+                <i key={i} className="size-3 rounded-sm bg-primary" style={{ opacity: (((i * 5) % 7) + 3) / 10 }} />
+              ))}
+            </span>
+          </span>
+          <span className="flex items-center justify-between gap-4">
+            Encrypted Sender <Hex>0x8d02…</Hex>
+          </span>
+          <span className="flex items-center gap-2 rounded-full bg-success px-3 py-1">
+            <ShieldCheckIcon className="size-5" /> Proof checks out. To: ?
+          </span>
+        </div>
+        <Arrow />
+        <div className="flex sm:flex-col items-center gap-3">
+          <Avatar address={BOB} size={80} />
+          <ul className="flex flex-col gap-1 m-0 p-0 text-left">
+            {[1, 2, 3].map(n => (
+              <li
+                key={n}
+                className={`flex items-center gap-2 rounded-full px-3 py-1 ${n === 3 ? "bg-success" : "bg-base-100 opacity-60"}`}
+              >
+                {n === 3 ? <CheckIcon className="size-5" /> : <XMarkIcon className="size-5" />} Channel {n}
+                {n === 3 && <Avatar address={ALICE} size={24} />}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     ),
