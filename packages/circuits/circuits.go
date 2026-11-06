@@ -13,6 +13,7 @@ import (
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
 	poseidon2gadget "github.com/consensys/gnark/std/hash/poseidon2"
+	"github.com/consensys/gnark/std/math/emulated"
 	"github.com/mistcash/pqmsg/packages/circuits/circuit"
 	"github.com/mistcash/pqmsg/packages/circuits/native"
 )
@@ -39,14 +40,21 @@ func (c *OpenChannel) Define(api frontend.API) error {
 	}
 	h.Write(c.ChannelKey)
 	api.AssertIsEqual(h.Sum(), c.ChannelKeyHash)
-	// TODO: Ciphertext = native.PackCiphertext(circuit.Encrypt(AT, Th, msg, R, E1, E2)) with ChannelKey = msg[0] + 2^128·msg[1],
-	// R, E1, E2 in CBD range, and Compile's IgnoreUnconstrainedInputs dropped.
+	f, err := emulated.NewField[circuit.Params](api)
+	if err != nil {
+		return err
+	}
+	// TODO: R, E1, E2 in CBD range.
+	u, v := circuit.Encrypt(api, f, &c.AT, &c.Th, circuit.MsgOf(api, c.ChannelKey), &c.R, &c.E1, &c.E2)
+	for i, x := range circuit.Pack(api, f, &u, &v) {
+		api.AssertIsEqual(x, c.Ciphertext[i])
+	}
 	return nil
 }
 
 // Compile compiles OpenChannel.
 func Compile() (constraint.ConstraintSystem, error) {
-	return frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, &OpenChannel{}, frontend.IgnoreUnconstrainedInputs())
+	return frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, &OpenChannel{})
 }
 
 // hash returns H(elements...) with gnark's native Poseidon2 Merkle-Damgård hasher.

@@ -11,6 +11,7 @@ import (
 	"github.com/consensys/gnark/std/hash/poseidon2"
 	"github.com/consensys/gnark/test"
 	"github.com/mistcash/pqmsg/packages/circuits"
+	"github.com/mistcash/pqmsg/packages/circuits/native"
 )
 
 func TestProveChannelKey(t *testing.T) {
@@ -56,6 +57,29 @@ func TestOpenChannelRejectsWrongChannelKeyHash(t *testing.T) {
 	a.ChannelKeyHash = 42
 	if test.IsSolved(&circuits.OpenChannel{}, a, ecc.BN254.ScalarField()) == nil {
 		t.Fatal("solved with a wrong Channel Key Hash")
+	}
+}
+
+func TestOpenChannelRejectsWrongEncryptedChannelKey(t *testing.T) {
+	var senderKey, channelKey, other fr.Element
+	channelKey.SetUint64(42)
+	other.SetUint64(43)
+	a, ct, err := circuits.Assign(circuits.UserKey(senderKey), channelKey, make([]byte, 32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, otherCt, err := circuits.Assign(circuits.UserKey(senderKey), other, make([]byte, 32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ct[36].Add(&ct[36], new(fr.Element).SetOne())
+	for _, wrong := range []native.Ciphertext{ct, otherCt} {
+		for i := range wrong {
+			a.Ciphertext[i] = wrong[i]
+		}
+		if test.IsSolved(&circuits.OpenChannel{}, a, ecc.BN254.ScalarField()) == nil {
+			t.Fatal("solved with a wrong Encrypted Channel Key")
+		}
 	}
 }
 
