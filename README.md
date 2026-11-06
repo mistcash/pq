@@ -120,6 +120,13 @@ pqmsg aims to let only a Channel's two ends read its messages, and to keep who t
 
 **The Sender Key is the weak link.** It's a hash of a wallet signature, and the app only accepts wallets that sign deterministically. Registering sends a transaction from that wallet, which reveals its public key. A quantum attacker who recovers the private key from it can sign `pqmsg: derive Sender Key v1` again, get the same Sender Key, and from it the User's Kyber secret key and every Channel Key they opened. So harvest now, decrypt later works against registered Users today. Fixing it means a root secret that doesn't come from the wallet's ECDSA key, at the cost of ADR-0002's "nothing to back up".
 
+### Keys, and where they live
+
+- **No ephemeral keys.** Every key comes from the Sender Key, by design (ADR-0002), so there's no forward secrecy and no re-keying. A leaked Sender Key exposes every Channel its User opened and every Channel opened to them, since their User Key comes from it too.
+- **Only sign it on pqmsg.** Any site that gets your wallet to sign `pqmsg: derive Sender Key v1` learns your Sender Key, because a plain `personal_sign` isn't tied to the site that asked.
+- **Sender Keys stay in memory** for the page's lifetime and are never sent anywhere.
+- **Channel Keys are cached unencrypted in `localStorage`**, so anyone who can run script in this browser profile (an XSS bug, an extension) or open it can read your chats. **Find my chats** rebuilds them from one signature, so they could live in memory instead. The app doesn't set a Content Security Policy yet.
+
 ## Design
 
 See `DESIGN.md`.
