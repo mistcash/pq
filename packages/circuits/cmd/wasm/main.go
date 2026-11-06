@@ -15,6 +15,7 @@ import (
 
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
+	webgpu "github.com/consensys/gnark/backend/accelerated/webgpu/groth16"
 	"github.com/consensys/gnark/backend/groth16"
 	groth16bn254 "github.com/consensys/gnark/backend/groth16/bn254"
 	"github.com/consensys/gnark/constraint"
@@ -71,7 +72,7 @@ func main() {
 			encryptedSender, err2 := element(a[1])
 			return toHex(circuits.DecryptSender(channelKey, encryptedSender)), errors.Join(err, err2)
 		}),
-		// loadProver(ccs, pk) reads the constraint system and proving key once, for prove.
+		// loadProver(ccs, pk) reads the constraint system and proving key once, for prove, and resolves to whether it uses the GPU.
 		"loadProver": async(func(a []js.Value) (any, error) {
 			cs, key := groth16.NewCS(ecc.BN254), groth16.NewProvingKey(ecc.BN254)
 			if _, err := cs.ReadFrom(bytes.NewReader(bytesOf(a[0]))); err != nil {
@@ -82,7 +83,9 @@ func main() {
 				return nil, err
 			}
 			ccs, pk = cs, key
-			return nil, nil
+			// On the GPU when the page installed gnark's WebGPU bridge (gnark-webgpu.js), else on the CPU.
+			gpu = js.Global().Get("gnarkGroth16WebGPU").Truthy() && webgpu.Prepare(pk) == nil
+			return gpu, nil
 		}),
 		// prove(userKey, channelKey) resolves to { proof, channelKeyHash, encryptedChannelKey }, ready for the contract.
 		"prove": async(func(a []js.Value) (any, error) {
@@ -100,6 +103,12 @@ func main() {
 			seed := make([]byte, 32)
 			rand.Read(seed)
 			proof, ct, err := circuits.ProveChannelKey(ccs, pk, userKey, channelKey, seed)
+			if err != nil && gpu {
+				// The GPU failed: prove on the CPU from now on.
+				gpu = false
+				webgpu.Release(pk)
+				proof, ct, err = circuits.ProveChannelKey(ccs, pk, userKey, channelKey, seed)
+			}
 			if err != nil {
 				return nil, err
 			}
@@ -135,10 +144,11 @@ func main() {
 	select {}
 }
 
-// The prover's constraint system and proving key, set by loadProver.
+// The prover's constraint system and proving key, set by loadProver, and whether it proves on the GPU.
 var (
 	ccs constraint.ConstraintSystem
 	pk  groth16.ProvingKey
+	gpu bool
 )
 
 // async is fn returning a Promise, settled from a goroutine so Go can wait on JavaScript meanwhile.
