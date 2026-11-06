@@ -455,17 +455,21 @@ const ArrowKeys = () => {
   return null;
 };
 
+/** The way down from the app to how it works. */
+export const HowItWorks = () => (
+  <a
+    href="#beat-1"
+    className="flex items-center gap-2 rounded-full bg-base-100 px-5 py-2.5 font-medium hover:text-primary transition-colors"
+  >
+    How it works
+    <ChevronDownIcon className="size-5 animate-bounce" />
+  </a>
+);
+
 /** How pq works, under the app: one full-screen beat per cue of the talk. */
 export const Landing = () => (
   <div>
     <ArrowKeys />
-    <a
-      href="#beat-1"
-      className="flex items-center gap-2 w-fit mx-auto mb-8 rounded-full bg-base-100 px-5 py-2.5 font-medium hover:text-primary transition-colors"
-    >
-      How it works
-      <ChevronDownIcon className="size-5 animate-bounce" />
-    </a>
     {BEATS.map(({ kicker, title, lines, tags, visual, dark }, i) => (
       <section
         key={kicker}
