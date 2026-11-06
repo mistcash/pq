@@ -51,17 +51,14 @@ const Row = ({ children }: { children: ReactNode }) => (
 const BEATS: Beat[] = [
   {
     kicker: "Pay",
-    title: "Pay anyone privately, with MIST.cash.",
-    lines: [
-      "MIST.cash keeps who paid whom off the chain.",
-      "To collect, your friend just needs the payment's claiming key.",
-    ],
+    title: "Pay anyone, privately.",
+    lines: ["A private payment keeps who paid whom off the chain.", "To collect it, your friend just needs its key."],
     visual: (
       <Row>
         <Person address={ALICE} says="100 USDC 💸" mine />
         <Arrow />
         <Public>
-          <b>MIST.cash</b>
+          <b>Private payment</b>
           <Hex>100 USDC</Hex>
         </Public>
         <Arrow />
@@ -73,12 +70,12 @@ const BEATS: Beat[] = [
     kicker: "Hand-off",
     title: "pq passes them the key, privately.",
     lines: [
-      "Send the claiming key in a pq message, stored on-chain.",
+      "Send the key in a pq message, stored on-chain.",
       "Only your friend can open it, and the chain can't tell it's for them.",
     ],
     visual: (
       <Row>
-        <Person address={ALICE} says="🔑 claiming key" mine />
+        <Person address={ALICE} says="🔑 payment key" mine />
         <Arrow />
         <Public>
           <span className="flex items-center gap-2 opacity-70">
