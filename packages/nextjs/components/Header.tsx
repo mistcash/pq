@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { hardhat } from "viem/chains";
@@ -22,8 +23,8 @@ export const Header = () => {
 
   return (
     <div className="sticky top-0 navbar bg-base-100 min-h-16 shrink-0 justify-between z-20 border-b border-base-300 px-4">
-      <Link href="/" className="text-2xl font-bold text-primary">
-        pqmsg
+      <Link href="/" className="rounded-xl">
+        <Image src="/logo.svg" alt="pq" width={40} height={40} className="rounded-xl" priority />
       </Link>
       <div className="flex items-center gap-1">
         <DeepDiveToggle />
