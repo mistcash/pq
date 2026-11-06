@@ -457,7 +457,9 @@ export const Landing = () => (
             ))}
           </p>
         </div>
-        <div className="w-full max-w-5xl">{visual}</div>
+        <div className="w-full max-w-5xl motion-safe:animate-pop motion-safe:[animation-timeline:view()] motion-safe:[animation-range:entry_0%_entry_40%]">
+          {visual}
+        </div>
         {tags && (
           <ul className="flex flex-wrap justify-center gap-2">
             {tags.map(tag => (
