@@ -70,7 +70,7 @@ pq leads with **privacy**: only a Channel's two ends can read it, even with a fu
 
 pq keeps each User Key and Channel on [Arkiv](https://arkiv.network)'s Rabdi testnet (chain 7794095), and only its keccak256 on PqMsg (ADR-0005). The Fixed Sender writes every entity; whoever reads one checks it hashes to PqMsg's hash. Under Sepolia's Glamsterdam gas, this cut `register` from 3.02M to 0.36M gas and `openChannel` from 5.01M to 0.83M, and Arkiv charges the Fixed Sender about 0.5M Rabdi gas per entity; `docs/gas.md` has the transactions. `Registered` and `ChannelOpened` carry each hash too.
 
-So far the Fixed Sender writes to Arkiv and checks User Keys against PqMsg there (`app/api/fixed-sender/route.ts`). The app still reads User Keys and Channels from PqMsg, as before ADR-0005, so it can't use this deployment until it reads them from Arkiv, which comes next.
+The Fixed Sender writes to Arkiv (`app/api/fixed-sender/route.ts`), and the browser reads from it directly (`utils/arkiv.ts`): every Channel, and a recipient's User Key by the hash it read from PqMsg over Anon-RPC. Unlocking stores your User Key again if it has expired, and deep dive mode (🤿) links each new entity on Arkiv's explorer.
 
 - **Wallet that writes the entities:** `0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C`, the Fixed Sender ([on the explorer](https://rabdi.explorer.arkiv.network/address/0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C)).
 - **A query to run:** every pq entity for the Sepolia PqMsg, User Keys and Channels alike:
