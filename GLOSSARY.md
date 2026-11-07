@@ -12,6 +12,10 @@ _Avoid_: member, account
 The Kyber512 public key a User registers, derived from their Sender Key; Channel Keys opened to them are encrypted to it.
 _Avoid_: registration key, public key
 
+**User Key Hash**:
+The keccak256 of a User Key, which PqMsg stores in its place; the key itself lives on Arkiv (ADR-0005).
+_Avoid_: key commitment, key ID
+
 **User Index**:
 A User's permanent position in the list of registered Users.
 _Avoid_: recipient index, user id
@@ -33,15 +37,23 @@ The public hash of a Channel Key, against which a recipient checks a Channel Key
 _Avoid_: public parameter, commitment
 
 **Encrypted Channel Key**:
-A Channel's Channel Key encrypted to its recipient's User Key, as 37 field elements on-chain.
+A Channel's Channel Key encrypted to its recipient's User Key, as 37 field elements on Arkiv.
 _Avoid_: channel ciphertext
+
+**Channel Hash**:
+The keccak256 of a Channel's Channel Key Hash, Encrypted Channel Key and Encrypted Sender, which PqMsg stores in their place; the Channel itself lives on Arkiv (ADR-0005).
+_Avoid_: channel ID, Channel Key Hash
+
+**Arkiv entity**:
+A User Key or Channel stored on Arkiv by the Fixed Sender, found by its hash and counted only if it hashes to one on PqMsg.
+_Avoid_: blob, record
 
 **Encrypted Sender**:
 The User Index of a Channel's sender, padded with a hash of the Channel Key, so only the Channel's two ends can read it.
 _Avoid_: sender, from
 
 **Fixed Sender**:
-The single account that submits Channel openings and messages on users' behalf, standing in for a future relayer.
+The single account that submits Channel openings and messages on users' behalf, and stores User Keys and Channels on Arkiv, standing in for a future relayer.
 _Avoid_: relayer, burner
 
 **Message Index**:

@@ -23,14 +23,15 @@ pq aims to let only a Channel's two ends read its messages, and to keep who talk
 
 ## Known gaps in the protocol
 
-- **Kyber512 CPA-PKE, not ML-KEM.** It's NIST level 1 and only CPA-secure, without the Fujisaki-Okamoto transform. User Keys never change, and the proof doesn't tie a ciphertext to a registered User Key, so anyone can post crafted ciphertexts to a User. If a User's behaviour shows whether one decrypted to a valid Channel, for example by replying, that's the plaintext-checking oracle that known key-recovery attacks on CPA Kyber need. Each try costs a Channel opening, at well over 1M gas.
+- **Kyber512 CPA-PKE, not ML-KEM.** It's NIST level 1 and only CPA-secure, without the Fujisaki-Okamoto transform. User Keys never change, and the proof doesn't tie a ciphertext to a registered User Key, so anyone can post crafted ciphertexts to a User. If a User's behaviour shows whether one decrypted to a valid Channel, for example by replying, that's the plaintext-checking oracle that known key-recovery attacks on CPA Kyber need. Each try costs a Channel opening, at about 0.8M gas.
 - **Messages aren't authenticated.** A Ciphertext Element is the message half plus a pad, so changing it shifts the plaintext predictably. Someone watching the mempool can front-run a `post` with altered Ciphertext Elements under the same Message ID: the recipient reads the altered message, and the real one reverts.
 - **The trusted setup is single-party.** `cmd/artifacts` runs a dev-only Groth16 setup, and whoever runs it could keep its secret randomness and forge proofs. That allows junk Channel openings but exposes no messages. A multi-party ceremony should replace it before mainnet.
-- **The contract doesn't refuse repeats.** The Fixed Sender refuses a Channel that's already open, but `openChannel` doesn't, so anyone can replay a proof. `getChannels` returns every Channel, and each User trial-decrypts all of them.
+- **The contract doesn't refuse repeats.** The Fixed Sender refuses a Channel that's already open, but `openChannel` doesn't, so anyone can replay a proof. `getChannels` returns every Channel Hash, and each User fetches every Channel from Arkiv and trial-decrypts all of them.
 
 ## Side channels, memory and metadata
 
 - **No side-channel guarantees.** The crypto runs as Go compiled to WASM, and nothing in a browser promises constant time. CIRCL's Kyber aims to be constant-time in native code; we don't claim that survives WASM.
 - **No memory wiping.** Keys cross between JavaScript and Go as strings, which can't be zeroed, and stay on Go's heap until it's reclaimed. On the GPU path, the witness sits in GPU buffers.
 - **The proving key is read without subgroup checks** (`UnsafeReadFrom`), which saves 18 s. It's served from the same origin as `pqmsg.wasm`, so anyone able to swap it could swap the prover too.
-- **Metadata.** Registering is public. The RPC provider sees which Message IDs a browser polls, and the Fixed Sender sees the IP address behind each Channel opening and message.
+- **Metadata.** Registering is public. The RPC provider sees which Message IDs a browser polls, and the Fixed Sender sees the IP address behind each Channel opening and message. Arkiv's RPC sees whose User Key a browser fetches before opening a Channel.
+- **Arkiv keeps the data available.** If an entity expires or Arkiv loses it, the hash on PqMsg can't bring it back: a Channel nobody can fetch can't be read. A User Key comes back the next time its owner unlocks; a Channel doesn't yet.

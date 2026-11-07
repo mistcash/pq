@@ -5,17 +5,18 @@ export type DiveStep = "unlock" | "open" | "send" | "read" | "find";
 
 /**
  * Every value the deep dive shows, in order, with where it lives: a "secret" key (hidden until you tap it), something
- * that stays in your "browser", or something anyone can read on the "chain".
+ * that stays in your "browser", or something anyone can read on the "chain" or on "arkiv".
  */
 export const VALUES = {
   prfOutput: ["Passkey PRF output", "secret"],
   senderKey: ["Sender Key", "secret"],
-  userKey: ["User Key", "chain"],
+  userKey: ["User Key", "arkiv"],
+  userKeyHash: ["User Key Hash", "chain"],
   userIndex: ["Their User Index", "browser"],
   channelKey: ["Channel Key", "secret"],
   channelKeyHash: ["Channel Key Hash", "chain"],
-  encryptedChannelKey: ["Encrypted Channel Key", "chain"],
-  encryptedSender: ["Encrypted Sender", "chain"],
+  encryptedChannelKey: ["Encrypted Channel Key", "arkiv"],
+  encryptedSender: ["Encrypted Sender", "arkiv"],
   proof: ["Proof", "chain"],
   provingTime: ["Proving time", "browser"],
   messageIndex: ["Message Index", "browser"],
@@ -27,6 +28,7 @@ export const VALUES = {
   channels: ["Channels checked", "browser"],
   found: ["Chats found", "browser"],
   tx: ["Transaction", "chain"],
+  entity: ["Arkiv entity", "arkiv"],
 } as const;
 
 export type DiveValues = Partial<Record<keyof typeof VALUES, string>>;
@@ -50,3 +52,7 @@ export const recordStep = (step: DiveStep, values: DiveValues) =>
 /** Adds the transaction a recorded step just sent. */
 export const recordTx = (step: DiveStep, tx: string) =>
   useDeepDive.setState(state => ({ steps: { ...state.steps, [step]: { ...state.steps[step], tx } } }));
+
+/** Adds the Arkiv entity a recorded step just stored. */
+export const recordEntity = (step: DiveStep, entity: string) =>
+  useDeepDive.setState(state => ({ steps: { ...state.steps, [step]: { ...state.steps[step], entity } } }));

@@ -4,6 +4,7 @@ Set up with Scaffold-ETH 2 using Foundry (`npx create-eth@latest -s foundry`), p
 
 | Job | Primitive | Code |
 | --- | --- | --- |
+| Keep User Keys and Channels available, cheaply | Arkiv entities on the Rabdi testnet, checked against keccak256 hashes on PqMsg | `packages/nextjs/utils/arkiv.ts`, `app/api/fixed-sender/route.ts` |
 | Carry the Channel Key to its recipient | Kyber512 CPA-PKE (NIST level 1), with the ciphertext left uncompressed so the circuit can check it | `packages/circuits/kyber.go`, `native/` |
 | Prove the Encrypted Channel Key is well formed | Groth16 on BN254 (gnark v0.16), checked on-chain by `Verifier.sol` | `packages/circuits/circuits.go`, `circuit/` |
 | Every hash, key derivation and message pad | gnark's Poseidon2 on BN254, in Merkle-Damgård mode | `packages/circuits/circuits.go` |
@@ -14,18 +15,20 @@ The browser runs the same Go code, compiled to WASM (`packages/circuits/cmd/wasm
 
 ## Protocol
 
-1. Users connect their wallet and register a User Key, a Kyber512 public key derived from their Sender Key, which comes from a passkey they make when joining (ADR-0004).
+1. Users connect their wallet and register a User Key, a Kyber512 public key derived from their Sender Key, which comes from a passkey they make when joining (ADR-0004). PqMsg keeps only its keccak256, the User Key Hash, and the Fixed Sender stores the key itself on Arkiv (ADR-0005).
 2. Registered Users are shown in a list, and the sender picks a recipient.
-3. The sender opens a Channel to them. Its Channel Key is H(Sender Key, recipient's User Index), and the Sender Key comes from the sender's passkey (ADR-0004). The sender encrypts it to the recipient's User Key (Kyber512 CPA-PKE, uncompressed), and the circuit proves that the Channel Key hashes to the Channel Key Hash and that the Encrypted Channel Key encrypts it. The User Key is a private input, so the recipient stays hidden (ADR-0003). The recipient finds the Channel by decrypting every Encrypted Channel Key and checking each result against its Channel Key Hash, and learns who opened it from the Encrypted Sender. Nothing is shared out of band.
+3. The sender opens a Channel to them. Its Channel Key is H(Sender Key, recipient's User Index), and the Sender Key comes from the sender's passkey (ADR-0004). The sender encrypts it to the recipient's User Key (Kyber512 CPA-PKE, uncompressed), and the circuit proves that the Channel Key hashes to the Channel Key Hash and that the Encrypted Channel Key encrypts it. The User Key is a private input, so the recipient stays hidden (ADR-0003). The recipient finds the Channel by decrypting every Encrypted Channel Key and checking each result against its Channel Key Hash, and learns who opened it from the Encrypted Sender. Nothing is shared out of band. The Fixed Sender stores the Channel on Arkiv, and PqMsg keeps only its keccak256, the Channel Hash (ADR-0005).
 4. To send a message, the sender derives the Message Key = H(Channel Key, Message Index) and the Message ID = H(Message Key, 0). The message's two 31-byte halves become the two Ciphertext Elements by adding H(Message Key, 1) and H(Message Key, 2) respectively (hash and add). In Phase 1 this happens outside the circuit.
 5. The contract stores the two Ciphertext Elements as u256 values in a publicly readable hashmap keyed by Message ID. The recipient finds messages by checking Message IDs from Message Index 0 upward.
 
 A Fixed Sender (a stand-in for a future relayer) submits Channel openings and messages, so they don't reveal who is talking. Registration comes from the user's own wallet.
 
 Contract stores:
-1. List of registered Users with their User Key (an 800-byte packed Kyber512 public key).
-2. Channels array: each Channel's Channel Key Hash, Encrypted Channel Key and Encrypted Sender.
+1. List of registered Users with their User Key Hash, the keccak256 of their 800-byte packed Kyber512 public key.
+2. Channels array: each Channel's Channel Hash, the keccak256 of its Channel Key Hash, Encrypted Channel Key and Encrypted Sender.
 3. Messages: hashmap of Message ID to the two Ciphertext Elements.
+
+Arkiv stores each User Key and each Channel whole, under its hash, and readers drop any that doesn't hash to one on PqMsg.
 
 It emits `Registered(user)`, `ChannelOpened(channelKeyHash)` and `Posted(messageId)`, each indexed.
 
@@ -39,7 +42,7 @@ Every key comes from one passkey (ADR-0004). H is Poseidon2, and `tag` is 2⁶�
 passkey's PRF output on "pqmsg: derive Sender Key v2"
 └─ Sender Key = H(PRF output)                           kept in memory, never sent
    ├─ User Key = Kyber512 key pair seeded by H(Sender Key, tag)
-   │             its 800-byte public key is registered on-chain
+   │             its 800-byte public key goes on Arkiv, its keccak256 on-chain
    └─ Channel Key = H(Sender Key, recipient's User Index)
       ├─ Channel Key Hash = H(Channel Key)              public
       ├─ Encrypted Sender = sender's User Index + H(Channel Key, tag)

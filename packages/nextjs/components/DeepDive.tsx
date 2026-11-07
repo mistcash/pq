@@ -3,19 +3,21 @@
 import { useEffect, useState } from "react";
 import { type Hex, keccak256 } from "viem";
 import { useAccount } from "wagmi";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { TxLink } from "~~/components/TxLink";
 import { type DiveStep, type DiveValues, VALUES, useDeepDive } from "~~/services/store/deepDive";
+import { arkivEntityUrl } from "~~/utils/arkiv";
 
-type Topic = "Browser" | "Circuit" | "Chain" | "Watch out";
+type Topic = "Browser" | "Circuit" | "Chain" | "Arkiv" | "Watch out";
 
-const TOPICS: Record<Topic, string> = { Browser: "💻", Circuit: "🧮", Chain: "⛓️", "Watch out": "⚠️" };
-const WHERE = { secret: "🔒 secret", browser: "💻 your browser", chain: "🌍 on-chain" };
+const TOPICS: Record<Topic, string> = { Browser: "💻", Circuit: "🧮", Chain: "⛓️", Arkiv: "🗄️", "Watch out": "⚠️" };
+const WHERE = { secret: "🔒 secret", browser: "💻 your browser", chain: "🌍 on-chain", arkiv: "🗄️ on Arkiv" };
 
 const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, string][] }[] = [
   {
     step: "unlock",
     title: "Join & unlock",
-    what: "Your passkey makes your Sender Key, the secret behind your User Key and every Channel you open. Joining puts your User Key, the public half of a key pair made from it, on-chain from your wallet.",
+    what: "Your passkey makes your Sender Key, the secret behind your User Key and every Channel you open. Joining puts the hash of your User Key, the public half of a key pair made from it, on-chain from your wallet, and the key itself on Arkiv.",
     notes: [
       [
         "Browser",
@@ -23,7 +25,11 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
       ],
       [
         "Chain",
-        "Joining calls register(User Key) from your own wallet, so anyone can see that your address joined, and its 800-byte User Key. That's what lets people encrypt to you.",
+        "Joining calls register(User Key) from your own wallet, so anyone can see that your address joined, and its 800-byte User Key. PqMsg stores only its keccak256, the User Key Hash, which costs 88% less gas.",
+      ],
+      [
+        "Arkiv",
+        "The Fixed Sender then stores your User Key on Arkiv, under its hash, for about 182 days. That's what lets people encrypt to you: they fetch it there and check it hashes to your User Key Hash. If it has expired when you unlock, the app stores it again.",
       ],
       [
         "Watch out",
@@ -46,11 +52,15 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
       ],
       [
         "Chain",
-        "The Fixed Sender calls openChannel, so your address isn't on it. The Verifier checks the proof, and PqMsg stores the Channel Key Hash, Encrypted Channel Key and Encrypted Sender. Nothing names either of you.",
+        "The Fixed Sender calls openChannel, so your address isn't on it. The Verifier checks the proof, and PqMsg stores only the keccak256 of the Channel Key Hash, Encrypted Channel Key and Encrypted Sender. Nothing names either of you.",
+      ],
+      [
+        "Arkiv",
+        "Just before that, the Fixed Sender stores the Channel itself on Arkiv, under that hash. The Fixed Sender owns the entity, so it doesn't name you either.",
       ],
       [
         "Watch out",
-        "Their User Key comes over Anon-RPC, a mixnet, so the RPC server doesn't learn who you're about to message, unless Anon-RPC fails and the app reads it directly. The Fixed Sender is our server: it can't read anything, but it sees your IP and timing, and could alter or drop what you send. Anyone can post a Channel nobody can open, and forging proofs adds little to that: whoever ran the dev-only setup, PqMsg's owner by swapping the Verifier, or a quantum computer could.",
+        "Their User Key Hash comes over Anon-RPC, a mixnet, so the RPC server doesn't learn who you're about to message, unless Anon-RPC fails and the app reads it directly. Their User Key then comes from Arkiv, whose RPC does see whose key you asked for. The Fixed Sender is our server: it can't read anything, but it sees your IP and timing, and could alter or drop what you send. Anyone can post a Channel nobody can open, and forging proofs adds little to that: whoever ran the dev-only setup, PqMsg's owner by swapping the Verifier, or a quantum computer could.",
       ],
     ],
   },
@@ -99,7 +109,11 @@ const STEPS: { step: DiveStep; title: string; what: string; notes: [Topic, strin
         "Browser",
         "It rebuilds your Channel Key for each User Index and looks for its hash. Then it decrypts every Encrypted Channel Key with your Kyber512 secret key. Only Channels opened to you give back a Channel Key that matches, and their Encrypted Sender says who claims to have opened them.",
       ],
-      ["Chain", "It only reads, and it downloads every User and Channel, so the reads don't say which ones are yours."],
+      ["Chain", "It only reads every User and every Channel's hash."],
+      [
+        "Arkiv",
+        "It downloads every Channel from Arkiv and drops any that doesn't hash to one on-chain, so the reads don't say which ones are yours.",
+      ],
       [
         "Watch out",
         "Nothing proves who opened a Channel to you: the Encrypted Sender is outside the proof, so anyone can claim to be anyone. Found Channel Keys are kept unencrypted in this browser's storage.",
@@ -208,6 +222,16 @@ const Value = ({ name, value }: { name: keyof typeof VALUES; value: string }) =>
           <code className="block font-mono text-xs break-all max-h-24 overflow-y-auto">{value}</code>
         )}
         {name === "tx" && <TxLink hash={value} />}
+        {name === "entity" && (
+          <a
+            className="link link-hover inline-flex items-center gap-1 text-sm text-base-content/70"
+            href={arkivEntityUrl(value as Hex)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            See it on Arkiv <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+          </a>
+        )}
       </dd>
     </div>
   );

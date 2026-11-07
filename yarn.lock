@@ -39,6 +39,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@arkiv-network/sdk@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@arkiv-network/sdk@npm:1.0.0"
+  peerDependencies:
+    typescript: ">=5.0.0"
+    viem: ^2.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+    viem:
+      optional: false
+  checksum: 10/db040940c4f0741f80b3018a575d4d564ca6a2e2d5beb7a07032b8b25a5d999a9d19d20e5eabb6838974c389df6b0881790383aacbf1fae843e9732723b3bd05
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/code-frame@npm:7.29.7"
@@ -3941,6 +3956,7 @@ __metadata:
   resolution: "@se-2/nextjs@workspace:packages/nextjs"
   dependencies:
     "@anon-rpc/browser-harness": "npm:0.4.0"
+    "@arkiv-network/sdk": "npm:1.0.0"
     "@heroicons/react": "npm:~2.2.0"
     "@rainbow-me/rainbowkit": "npm:2.2.11"
     "@react-native-async-storage/async-storage": "npm:~2.2.0"

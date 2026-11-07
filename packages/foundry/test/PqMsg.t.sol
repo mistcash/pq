@@ -48,7 +48,7 @@ contract PqMsgTest is Test {
         vm.prank(alice);
         pqMsg.register(key(42));
 
-        assertEq(pqMsg.userKeys(alice), key(42));
+        assertEq(pqMsg.userKeyHashes(alice), keccak256(key(42)));
         assertEq(pqMsg.getUsers().length, 1);
         assertEq(pqMsg.users(0), alice);
     }
@@ -62,7 +62,7 @@ contract PqMsgTest is Test {
         vm.prank(alice);
         pqMsg.register(key(3));
 
-        assertEq(pqMsg.userKeys(alice), key(3));
+        assertEq(pqMsg.userKeyHashes(alice), keccak256(key(3)));
         assertEq(pqMsg.getUsers().length, 2);
         assertEq(pqMsg.users(0), alice);
         assertEq(pqMsg.users(1), bob);
@@ -70,7 +70,7 @@ contract PqMsgTest is Test {
 
     function testRegisterEmitsRegistered() public {
         vm.expectEmit(address(pqMsg));
-        emit PqMsg.Registered(alice);
+        emit PqMsg.Registered(alice, keccak256(key(42)));
         vm.prank(alice);
         pqMsg.register(key(42));
     }
@@ -84,16 +84,14 @@ contract PqMsgTest is Test {
     function testOpenChannel() public {
         pqMsg.openChannel(channelKeyHash, encryptedChannelKey, 7, proof);
 
-        PqMsg.Channel[] memory opened = pqMsg.getChannels();
+        bytes32[] memory opened = pqMsg.getChannels();
         assertEq(opened.length, 1);
-        assertEq(opened[0].channelKeyHash, channelKeyHash);
-        assertEq(opened[0].encryptedChannelKey[36], encryptedChannelKey[36]);
-        assertEq(opened[0].encryptedSender, 7);
+        assertEq(opened[0], keccak256(abi.encode(channelKeyHash, encryptedChannelKey, uint256(7))));
     }
 
     function testOpenChannelEmitsChannelOpened() public {
         vm.expectEmit(address(pqMsg));
-        emit PqMsg.ChannelOpened(channelKeyHash);
+        emit PqMsg.ChannelOpened(channelKeyHash, keccak256(abi.encode(channelKeyHash, encryptedChannelKey, uint256(7))));
         pqMsg.openChannel(channelKeyHash, encryptedChannelKey, 7, proof);
     }
 

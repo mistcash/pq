@@ -7,7 +7,7 @@ import { People } from "./_components/People";
 import { Register } from "./_components/Register";
 import { Restore } from "./_components/Restore";
 import type { NextPage } from "next";
-import type { Address } from "viem";
+import { type Address, zeroHash } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useOpenChannel } from "~~/hooks/useOpenChannel";
@@ -15,13 +15,17 @@ import { startProver } from "~~/utils/crypto";
 
 const Home: NextPage = () => {
   const { address } = useAccount();
-  const { data: key } = useScaffoldReadContract({ contractName: "PqMsg", functionName: "userKeys", args: [address] });
+  const { data: key } = useScaffoldReadContract({
+    contractName: "PqMsg",
+    functionName: "userKeyHashes",
+    args: [address],
+  });
   const [other, setOther] = useState<Address>();
   const { step, restored, restore } = useOpenChannel();
   // Loads the prover in the background now, so opening a Channel only waits for the proof itself.
   useEffect(() => void startProver(), []);
   // Join only once the chain says you haven't: it makes a new passkey and replaces your User Key.
-  const joining = !address || key === "0x";
+  const joining = !address || key === zeroHash;
 
   return (
     <>
