@@ -14,15 +14,16 @@ export const Messages = ({ channelKey, mine }: { channelKey: Hex; mine?: boolean
   const { messages, refresh, refreshing, send } = useMessages(channelKey);
   const count = messages?.length;
   const seen = useRef(count);
+  const card = useRef<HTMLDivElement>(null);
 
-  // New messages land just above the pinned composer, so scroll them into view.
+  // New messages land just above the pinned composer, so scroll them into view, not the walkthrough below.
   useEffect(() => {
-    if (seen.current !== undefined && count! > seen.current) scrollTo(0, document.body.scrollHeight);
+    if (seen.current !== undefined && count! > seen.current) card.current?.scrollIntoView({ block: "end" });
     seen.current = count;
   }, [count]);
 
   return (
-    <div className="card bg-base-100 border border-base-300 p-4 gap-1">
+    <div ref={card} className="card bg-base-100 border border-base-300 p-4 gap-1">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold m-0 pl-1">{mine ? "You said" : "They said"}</h2>
         <button
