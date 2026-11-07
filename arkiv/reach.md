@@ -19,7 +19,7 @@ Yes, on testnets:
 - **Contracts:** PqMsg on Sepolia at [`0xFbF7…f515`](https://sepolia.etherscan.io/address/0xFbF7E8E3CC9C6C641F23aB5be6caBC919A8Af515), with its Verifier at `0x5e6a…c295`.
 - **Data:** every pqmsg entity on Arkiv's Rabdi testnet, written by `0xaE7b…626C` ([explorer](https://rabdi.explorer.arkiv.network/address/0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C)), queryable with the `curl` in `schema.md`.
 - **Relayer:** `yarn start` with `NEXT_PUBLIC_TARGET_NETWORK=sepolia` and a funded `FIXED_SENDER_PRIVATE_KEY` serves the Fixed Sender, whose `/api/fixed-sender` stores User Keys and Channels on Arkiv (README, "Deploy to Sepolia").
-- **App:** it still reads User Keys and Channels from PqMsg, so it works against this deployment once its reads move to Arkiv, the next change. Then: join with Sepolia ETH in your wallet, open a Channel to another User, and tap 🤿 to watch each value land on Sepolia or Arkiv.
+- **App:** the same `yarn start` serves it. Join with Sepolia ETH in your wallet, open a Channel to another User, and tap 🤿 to watch each value land on Sepolia or Arkiv.
 
 ## Will we keep building it after Mumbai?
 
