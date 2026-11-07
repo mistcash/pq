@@ -14,6 +14,7 @@ import { passkeyProblem } from "~~/utils/passkey";
 import { notification } from "~~/utils/scaffold-eth";
 
 const FRIENDS = ["0x01", "0x02", "0x05"].map(n => n.padEnd(42, "0"));
+const PERKS = ["🔒 Post-quantum", "🌍 On Ethereum", "🙈 The chain can't see who's talking"];
 
 /** Connect, then register with one tap and a new passkey, which makes your User Key. */
 export const Register = () => {
@@ -58,13 +59,13 @@ export const Register = () => {
         </div>
       )}
       <div>
-        <h1 className="text-4xl font-bold m-0">{address ? "Hi, it's you!" : "pqmsg"}</h1>
-        <p className="text-lg text-base-content/70 mb-0">
+        <h1 className={`font-bold m-0 ${address ? "text-4xl" : "text-6xl"}`}>{address ? "Hi, it's you!" : "pq"}</h1>
+        <p className="text-lg text-base-content/70 text-balance mb-0">
           {step
             ? PROGRESS[step]
             : address
               ? (problem ?? "Join so people can find you and message you.")
-              : "Tiny private messages, from you to anyone."}
+              : "Scalable, post-quantum cryptographic messaging for private payments and peer coordination."}
         </p>
       </div>
       {address ? (
@@ -72,9 +73,18 @@ export const Register = () => {
           {step || isMining ? <span className="loading loading-dots" /> : "Join"}
         </button>
       ) : (
-        <button className="btn btn-primary btn-lg btn-block" onClick={openConnectModal}>
-          Connect wallet
-        </button>
+        <>
+          <button className="btn btn-primary btn-lg btn-block" onClick={openConnectModal}>
+            Connect wallet
+          </button>
+          <ul className="flex flex-wrap justify-center gap-2 m-0 p-0 text-sm">
+            {PERKS.map(perk => (
+              <li key={perk} className="rounded-full bg-base-200 px-3 py-1">
+                {perk}
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </div>
   );
