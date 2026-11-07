@@ -20,7 +20,7 @@ pqmsg's promise is that nobody, us included, can read your chats or tell who tal
 - **Nobody could audit what we store.** Every pqmsg entity, its owner and its expiry are public on [Rabdi's explorer](https://rabdi.explorer.arkiv.network/address/0xaE7b2d4E92D21abf48672edcEEEB7892fcaB626C). That matters for an app that claims to store nothing that names who talks to whom: you can check.
 - **Any app could read it.** User Keys are a directory of post-quantum public keys keyed by wallet. Another app can query `arkiv.schema = str('pqmsg.userKey')` and encrypt to pqmsg's users without asking us.
 
-Arkiv's expiry also matches the data: a key whose owner hasn't opened pqmsg in six months can lapse. Next, it'll come back when they return.
+Arkiv's expiry also matches the data: a key whose owner hasn't opened pqmsg in six months lapses, and comes back when they return.
 
 ## What we kept off Arkiv, and why
 
