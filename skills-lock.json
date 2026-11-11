@@ -15,6 +15,13 @@
       "computedHash": "917eba27222a174bd05088df28a155c8e43a28be611d3694d409790adcc082d0",
       "installMode": "copy"
     },
+    "brag-slim": {
+      "source": "latent-spaces/brag",
+      "sourceType": "github",
+      "skillPath": "skills/brag-slim/SKILL.md",
+      "computedHash": "2bd6f704826635236b91d7d19a6d8d75f1dd8fc6de234a1e2eb645282b021298",
+      "installMode": "copy"
+    },
     "code-review": {
       "source": "mattpocock/skills",
       "sourceType": "github",
