@@ -46,8 +46,8 @@ Every pq message sits on Ethereum for anyone to see, and only the two of you can
 ## Audio direction
 - Role: warm, upbeat bed with motion-matched UI accents
 - Music: `happy-beats-business-moves-vol-1-by-ende-dot-app.mp3` (120.19 BPM, full energy from 0 s, lifts about +3 dB at 16 s)
-- Music treatment: start at 0; sit a little under during the dark hook and open up on the 2.0 s reveal; short fade under the end card from about 21.3 s
-- Music cue guidance: preset `assets/music/cues/happy-beats-business-moves-vol-1-by-ende-dot-app.music-cues.json` read. Beat grid 0.02 + 0.5·k s. Strong cues to lock: 16.02 (Lasting: the section lift), 20.02 (the outro CTA tap). Beat-grid windows: perk chips 6.02 / 7.02 / 8.02 (every other beat, they are text), Say-hi chips 9.52 / 10.52 / 11.52, locks 16.02 / 16.52 / 17.02 (icons, every beat is fine).
+- Music treatment: start at 0; low-passed (muffled) under the dark hook, opening up on the 2.0 s reveal; 0.7 s fade under the end card; final mix mastered to about −16 LUFS
+- Music cue guidance: preset `assets/music/cues/happy-beats-business-moves-vol-1-by-ende-dot-app.music-cues.json` read. Beat grid 0.02 + 0.5·k s. Strong cues to lock: 16.02 (Lasting: the section lift), 20.02 (the outro CTA tap). Beat-grid windows: perk chips 5.52 / 6.02 / 6.52 (revealed a beat apart, then held as a set), Say-hi chips 9.52 / 10.52 / 11.52, locks 16.02 / 16.52 / 17.02 (icons, every beat is fine).
 - Audio-reactive treatment: subtle; music RMS/bass gives the hook's hex field and the Lasting locks a soft glow/presence. No waveform or equalizer visuals.
 - SFX posture: moderate, motion-matched; low high-frequency-risk files for anything repeated
 - Audio-coupled moments: the reveal wipe, three cursor taps, typed message, the locks latching, success confetti, the final CTA
@@ -72,7 +72,7 @@ Transition mood: soft → Scene 3 (old out 4.75–5.0, new in from 5.0)
 
 ### Scene 3 — Title — 3.5 s
 Laid out like the app's own `public/thumbnail.jpg`: the pq logo tile with a white rim, and the verbatim tagline "Scalable, post-quantum cryptographic messaging for private payments and peer coordination." The Register card's perks pop in: 🔒 Post-quantum · 🌍 On Ethereum · 🙈 The chain can't see who's talking.
-Sequential/interaction: yes — perks on every other beat (6.02 / 7.02 / 8.02); tagline held ~3 s
+Sequential/interaction: yes — perks a beat apart (5.52 / 6.02 / 6.52), then held as a set; tagline held ~3 s
 Audio intent: confident, the name lands
 Audio-coupled idea: a warm accent as the logo lands
 Transition mood: clean → Scene 4 (slide left)

@@ -67,7 +67,7 @@ Scene summary:
 - Audio role: warm bed with motion-matched UI accents
 - Audio arc: a touch under the hook, opens on the reveal, lifts with the track at 16 s, fades under the end card
 - Music: `assets/music/happy-beats-business-moves-vol-1-by-ende-dot-app.mp3`
-- Music treatment: volume ~0.3 in the hook rising to ~0.38 from 2.0 s; fade out over the last ~0.7 s
+- Music treatment: volume 0.38; a low-pass automated from 700 Hz to open at 2.02 s (muffled hook, bright reveal); 0.7 s fade-out
 - Music cue guidance: bundled preset `.claude/skills/brag/assets/music/cues/happy-beats-business-moves-vol-1-by-ende-dot-app.music-cues.json`; beats at 0.02 + 0.5·k; strong cues 16.02 and 20.02 to lock
 - Audio-reactive treatment: subtle; RMS/bass breathe the hook's hex field brightness and the locks' glow
 - Audio-coupled moments:
