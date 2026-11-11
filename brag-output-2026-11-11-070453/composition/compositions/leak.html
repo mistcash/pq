@@ -7,28 +7,30 @@
     #leak-row { position: absolute; left: 0; right: 0; top: 720px; height: 0; display: flex; justify-content: center; align-items: center; }
     #leak-row code { font-family: "IBM Plex Mono", monospace; }
     #leak-badge { position: absolute; top: -14px; right: -14px; background: #ff8863; color: #081019; }
+    #leak-chain { position: absolute; top: -14px; left: -14px; }
   </style>
   <div id="root" data-composition-id="leak" data-width="1920" data-height="1080">
     <div id="leak-content">
       <div id="leak-head">
         <h1 id="leak-title" class="font-bold m-0 text-center text-balance" style="font-size: 96px; line-height: 1.05"><span>One</span> <span>day,</span> <span>every</span> <span>auditor</span> <span>commitment</span> <span>becomes</span> <span>public.</span></h1>
       </div>
-      <!-- The Landing's private payment, as anyone watching the chain sees it, decrypted. -->
+      <!-- The Landing's private payment, on Ethereum, as anyone watching the chain sees it, decrypted. -->
       <div id="leak-row">
         <div style="zoom: 1.9">
           <div class="flex flex-row items-center justify-center gap-6">
             <img id="leak-alice" src="assets/img/alice.svg" width="80" height="80" class="shrink-0 rounded-full" alt="" />
             <span id="leak-arrow-l"><svg class="block size-8 opacity-60" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg></span>
             <div id="leak-card" class="relative flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed p-5">
-              <b>Private payment</b>
-              <code id="leak-pill" class="rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">0x4be1…a07c</code>
-              <span class="text-sm opacity-70">made in your payments app</span>
+              <b class="text-xl">Private payment</b>
+              <code id="leak-pill" class="rounded-full bg-primary/10 text-primary px-3 py-1 text-base whitespace-nowrap">0x4be1…a07c</code>
+              <span class="text-base opacity-70">made in your payments app</span>
               <!-- Sized to the decrypted line, so the card doesn't jump when it fills in. -->
-              <span class="grid justify-items-center opacity-70 whitespace-nowrap">
+              <span class="grid justify-items-center text-lg opacity-70 whitespace-nowrap">
                 <span id="leak-from" style="grid-area: 1 / 1">from ? to ?</span>
                 <span style="grid-area: 1 / 1; visibility: hidden" aria-hidden="true">from 0x0100…0000 to 0x0500…0000</span>
               </span>
-              <span id="leak-badge" class="rounded-full px-3 py-1 text-sm font-semibold whitespace-nowrap">🔓 decrypted</span>
+              <span id="leak-chain" class="flex items-center gap-1.5 rounded-full bg-base-100 border border-base-300 pl-2.5 pr-3 py-1 text-base font-semibold whitespace-nowrap"><img src="assets/img/ethereum.svg" width="11" height="18" alt="" />Ethereum</span>
+              <span id="leak-badge" class="rounded-full px-3 py-1 text-base font-semibold whitespace-nowrap">🔓 decrypted</span>
             </div>
             <span id="leak-arrow-r"><svg class="block size-8 opacity-60" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg></span>
             <img id="leak-bob" src="assets/img/bob.svg" width="80" height="80" class="shrink-0 rounded-full" alt="" />
@@ -41,13 +43,15 @@
     (() => {
       const tl = gsap.timeline({ paused: true });
       const pop = (sel, at) => tl.fromTo(sel, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, at);
+      // Words arrive at reading pace, 0.3 s apart (about 200 words a minute), and stay.
+      const words = (sel, at) =>
+        tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.3, ease: "power2.out" }, at);
       tl.fromTo("#leak-card", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, 0.02);
-      // Per word, from grey to ink, in place.
-      tl.fromTo("#leak-title span", { opacity: 0, color: "#798a97" }, { opacity: 1, color: "#081019", duration: 0.12, stagger: 0.05, ease: "power2.out" }, 0.05);
+      words("#leak-title span", 0.3); // last word lands 2.3
 
-      // beat-grid: decrypted on 3.52 (global), the parties pop in on 3.52 and 4.02.
-      pop("#leak-badge", 0.52);
-      tl.fromTo("#leak-card", { borderColor: "#acc4d6" }, { borderColor: "#ff8863", duration: 0.2, ease: "power2.out", immediateRender: false }, 0.52);
+      // beat-grid: decrypted on 9.02 (global), the parties pop in on 9.32 and 9.52.
+      pop("#leak-badge", 2.52);
+      tl.fromTo("#leak-card", { borderColor: "#acc4d6" }, { borderColor: "#ff8863", duration: 0.2, ease: "power2.out", immediateRender: false }, 2.52);
       const HEX = "0123456789abcdef";
       const pill = document.getElementById("leak-pill"), from = document.getElementById("leak-from");
       const decrypt = { p: 0 };
@@ -72,14 +76,14 @@
             }
           },
         },
-        0.52,
+        2.52,
       );
-      pop("#leak-alice", 0.6);
-      tl.fromTo("#leak-arrow-l", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.25, ease: "power3.out" }, 0.7);
-      tl.fromTo("#leak-arrow-r", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.25, ease: "power3.out" }, 0.98);
-      pop("#leak-bob", 1.02);
-      // Out (5.78–6.0): blur away; the title arrives on the same ground.
-      tl.to("#leak-content", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 2.78);
+      pop("#leak-alice", 2.82);
+      tl.fromTo("#leak-arrow-l", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.25, ease: "power3.out" }, 2.9);
+      tl.fromTo("#leak-arrow-r", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.25, ease: "power3.out" }, 3.0);
+      pop("#leak-bob", 3.02);
+      // Held 2 s after the last change, then out (5.5–5.72).
+      tl.to("#leak-content", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 5.5);
       window.__timelines["leak"] = tl;
     })();
   </script>
