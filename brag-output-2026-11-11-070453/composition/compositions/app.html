@@ -1,0 +1,182 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #e3edf5; overflow: hidden; }
+    #app-left4, #app-left5 { position: absolute; left: 130px; top: 0; height: 1080px; width: 760px; display: flex; flex-direction: column; justify-content: center; }
+    #app-left4 h2 span, #app-left5 h2 span { display: inline-block; }
+    #app-wrap { position: absolute; left: 950px; top: 50px; }
+    .app-cursor { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 30; pointer-events: none; }
+    .app-cursor svg { position: absolute; left: -2px; top: -1px; transform-origin: 2px 1px; filter: drop-shadow(0 3px 6px rgb(8 16 25 / 0.35)); }
+  </style>
+  <div id="root" data-composition-id="app" data-width="1920" data-height="1080">
+    <div id="app-left4" class="gap-8">
+      <h2 class="font-bold m-0" style="font-size: 150px; line-height: 1"><span>Say</span> <span>hi</span> <span>👋</span></h2>
+      <ul class="flex flex-col items-start gap-4 m-0 p-0 list-none" style="font-size: 34px">
+        <li class="app-chip rounded-full bg-base-100 px-6 py-2">🔒 Kyber512, post-quantum</li>
+        <li class="app-chip rounded-full bg-base-100 px-6 py-2">🧮 A zero-knowledge proof</li>
+        <li class="app-chip rounded-full bg-base-100 px-6 py-2">💻 Made in your browser</li>
+      </ul>
+    </div>
+    <div id="app-left5">
+      <h2 class="font-bold m-0 text-balance" style="font-size: 104px; line-height: 1.05"><span>🙈</span> <span>The</span> <span>chain</span> <span>can't</span> <span>see</span> <span>who's</span> <span>talking.</span></h2>
+    </div>
+
+    <!-- The app at 1.75×: header, then the Chat screen (packages/nextjs/app/_components/Chat.tsx, Messages.tsx). -->
+    <div id="app-wrap">
+      <div id="app-frame" class="relative rounded-[2.5rem] overflow-hidden border border-base-300 bg-base-200 shadow-2xl" style="zoom: 1.75; width: 480px; height: 560px">
+        <div class="navbar bg-base-100 min-h-16 justify-between border-b border-base-300 px-4 relative z-10" data-layout-allow-occlusion>
+          <img src="assets/img/logo.svg" width="40" height="40" class="rounded-xl" alt="pq" />
+          <div class="flex items-center gap-1">
+            <span class="btn btn-sm px-2 btn-ghost">🤿 <span>Deep dive</span></span>
+            <span class="btn btn-sm rounded-full pl-1 pr-3 bg-base-100 border-base-300 gap-2"><img src="assets/img/me.svg" width="24" height="24" class="rounded-full" alt="" />0x3A9f…c21E</span>
+          </div>
+        </div>
+        <div id="app-scroll" class="px-4 py-8">
+          <div class="flex flex-col gap-6">
+            <span class="btn btn-ghost btn-lg self-start -ml-3 px-3"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg> People</span>
+            <div class="flex flex-col items-center text-center gap-3">
+              <div id="app-bouncer" class="relative isolate">
+                <div id="app-confetti-1" class="confetti"></div>
+                <img src="assets/img/other.svg" width="128" height="128" class="shrink-0 rounded-full" alt="" />
+              </div>
+              <h1 class="text-3xl font-bold m-0">0x7A3f…9C2e</h1>
+            </div>
+            <div class="card relative bg-base-100 border border-base-300 p-6 items-center text-center gap-4">
+              <div id="app-cursor-1" class="app-cursor" style="top: auto; bottom: 48px"><svg width="29" height="36" viewBox="0 0 23 29"><path d="M1.5 1.5v22.2l6-5.6 3.8 8.9 4.2-1.8-3.8-8.7h8.3z" fill="#081019" stroke="#fff" stroke-width="2" stroke-linejoin="round" /></svg></div>
+              <div id="app-pre" style="display: contents">
+                <p class="text-base-content/70 m-0">Only they can read what you write.</p>
+                <span id="app-sayhi" class="btn btn-primary btn-lg btn-block">Say hi 👋</span>
+              </div>
+              <div id="app-busy" style="display: none">
+                <span class="dots text-primary" style="width: 2.5rem; height: 2.5rem"><i class="app-dot"></i><i class="app-dot"></i><i class="app-dot"></i></span>
+                <p class="m-0">Doing some secret math, right here in your browser…</p>
+              </div>
+              <div id="app-post" style="display: none">
+                <h2 id="app-connected" class="text-2xl font-bold m-0">You're connected!</h2>
+                <p class="text-base-content/70 m-0">They'll find your chat when they tap “Find my chats”.</p>
+                <span class="link link-hover inline-flex items-center gap-1 text-sm text-base-content/70">See it on Etherscan <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg></span>
+              </div>
+            </div>
+            <div id="app-msgs" class="card bg-base-100 border border-base-300 p-4 gap-1" style="display: none">
+              <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold m-0 pl-1">You said</h2>
+                <span class="btn btn-ghost btn-circle btn-lg -mr-2"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></span>
+              </div>
+              <div id="app-empty" class="chat chat-end">
+                <div class="chat-bubble bg-transparent border-2 border-dashed border-base-300 text-base-content/70">Nothing yet. Say hi!</div>
+              </div>
+              <div id="app-sent" class="chat chat-end" style="display: none">
+                <div id="app-sent-bubble" class="chat-bubble break-words chat-bubble-primary">here's the claiming key 🔑</div>
+                <span class="chat-footer link link-hover inline-flex items-center gap-1 text-sm text-base-content/70">See it on Etherscan <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg></span>
+              </div>
+              <div class="bg-base-100 py-3 mt-3">
+                <div class="flex items-center gap-2">
+                  <input id="app-input" class="input input-lg flex-1 min-w-0" placeholder="Say something" style="caret-color: transparent" />
+                  <span id="app-left" class="w-7 text-center font-semibold text-base-content/70">62</span>
+                  <div class="relative isolate">
+                    <div id="app-confetti-2" class="confetti"></div>
+                    <button id="app-send" class="btn btn-primary btn-lg btn-circle" disabled><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg></button>
+                    <div id="app-cursor-2" class="app-cursor"><svg width="29" height="36" viewBox="0 0 23 29"><path d="M1.5 1.5v22.2l6-5.6 3.8 8.9 4.2-1.8-3.8-8.7h8.3z" fill="#081019" stroke="#fff" stroke-width="2" stroke-linejoin="round" /></svg></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.fonts.ready.then(() => {
+      const $ = id => document.getElementById(id);
+      const tl = gsap.timeline({ paused: true });
+      const pop = (target, at, origin = "50% 50%") =>
+        tl.fromTo(target, { opacity: 0, scale: 0.5, transformOrigin: origin }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, at);
+      const burst = (box, at) => {
+        box.innerHTML = "<i></i>".repeat(14);
+        [...box.children].forEach((el, i) => {
+          const turn = i / 14, far = (7 + (i % 4) * 1.5) * 16, a = turn * Math.PI * 2;
+          tl.set(el, { opacity: 1 }, at);
+          tl.fromTo(el, { x: 0, y: 0, rotation: turn * 360, scale: 1 }, { x: far * Math.sin(a), y: -far * Math.cos(a), rotation: turn * 360 + 360, scale: 0.6, duration: 1.1, ease: "burst" }, at);
+          tl.fromTo(el, { opacity: 1 }, { opacity: 0, duration: 0.33, ease: "burst", immediateRender: false }, at + 0.77);
+        });
+      };
+      // A cursor that glides in from (dx, dy), taps at `tap`, then leaves.
+      const tapAt = (cursor, from, tap) => {
+        const svg = cursor.firstElementChild;
+        tl.fromTo(cursor, { x: from[0], y: from[1], opacity: 0 }, { x: 10, y: 6, opacity: 1, duration: 0.42, ease: "power2.inOut" }, tap - 0.45);
+        tl.fromTo(svg, { scale: 1 }, { scale: 0.82, duration: 0.05, ease: "power2.out" }, tap);
+        tl.to(svg, { scale: 1, duration: 0.1, ease: "power2.out" }, tap + 0.06);
+        tl.to(cursor, { opacity: 0, x: 40, y: 30, duration: 0.2, ease: "power3.in" }, tap + 0.3);
+      };
+
+      // How far the app scrolls to show the composer, before and after the new bubble: the bottom of
+      // "You said" + 16 px − the 560 px frame. Measured once with Fredoka loaded (the scene isn't laid
+      // out while its timeline builds); re-measure if the app's markup changes.
+      const scrollA = 318, scrollB = 334;
+
+      // In: the app slides in from the right, where the title left to the left.
+      tl.fromTo("#app-wrap", { x: 160, opacity: 0, filter: "blur(10px)" }, { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0);
+      tl.fromTo("#app-left4 h2 span", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, stagger: 0.067, ease: "power2.out" }, 0.08);
+
+      // Tap Say hi on 9.0 (global): busy, the avatar bouncing to land on 10, 11 and 12.
+      tapAt($("app-cursor-1"), [150, 150], 0.5);
+      tl.to("#app-sayhi", { scale: 0.96, duration: 0.05, ease: "power2.out" }, 0.5);
+      tl.set("#app-pre", { display: "none" }, 0.55);
+      tl.set("#app-busy", { display: "contents" }, 0.55);
+      tl.fromTo(".app-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.36, ease: "sine.inOut", yoyo: true, repeat: 7, stagger: 0.12 }, 0.55);
+      for (const [up, down] of [[0.55, 1.0], [1.5, 2.0], [2.5, 3.0]]) {
+        tl.fromTo("#app-bouncer", { y: 0 }, { y: -32, duration: down - up, ease: "power3.out" }, up);
+        tl.fromTo("#app-bouncer", { y: -32 }, { y: 0, duration: 0.5, ease: "power3.in", immediateRender: false }, down);
+      }
+      // beat-grid: chips 9.52 / 10.52 / 11.52 (every other beat; they're text)
+      tl.fromTo(".app-chip", { opacity: 0, scale: 0.5, transformOrigin: "0% 50%" }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop", stagger: 1 }, 1.02);
+
+      // 12.0: connected.
+      tl.set("#app-busy", { display: "none" }, 3.5);
+      tl.set("#app-post", { display: "contents" }, 3.5);
+      tl.set("#app-msgs", { display: "flex" }, 3.5);
+      burst($("app-confetti-1"), 3.5);
+      pop("#app-connected", 3.5);
+
+      // 13.0: the caption changes, the app scrolls to the composer.
+      tl.to("#app-left4", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 4.28);
+      tl.fromTo("#app-left5 h2 span", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, stagger: 0.067, ease: "power2.out" }, 4.5);
+      tl.fromTo("#app-scroll", { y: 0 }, { y: -scrollA, duration: 0.45, ease: "power2.inOut" }, 4.5);
+
+      // Typing 13.35–14.25, the counter counting down, then sent on 14.5.
+      const typed = [..."here's the claiming key 🔑"];
+      const input = $("app-input"), left = $("app-left"), send = $("app-send");
+      const typing = { p: 0 };
+      tl.fromTo(
+        typing,
+        { p: 0 },
+        {
+          p: 1,
+          duration: 1.15,
+          ease: "none",
+          onUpdate() {
+            const t = typing.p * 1.15;
+            const text = typing.p <= 0 || typing.p >= 1 ? "" : typed.slice(0, Math.floor(Math.min(1, t / 0.9) * typed.length)).join("");
+            input.value = text;
+            left.textContent = 62 - new TextEncoder().encode(text).length;
+            send.disabled = !text;
+          },
+        },
+        4.85,
+      );
+      tapAt($("app-cursor-2"), [140, 110], 6.0);
+      tl.to("#app-send", { scale: 0.92, duration: 0.05, ease: "power2.out" }, 6.0);
+      tl.to("#app-send", { scale: 1, duration: 0.1, ease: "power2.out" }, 6.06);
+      burst($("app-confetti-2"), 6.0);
+      tl.set("#app-empty", { display: "none" }, 6.0);
+      tl.set("#app-sent", { display: "grid" }, 6.0);
+      pop("#app-sent-bubble", 6.0, "100% 100%");
+      tl.to("#app-scroll", { y: -scrollB, duration: 0.2, ease: "power2.inOut" }, 6.0);
+
+      // Out (15.75–16.0): the app leaves right, the caption blurs away.
+      tl.to("#app-wrap", { x: 140, opacity: 0, filter: "blur(10px)", duration: 0.25, ease: "power3.in" }, 7.25);
+      tl.to("#app-left5", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 7.27);
+      window.__timelines["app"] = tl;
+    });
+  </script>
+</template>
