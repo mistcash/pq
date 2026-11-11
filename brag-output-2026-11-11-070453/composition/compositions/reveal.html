@@ -1,0 +1,94 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #rev-stage { position: absolute; inset: 0; background: #e3edf5; }
+    #rev-head { position: absolute; left: 0; right: 0; top: 286px; display: flex; justify-content: center; }
+    #rev-row { position: absolute; left: 0; right: 0; top: 690px; height: 0; display: flex; justify-content: center; align-items: center; }
+    #rev-row .hex { font-family: "IBM Plex Mono", monospace; }
+    #rev-content { position: absolute; inset: 0; }
+  </style>
+  <div id="root" data-composition-id="reveal" data-width="1920" data-height="1080">
+    <!-- A circle of light opens from the on-chain card. -->
+    <div id="rev-stage">
+      <div id="rev-content">
+        <div id="rev-head">
+          <h2 id="rev-title" class="font-bold m-0" style="font-size: 88px; line-height: 1">Only the two of you can read it.</h2>
+        </div>
+        <div id="rev-row">
+          <div style="zoom: 1.9">
+            <div class="flex flex-row items-center justify-center gap-6">
+              <div class="flex flex-col items-center gap-3">
+                <img id="rev-alice" src="assets/img/alice.svg" width="80" height="80" class="shrink-0 rounded-full" alt="" />
+                <p id="rev-alice-says" class="m-0 rounded-3xl px-4 py-2 text-lg bg-primary text-primary-content whitespace-nowrap">🔑 claiming key</p>
+              </div>
+              <span id="rev-arrow-l"><svg class="block size-8 opacity-60" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg></span>
+              <div class="flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed p-5">
+                <span class="flex items-center gap-2 opacity-70"><svg class="block size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg> On-chain, for all to see</span>
+                <code id="rev-hex-1" class="hex rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">0x4be1…a07c</code>
+                <code id="rev-hex-2" class="hex rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">0x09a7…77e2</code>
+                <span class="opacity-70">from ? to ?</span>
+              </div>
+              <span id="rev-arrow-r"><svg class="block size-8 opacity-60" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg></span>
+              <div class="flex flex-col items-center gap-3">
+                <img id="rev-bob" src="assets/img/bob.svg" width="80" height="80" class="shrink-0 rounded-full" alt="" />
+                <p id="rev-bob-says" class="m-0 rounded-3xl px-4 py-2 text-lg bg-base-100 border-2 whitespace-nowrap">got the key! 🎉</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      const pop = (sel, at, origin = "50% 50%") =>
+        tl.fromTo(sel, { opacity: 0, scale: 0.5, transformOrigin: origin }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, at);
+
+      tl.fromTo(
+        "#rev-stage",
+        { clipPath: "circle(0px at 960px 690px)" },
+        { clipPath: "circle(1250px at 960px 690px)", duration: 0.45, ease: "power3.out" },
+        0,
+      );
+      // The whole line blurs in once the light has passed it.
+      tl.fromTo("#rev-title", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 0.12);
+
+      // beat-grid: Alice 2.52, Bob 3.02 (global)
+      pop("#rev-alice", 0.52);
+      pop("#rev-alice-says", 0.6, "50% 0%");
+      tl.fromTo("#rev-arrow-l", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.25, ease: "power3.out" }, 0.66);
+      tl.fromTo("#rev-arrow-r", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.25, ease: "power3.out" }, 1.0);
+      pop("#rev-bob", 1.02);
+      pop("#rev-bob-says", 1.1, "50% 0%");
+
+      // The ciphertext churns as Alice's message lands on-chain.
+      const HEX = "0123456789abcdef";
+      const hexes = [
+        [document.getElementById("rev-hex-1"), "0x4be1…a07c"],
+        [document.getElementById("rev-hex-2"), "0x09a7…77e2"],
+      ];
+      const churn = { p: 0 };
+      tl.fromTo(
+        churn,
+        { p: 0 },
+        {
+          p: 1,
+          duration: 0.35,
+          ease: "none",
+          onUpdate() {
+            const p = churn.p, f = Math.floor(p * 10);
+            hexes.forEach(([el, v], k) => {
+              el.textContent = p <= 0 || p >= 1 ? v : v.replace(/[0-9a-f](?!x)/g, (c, i) => HEX[(f * 7 + i * 13 + k * 5) % 16]);
+            });
+          },
+        },
+        0.62,
+      );
+
+      // Out: a quick blur and fade on the same ground (4.75–5.0 global).
+      tl.to("#rev-content", { opacity: 0, scale: 0.96, filter: "blur(6px)", duration: 0.22, ease: "power3.in" }, 2.75);
+      window.__timelines["reveal"] = tl;
+    })();
+  </script>
+</template>
