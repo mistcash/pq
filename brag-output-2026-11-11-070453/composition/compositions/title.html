@@ -1,0 +1,38 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #e3edf5; overflow: hidden; }
+    #title-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    #title-tagline span { display: inline-block; }
+  </style>
+  <div id="root" data-composition-id="title" data-width="1920" data-height="1080">
+    <!-- Laid out like packages/nextjs/public/thumbnail.jpg. -->
+    <div id="title-wrap">
+      <div style="zoom: 1.6" class="flex items-center gap-14 w-[1060px]">
+        <div id="title-tile" class="shrink-0 size-[300px] rounded-[64px] border-[8px] border-white overflow-hidden">
+          <img src="assets/img/logo.svg" class="size-full block" alt="pq" />
+        </div>
+        <div class="flex flex-col gap-6">
+          <h1 id="title-tagline" class="text-[44px] font-bold leading-[1.12] m-0"><span>Scalable,</span> <span>post-quantum</span> <span>cryptographic</span> <span>messaging</span> <span>for</span> <span>private</span> <span>payments</span> <span>and</span> <span>peer</span> <span>coordination.</span></h1>
+          <ul class="flex flex-wrap gap-2 m-0 p-0 list-none text-lg">
+            <li class="title-perk rounded-full bg-base-100 px-4 py-1.5">🔒 Post-quantum</li>
+            <li class="title-perk rounded-full bg-base-100 px-4 py-1.5">🌍 On Ethereum</li>
+            <li class="title-perk rounded-full bg-base-100 px-4 py-1.5">🙈 The chain can't see who's talking</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#title-tile", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, 0);
+      // The tagline, word by word from misty grey to ink, in place.
+      tl.fromTo("#title-tagline span", { color: "#acc4d6" }, { color: "#081019", duration: 0.12, stagger: 0.06, ease: "power2.out" }, 0.05);
+      // beat-grid: perks 5.52 / 6.02 / 6.52 (global), then held as a set.
+      tl.fromTo(".title-perk", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop", stagger: 0.5 }, 0.52);
+      // Out to the left, where the app comes in from the right (8.25–8.5 global).
+      tl.to("#title-wrap", { x: -90, opacity: 0, filter: "blur(6px)", duration: 0.25, ease: "power3.in" }, 3.25);
+      window.__timelines["title"] = tl;
+    })();
+  </script>
+</template>
