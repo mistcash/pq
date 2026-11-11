@@ -1,0 +1,93 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #081019; overflow: hidden; }
+    #hook-hex { position: absolute; inset: 0; font-family: "IBM Plex Mono", monospace; font-size: 22px; line-height: 38px; color: #acc4d6; white-space: pre; }
+    #hook-hex .col { position: absolute; top: 0; width: 120px; text-align: center; }
+    #hook-hex b { color: #4d86ff; font-weight: 400; }
+    #hook-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 55% at 50% 56%, #081019 35%, rgb(8 16 25 / 0.55) 70%, rgb(8 16 25 / 0) 100%); }
+    #hook-head { position: absolute; left: 0; right: 0; top: 250px; display: flex; justify-content: center; }
+    #hook-head span { display: inline-block; }
+    #hook-row { position: absolute; left: 0; right: 0; top: 690px; height: 0; display: flex; justify-content: center; align-items: center; }
+    /* The Landing's Public card, on the dark chain. */
+    #hook-row .public { border-color: rgb(172 196 214 / 0.55); color: #ffffff; }
+    #hook-row .hex { background: #0052ff; color: #ffffff; font-family: "IBM Plex Mono", monospace; }
+    #hook-row .person, #hook-row .arrow { visibility: hidden; }
+  </style>
+  <div id="root" data-composition-id="hook" data-width="1920" data-height="1080">
+    <!-- Columns of on-chain ciphertext, filled from a seeded PRNG below. -->
+    <div id="hook-hex" data-layout-ignore></div>
+    <div id="hook-vignette" data-layout-ignore></div>
+    <div id="hook-head">
+      <h1 class="font-bold text-white m-0" style="font-size: 150px; line-height: 1">
+        <span id="hook-w1">Public.</span> <span id="hook-w2">Forever.</span>
+      </h1>
+    </div>
+    <div id="hook-row">
+      <div style="zoom: 1.9">
+        <div class="flex flex-row items-center justify-center gap-6">
+          <div class="person flex flex-col items-center gap-3">
+            <img src="assets/img/alice.svg" width="80" height="80" class="shrink-0 rounded-full" alt="" />
+            <p class="m-0 rounded-3xl px-4 py-2 text-lg bg-primary text-primary-content whitespace-nowrap">🔑 claiming key</p>
+          </div>
+          <span class="arrow"><svg class="block size-8 opacity-60" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg></span>
+          <div id="hook-card" class="public flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed p-5">
+            <span class="flex items-center gap-2 opacity-70"><svg class="block size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg> On-chain, for all to see</span>
+            <code class="hex rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">0x4be1…a07c</code>
+            <code class="hex rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">0x09a7…77e2</code>
+            <span class="opacity-70">from ? to ?</span>
+          </div>
+          <span class="arrow"><svg class="block size-8 opacity-60" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg></span>
+          <div class="person flex flex-col items-center gap-3">
+            <img src="assets/img/bob.svg" width="80" height="80" class="shrink-0 rounded-full" alt="" />
+            <p class="m-0 rounded-3xl px-4 py-2 text-lg bg-base-100 border-2 whitespace-nowrap">got the key! 🎉</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      // mulberry32: the same columns every render.
+      let seed = 7;
+      const rnd = () => {
+        seed = (seed + 0x6d2b79f5) | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+      const HEX = "0123456789abcdef";
+      const field = document.getElementById("hook-hex");
+      const cols = [];
+      for (let c = 0; c < 15; c++) {
+        const lines = [];
+        for (let r = 0; r < 40; r++) {
+          let s = "";
+          for (let k = 0; k < 6; k++) s += HEX[Math.floor(rnd() * 16)];
+          lines.push(rnd() < 0.12 ? `<b>${s}</b>` : s);
+        }
+        const col = document.createElement("div");
+        col.className = "col";
+        col.style.left = `${36 + c * 128}px`;
+        col.style.opacity = (0.22 + rnd() * 0.25).toFixed(2);
+        col.innerHTML = lines.join("\n");
+        field.appendChild(col);
+        cols.push({ col, speed: 40 + rnd() * 50, off: rnd() * 300 });
+      }
+
+      const tl = gsap.timeline({ paused: true });
+      // The chain keeps scrolling past.
+      cols.forEach(({ col, speed, off }) =>
+        tl.fromTo(col, { y: -off }, { y: -(off + 2.5 * speed), duration: 2.5, ease: "none" }, 0),
+      );
+      // The app's pop: opacity 0 and scale 0.5, on its springy curve.
+      tl.fromTo("#hook-card", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, 0);
+      // beat-grid: "Public." 0.27, "Forever." 0.77 (one beat apart)
+      tl.fromTo("#hook-w1", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, 0.27);
+      tl.fromTo("#hook-w2", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, 0.77);
+      // Audio-reactive (subtle): the ciphertext brightens with the music's RMS.
+      const RMS = [0.52,0.56,0.47,0.47,0.44,0.42,0.42,0.54,0.53,0.51,0.49,0.45,0.39,0.37,0.38,0.39,0.38,0.37,0.36,0.63,0.53,0.52,0.54,0.53,0.5,0.44,0.43,0.37,0.33,0.33,0.58,0.51,0.47,0.46,0.34,0.3,0.32,0.43,0.4,0.38,0.35,0.49,0.48,0.44,0.45,0.45,0.32,0.29,0.31,0.47,0.38,0.37,0.51,0.48,0.48,0.47,0.41,0.29,0.3,0.28,0.61,0.49,0.49,0.48,0.45,0.4,0.43,0.54,0.68,0.57,0.51,0.54,0.37,0.32,0.31];
+      RMS.forEach((v, i) => tl.set("#hook-hex", { opacity: 0.75 + 0.6 * (v - 0.28) }, i / 30));
+      window.__timelines["hook"] = tl;
+    })();
+  </script>
+</template>
