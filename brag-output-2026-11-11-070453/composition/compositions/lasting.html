@@ -1,0 +1,49 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #last-stage { position: absolute; inset: 0; background: #ffffff; display: flex; align-items: center; justify-content: center; }
+  </style>
+  <div id="root" data-composition-id="lasting" data-width="1920" data-height="1080">
+    <!-- The Landing's "Lasting" beat (packages/nextjs/app/_components/Landing.tsx). -->
+    <div id="last-stage">
+      <div id="last-content" style="zoom: 1.8" class="flex flex-col items-center justify-center gap-10 text-center">
+        <div class="flex flex-col items-center gap-4 max-w-5xl">
+          <span id="last-kicker" class="font-semibold tracking-wide text-primary">Lasting</span>
+          <h2 id="last-title" class="text-6xl font-bold leading-[1.05] text-balance m-0">Private now, and for years to come.</h2>
+        </div>
+        <ol class="relative isolate w-fit mx-auto m-0 p-0 flex gap-16 list-none">
+          <span id="last-dash" class="absolute inset-x-10 top-10 -z-10 border-t-2 border-dashed"></span>
+          <li class="last-lock flex flex-col items-center gap-2"><span class="last-dot grid place-items-center size-20 rounded-full bg-primary text-primary-content"><svg class="size-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>today</li>
+          <li class="last-lock flex flex-col items-center gap-2"><span class="last-dot grid place-items-center size-20 rounded-full bg-primary text-primary-content"><svg class="size-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>in 10 years</li>
+          <li class="last-lock flex flex-col items-center gap-2"><span class="last-dot grid place-items-center size-20 rounded-full bg-primary text-primary-content"><svg class="size-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>in 20 years</li>
+        </ol>
+        <ul class="flex flex-wrap justify-center gap-2 m-0 p-0 list-none">
+          <li class="last-tag rounded-full border border-current/20 px-3 py-1 text-sm">Kyber512</li>
+          <li class="last-tag rounded-full border border-current/20 px-3 py-1 text-sm">zero-knowledge proofs</li>
+          <li class="last-tag rounded-full border border-current/20 px-3 py-1 text-sm">Poseidon2</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      // White rises from below over the app's ground.
+      tl.fromTo("#last-stage", { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.32, ease: "power3.out" }, 0);
+      tl.fromTo("#last-kicker", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, 0.06);
+      tl.fromTo("#last-title", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power2.out" }, 0.08);
+      // beat-locked: 16.02 (the track's section lift); beat-grid: locks 16.02 / 16.52 / 17.02
+      tl.fromTo(".last-lock", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop", stagger: 0.5 }, 0.02);
+      tl.fromTo("#last-dash", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 1, ease: "power2.inOut" }, 0.1);
+      tl.fromTo(".last-tag", { opacity: 0, scale: 0.5 }, { opacity: 0.7, scale: 1, duration: 0.4, ease: "pop", stagger: 0.12 }, 1.52);
+      // Audio-reactive (subtle): the locks glow with the bass.
+      const BASS = [1.0,0.85,0.54,0.55,0.39,0.41,0.48,0.55,0.54,0.5,0.44,0.39,0.38,0.44,0.49,0.94,0.71,0.62,0.16,0.28,0.35,0.38,0.4,0.36,0.34,0.33,0.32,0.34,0.36,0.37,0.95,0.6,0.43,0.35,0.29,0.36,0.39,0.41,0.41,0.42,0.42,0.4,0.36,0.38,0.41,0.87,0.64,0.39,0.35,0.22,0.28,0.33,0.37,0.31,0.29,0.29,0.3,0.32,0.31,0.3,0.87,0.59,0.48,0.54,0.26,0.48,0.42,0.45,0.43,0.34,0.51,0.26,0.55,0.24,0.53,0.92,0.66,0.57,0.21,0.3,0.23,0.45,0.18,0.44,0.23,0.42,0.33,0.36,0.38,0.3];
+      BASS.forEach((v, i) =>
+        tl.set(".last-dot", { boxShadow: `0 0 ${Math.round(6 + 18 * v)}px rgba(0, 82, 255, ${(0.15 + 0.25 * v).toFixed(2)})` }, i / 30),
+      );
+      // Out (18.75–19.0): up and blurred, before the outro's ground rises.
+      tl.to("#last-content", { y: -30, opacity: 0, filter: "blur(6px)", duration: 0.22, ease: "power3.in" }, 2.75);
+      window.__timelines["lasting"] = tl;
+    })();
+  </script>
+</template>
