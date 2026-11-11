@@ -328,6 +328,9 @@
   .justify-center {
     justify-content: center;
   }
+  .justify-items-center {
+    justify-items: center;
+  }
   .gap-1 {
     gap: calc(var(--spacing) * 1);
   }
@@ -357,6 +360,9 @@
   }
   .gap-16 {
     gap: calc(var(--spacing) * 16);
+  }
+  .gap-24 {
+    gap: calc(var(--spacing) * 24);
   }
   .self-start {
     align-self: flex-start;
@@ -544,9 +550,6 @@
   }
   .whitespace-nowrap {
     white-space: nowrap;
-  }
-  .text-white {
-    color: var(--color-white);
   }
   .opacity-60 {
     opacity: 60%;
