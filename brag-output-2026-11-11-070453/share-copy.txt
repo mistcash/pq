@@ -1,1 +1,1 @@
-Every pq message sits on Ethereum for anyone to see, and only the two of you can read it. Your browser does some secret math (a Kyber512 key and a zero-knowledge proof), and the chain can't see who's talking. Say hi on Sepolia: github.com/mistcash/pq
+Private payment viewing keys aren't post-quantum secure: one day, every auditor commitment becomes public. pq hands keys over with Kyber512 and a zero-knowledge proof made right in your browser, so they stay private for years. Say hi on Sepolia: github.com/mistcash/pq
