@@ -2,26 +2,22 @@
   <style>
     #root { position: absolute; inset: 0; overflow: hidden; }
     #last-stage { position: absolute; inset: 0; background: #ffffff; display: flex; align-items: center; justify-content: center; }
+    #last-title span { display: inline-block; }
   </style>
   <div id="root" data-composition-id="lasting" data-width="1920" data-height="1080">
-    <!-- The Landing's "Lasting" beat (packages/nextjs/app/_components/Landing.tsx). -->
+    <!-- The Landing's "Lasting" beat (packages/nextjs/app/_components/Landing.tsx), answering the opening's open lock. -->
     <div id="last-stage">
       <div id="last-content" style="zoom: 1.8" class="flex flex-col items-center justify-center gap-10 text-center">
         <div class="flex flex-col items-center gap-4 max-w-5xl">
-          <span id="last-kicker" class="font-semibold tracking-wide text-primary">Lasting</span>
-          <h2 id="last-title" class="text-6xl font-bold leading-[1.05] text-balance m-0">Private now, and for years to come.</h2>
+          <span id="last-kicker" class="text-lg font-semibold tracking-wide text-primary">Lasting</span>
+          <h2 id="last-title" class="text-6xl font-bold leading-[1.05] text-balance m-0"><span>Private</span> <span>now,</span> <span>and</span> <span>for</span> <span>years</span> <span>to</span> <span>come.</span></h2>
         </div>
         <ol class="relative isolate w-fit mx-auto m-0 p-0 flex gap-16 list-none">
           <span id="last-dash" class="absolute inset-x-10 top-10 -z-10 border-t-2 border-dashed"></span>
-          <li class="last-lock flex flex-col items-center gap-2"><span class="last-dot grid place-items-center size-20 rounded-full bg-primary text-primary-content"><svg class="size-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>today</li>
-          <li class="last-lock flex flex-col items-center gap-2"><span class="last-dot grid place-items-center size-20 rounded-full bg-primary text-primary-content"><svg class="size-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>in 10 years</li>
-          <li class="last-lock flex flex-col items-center gap-2"><span class="last-dot grid place-items-center size-20 rounded-full bg-primary text-primary-content"><svg class="size-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>in 20 years</li>
+          <li class="last-lock flex flex-col items-center gap-2 text-xl"><span class="last-dot grid place-items-center size-20 rounded-full bg-primary text-primary-content"><svg class="size-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>today</li>
+          <li class="last-lock flex flex-col items-center gap-2 text-xl"><span class="last-dot grid place-items-center size-20 rounded-full bg-primary text-primary-content"><svg class="size-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>in 10 years</li>
+          <li class="last-lock flex flex-col items-center gap-2 text-xl"><span class="last-dot grid place-items-center size-20 rounded-full bg-primary text-primary-content"><svg class="size-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>in 20 years</li>
         </ol>
-        <ul class="flex flex-wrap justify-center gap-2 m-0 p-0 list-none">
-          <li class="last-tag rounded-full border border-current/20 px-3 py-1 text-sm">Kyber512</li>
-          <li class="last-tag rounded-full border border-current/20 px-3 py-1 text-sm">zero-knowledge proofs</li>
-          <li class="last-tag rounded-full border border-current/20 px-3 py-1 text-sm">Poseidon2</li>
-        </ul>
       </div>
     </div>
   </div>
@@ -30,19 +26,19 @@
       const tl = gsap.timeline({ paused: true });
       // White rises from below over the app's ground.
       tl.fromTo("#last-stage", { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.32, ease: "power3.out" }, 0);
-      tl.fromTo("#last-kicker", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, 0.06);
-      tl.fromTo("#last-title", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power2.out" }, 0.08);
-      // beat-locked: 17.02 (strong cue); beat-grid: locks 17.02 / 17.52 / 18.02, all strong cues
-      tl.fromTo(".last-lock", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop", stagger: 0.5 }, 0.02);
-      tl.fromTo("#last-dash", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 1, ease: "power2.inOut" }, 0.1);
-      tl.fromTo(".last-tag", { opacity: 0, scale: 0.5 }, { opacity: 0.7, scale: 1, duration: 0.4, ease: "pop", stagger: 0.12 }, 1.52);
-      // Audio-reactive (subtle): the locks glow with the bass.
-      const BASS = [0.95,0.6,0.43,0.35,0.29,0.36,0.39,0.41,0.41,0.42,0.42,0.4,0.36,0.38,0.41,0.87,0.64,0.39,0.35,0.22,0.28,0.33,0.37,0.31,0.29,0.29,0.3,0.32,0.31,0.3,0.87,0.59,0.48,0.54,0.26,0.48,0.42,0.45,0.43,0.34,0.51,0.26,0.55,0.24,0.53,0.92,0.66,0.57,0.21,0.3,0.23,0.45,0.18,0.44,0.23,0.42,0.33,0.36,0.38,0.3,0.86,0.59,0.44,0.32,0.23,0.29,0.31,0.38,0.26,0.4,0.25,0.44,0.23,0.37,0.29,0.78,0.52,0.37,0.21,0.21,0.31,0.22,0.37,0.21,0.29,0.26,0.26,0.29,0.26,0.34];
+      tl.fromTo("#last-kicker", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, 0.1);
+      // Words arrive at reading pace, 0.3 s apart (about 200 words a minute), and stay.
+      tl.fromTo("#last-title span", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.3, ease: "power2.out" }, 0.3); // last lands 2.3
+      // beat-grid: locks 37.52 / 38.02 / 38.52 (global), latching in the track's quiet breakdown.
+      tl.fromTo(".last-lock", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop", stagger: 0.5 }, 2.52);
+      tl.fromTo("#last-dash", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 1, ease: "power2.inOut" }, 2.6);
+      // Audio-reactive (subtle): the locks glow with the bass, swelling as the music returns at 40 s.
+      const BASS = [0.04,0.03,0.04,0.04,0.07,0.05,0.05,0.06,0.04,0.05,0.04,0.04,0.04,0.03,0.04,0.05,0.05,0.06,0.07,0.05,0.05,0.06,0.05,0.06,0.03,0.05,0.04,0.06,0.08,0.06,0.2,0.17,0.25,0.23,0.2,0.21,0.19,0.18,0.2,0.18,0.16,0.15,0.2,0.19,0.16,0.14,0.14,0.1,0.07,0.03,0.03,0.03,0.04,0.19,0.27,0.31,0.36,0.31,0.28,0.24,0.28,0.26,0.24,0.23,0.27,0.23,0.24,0.27,0.24,0.23,0.19,0.14,0.1,0.09,0.08,0.09,0.05,0.04,0.04,0.03,0.05,0.05,0.07,0.07,0.09,0.09,0.1,0.1,0.09,0.09,0.2,0.14,0.07,0.08,0.11,0.08,0.08,0.06,0.03,0.05,0.06,0.04,0.08,0.04,0.05,0.05,0.03,0.05,0.01,0.02,0.02,0.01,0.02,0.08,0.08,0.09,0.08,0.07,0.08,0.07,0.07,0.06,0.06,0.06,0.07,0.07,0.07,0.06,0.06,0.06,0.06,0.07,0.04,0.04,0.04,0.1,0.05,0.08,0.04,0.04,0.05,0.03,0.05,0.04,0.03,0.04,0.05,0.03,0.06,0.04,0.29,0.46,0.46,0.47,0.43,0.42,0.41,0.42,0.39,0.37,0.33,0.31,0.33,0.35,0.37,0.35,0.27,0.32,0.33,0.34,0.34,0.35,0.34,0.37,0.39,0.42,0.41,0.39,0.36,0.38,0.36,0.3,0.28,0.29,0.3,0.3,0.33,0.34,0.31,0.31,0.35,0.36,0.37,0.36,0.36];
       BASS.forEach((v, i) =>
-        tl.set(".last-dot", { boxShadow: `0 0 ${Math.round(6 + 18 * v)}px rgba(0, 82, 255, ${(0.15 + 0.25 * v).toFixed(2)})` }, i / 30),
+        tl.set(".last-dot", { boxShadow: `0 0 ${Math.round(6 + 30 * v)}px rgba(0, 82, 255, ${(0.15 + 0.4 * v).toFixed(2)})` }, i / 30),
       );
-      // Out (19.75–20.0): up and blurred, before the outro's ground rises.
-      tl.to("#last-content", { y: -30, opacity: 0, filter: "blur(6px)", duration: 0.22, ease: "power3.in" }, 2.75);
+      // Held 2 s after the last lock lands, then out (41.0–41.22 global), before the outro's ground rises.
+      tl.to("#last-content", { y: -30, opacity: 0, filter: "blur(6px)", duration: 0.22, ease: "power3.in" }, 6.0);
       window.__timelines["lasting"] = tl;
     })();
   </script>
