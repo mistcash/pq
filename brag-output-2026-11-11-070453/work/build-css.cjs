@@ -24,7 +24,7 @@ const markup = files.map(f => fs.readFileSync(path.join(comp, f), "utf8").replac
     document.body.appendChild(d);
   }, markup);
   const css = await page.waitForFunction(
-    () => [...document.querySelectorAll("style")].map(s => s.textContent).find(t => t.includes("tailwindcss v") && t.includes(".rounded-3xl")),
+    () => [...document.querySelectorAll("style")].map(s => s.textContent).find(t => t.includes("tailwindcss v") && t.includes(".rounded-full")),
     null,
     { timeout: 20000 },
   );
