@@ -27,9 +27,9 @@
       tl.fromTo("#title-tile", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, 0.02);
       // Words arrive at reading pace, 0.3 s apart (about 200 words a minute), and stay.
       tl.fromTo("#title-tagline span", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.3, ease: "power2.out" }, 0.3); // last lands 3.2
-      // perks 20.78 / 21.08 (global), once the tagline is read.
+      // perks 24.88 / 25.18 (global), once the tagline is read.
       tl.fromTo(".title-perk", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop", stagger: 0.3 }, 3.52);
-      // Held 2 s, then out to the left, where the app comes in from the right (23.51–23.76 global).
+      // Held 2 s, then out to the left, where the app comes in from the right (27.61–27.86 global).
       tl.to("#title-wrap", { x: -90, opacity: 0, filter: "blur(6px)", duration: 0.25, ease: "power3.in" }, 6.25);
       window.__timelines["title"] = tl;
     })();
