@@ -65,24 +65,23 @@ Scene summary:
 5. Your turn — 46.5–52.5 s — logo, "Your turn: say hi.", ⟠ "It's live on Sepolia.", CTA tap, pills
 
 ## Audio
-- Audio role: warm bed with motion-matched UI accents
-- Audio arc: bright from the first frame, fades under the end card
-- Music: `assets/music/happy-beats-business-moves-vol-1-by-ende-dot-app.mp3`
-- Music treatment: volume 0.38; 0.7 s fade-out; final mix mastered to about −16 LUFS
-- Music cue guidance: bundled preset `.claude/skills/brag/assets/music/cues/happy-beats-business-moves-vol-1-by-ende-dot-app.music-cues.json`; beats at 0.02 + 0.5·k; pops and taps on the beat grid; word reveals follow reading pace; Lasting's locks latch in the track's quiet breakdown (32–40 s) and the music returns at 40 s
-- Audio-reactive treatment: subtle; bass breathes the Lasting locks' glow, swelling as the music returns at 40 s
+- Audio role: a cool, nocturnal electronic bed with motion-matched UI accents
+- Audio arc: the track's quiet, mysterious intro under the chat; its beat drops as the quantum computer joins (7.52 s); a steady groove through the fix; fades under the end card
+- Music: `assets/music/ethernight-club-by-kevin-macleod.mp3` — "Ethernight Club" by Kevin MacLeod (incompetech.com), CC BY 4.0; credit in `share-copy.txt`
+- Music treatment: `data-media-start="8.92"`, volume 0.38, 0.7 s fade-out; final mix mastered to about −16 LUFS
+- Music cue guidance: kick grid measured from the track (first kick 16.44 s in the track, every 0.513 s, 117.6 BPM); beat-locked: the drop on 7.52 s; scene starts, chat messages, "You're connected!", the send and the CTA tap on the grid
+- Audio-reactive treatment: subtle; bass breathes the Lasting locks' glow (`work/audio-data.json`, from the track at 8.92 s)
 - Audio-coupled moments:
-  - 0.44 / 2.54 / 5.54 — soft drops as each chat message arrives
-  - 7.54 — a short glitch as the quantum computer joins; 8.04 — the unlock click
-  - 17.54 — warm accent on the logo
-  - 27.04, 37.04, 50.04 — cursor clicks
-  - 31.54 — success bell with the confetti
-  - 35.6–36.4 — a few key ticks
-  - 42.54 / 43.04 / 43.54 — Lasting's lock latches
-  - 50.06 — final bell with the CTA confetti
-- SFX selection guidance: low high-frequency-risk Kenney files (`interface/click_00x`, `impact/impactSoft_medium_001`, `interface/switch_00x`, `impact/impactBell_heavy_00x`, `keyboard/keypress-*`), rotate takes for repeats, SFX at 0.55–0.85 with repeats quieter
+  - 0.36 / 2.41 / 5.49 — soft drops as each chat message arrives
+  - 7.54 — a short glitch as the quantum computer joins; 8.05 — the unlock click
+  - 17.3 — warm accent on the logo
+  - 26.97, 36.77, 50.03 — cursor clicks
+  - 31.64 — success bell with the confetti
+  - 35.53–36.33 — a few key ticks
+  - 42.37 / 42.87 / 43.37 — Lasting's lock latches
+  - 50.05 — final bell with the CTA confetti
+- SFX selection guidance: low high-frequency-risk Kenney files, rotate takes for repeats, SFX at 0.3–0.8 with repeats quieter
 - SFX analysis guidance: `.claude/skills/brag/assets/sfx/sfx-analysis.md`
-- Exact SFX choice: chosen against the implemented animation
 - Audio files: copied into `composition/assets/`
 
 ## Hyperframes Instructions
