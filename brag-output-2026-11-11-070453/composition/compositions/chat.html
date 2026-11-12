@@ -7,8 +7,8 @@
     #chat-wrap { position: absolute; left: 950px; top: 50px; }
     #chat-slot { display: grid; }
     #chat-slot > * { grid-area: 1 / 1; }
-    #chat-open { background: #ff8863; color: #081019; }
-    #chat-tags { display: grid; justify-items: end; }
+    #chat-open { background: #ff8863; color: #081019; box-shadow: 0 6px 18px rgb(255 136 99 / 0.45); }
+    #chat-tags { display: grid; justify-items: end; align-items: center; }
     #chat-tags > * { grid-area: 1 / 1; }
   </style>
   <div id="root" data-composition-id="chat" data-width="1920" data-height="1080">
@@ -49,7 +49,7 @@
                 <div class="chat-footer mt-1">
                   <span id="chat-tags">
                     <span id="chat-lock" class="rounded-full bg-base-100 border border-base-300 px-2.5 py-0.5 text-base">🔒 ECDH-encrypted</span>
-                    <span id="chat-open" class="rounded-full px-2.5 py-0.5 text-base font-semibold">🔓 decrypted</span>
+                    <span id="chat-open" class="rounded-full px-4 py-1.5 text-xl font-bold">🔓 decrypted</span>
                   </span>
                 </div>
               </div>
@@ -86,7 +86,7 @@
       pop("#chat-sys", 7.52, "50% 50%");
       tl.to("#chat-frame", { keyframes: [{ x: -6, duration: 0.05 }, { x: 6, duration: 0.06 }, { x: -3, duration: 0.06 }, { x: 0, duration: 0.08 }], ease: "power2.out" }, 7.52);
       tl.to("#chat-lock", { opacity: 0, duration: 0.12 }, 8.02);
-      tl.fromTo("#chat-open", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, 8.02);
+      tl.fromTo("#chat-open", { opacity: 0, scale: 0.6, transformOrigin: "100% 50%" }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, 8.02);
       tl.to("#chat-key", { keyframes: [{ rotation: -3, duration: 0.06 }, { rotation: 2, duration: 0.08 }, { rotation: 0, duration: 0.12 }], ease: "power2.out" }, 8.02);
 
       // Once the twist has been read, the chat steps aside for what it means.
