@@ -4,7 +4,9 @@
 pq is post-quantum messaging on Ethereum for private payments: keys travel with Kyber512 and a zero-knowledge proof made in your browser, so what you hand over stays private even once quantum computers arrive, and the chain can't see who's talking.
 
 ## The angle
-**Today's private payments have a quantum expiry date, told as a chat.** alice.eth pays bob.eth privately and sends him the viewing key for his auditor over an ECDH-encrypted chat. Then "⚛️ A quantum computer joined the chat" and the key's lock flips to "🔓 decrypted": private payment viewing keys aren't post-quantum secure, so one day every auditor commitment becomes public (README: "Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists"). pq is the fix: the same two people in the real pq Chat screen, the same viewing key, sent with its own cheerful "Doing some secret math, right here in your browser…", and the ending's locks stay closed for years.
+**Today's private payments have a quantum expiry date, told as a chat.** alice.eth pays her supplier privately; her auditor, bob.eth, needs her viewing key, and she seals it to him on-chain with ECDH, the way Starknet's STRK20 escrows viewing keys to its auditor. Then "⚛️ Years later, a quantum computer joined the chat" and the key flips to "🔓 decrypted": private payments are sealed with ECDH (Stark-curve ECDH in STRK20, Jubjub/Pallas DH in Zcash, X25519 in Privacy Pools v2), and quantum computers break it, so what's recorded today is readable later: your payment history. pq is the fix: the same two people in the real pq Chat screen, Alice sending Bob her viewing key with Kyber512, with its own cheerful "Doing some secret math, right here in your browser…", and the ending's locks stay closed for years.
+
+Every claim about viewing keys is checked against primary sources in `docs/research/viewing-keys.md`. "Auditor commitments" (an earlier caption) is not a term any of the three protocols use, so it was dropped.
 
 ## People
 alice.eth and bob.eth, crypto's classic pair, drawn as people rather than bots: Notionists by Zoish (CC0 1.0, via DiceBear), Alice with long hair on the app's warm yellow `#FFCF72`, Bob with curly hair on misty `#ACC4D6`. They're fictional characters; no real person's name or likeness is used (the user's first idea, vitalik.eth with Vitalik's face, would imply he uses or endorses pq).
@@ -14,15 +16,15 @@ alice.eth and bob.eth, crypto's classic pair, drawn as people rather than bots: 
 - Chat messages arrive whole, each given 0.5 s + 0.3 s a word before the next one.
 - Everything on screen then **holds at least 2 s** after its last word or element lands before the scene changes.
 - Readable text is at least ~30 px on screen; only navbar chrome and "See it on Etherscan" stay smaller, as texture.
-- The video runs as long as that takes: 52.5 s.
+- The video runs as long as that takes: 56.6 s.
 
 ## Hook (first 2-3 seconds)
-A chat window lands mid-frame with bob.eth "on Ethereum" in its header, and Alice's first message pops in at 0.42 s: "Sent you 100 USDC, privately 🤫".
+A chat window lands mid-frame with bob.eth, tagged "🧾 auditor", "on Ethereum" in its header, and Alice's first message pops in at 0.34 s: "Paid my supplier 100 USDC, privately 🤫".
 
 ## Key moments (the middle)
-- "⚛️ A quantum computer joined the chat", the window jolts, Alice's "🔑 viewing key" goes from "🔒 ECDH-encrypted" to "🔓 decrypted".
+- "⚛️ Years later, a quantum computer joined the chat" as the beat drops, the window jolts, Alice's "🔑 My viewing key, sealed to you on-chain" goes from "🔒 ECDH-encrypted" to a larger, glowing "🔓 decrypted".
 - The real Chat screen, alice.eth to bob.eth: a cursor taps **Say hi 👋**, Bob's face bounces, "Doing some secret math, right here in your browser…", then confetti and "You're connected!".
-- The Messages composer typing "here's the viewing key 🔑" with its 62-byte countdown, send, confetti, the bubble pops in under "You said".
+- The Messages composer typing "here's my viewing key 🔑" with its 62-byte countdown, send, confetti, the bubble pops in under "You said".
 - The Landing's three cobalt locks, all staying closed: today, in 10 years, in 20 years.
 
 ## Outro / punchline
@@ -34,7 +36,7 @@ A chat window lands mid-frame with bob.eth "on Ethereum" in its header, and Alic
 - Interpretation: 5 scenes on light grounds at reading pace; springy pops (the app's own `pop` curve) for arrivals, word-by-word blur-ins for text, the chat stepping aside for the captions, wipes between beats.
 
 ## Format: landscape — 1920x1080
-## Duration: 52.5 s
+## Duration: 56.6 s
 
 ## Visual identity (from the project)
 - Background: `#E3EDF5` (base-200), `#FFFFFF` (base-100)
@@ -46,38 +48,38 @@ A chat window lands mid-frame with bob.eth "on Ethereum" in its header, and Alic
 - Radii: field 1rem, box 1.5rem, selector 2rem (DaisyUI 5 light theme overrides in `styles/globals.css`)
 
 ## Share copy (draft)
-Private payment viewing keys aren't post-quantum secure: one day every auditor commitment becomes public. pq hands keys over with Kyber512 instead.
+Private payments and their viewing keys are sealed with ECDH, and quantum computers break it: recorded today, readable later. pq hands keys over with Kyber512.
 
 ## Audio direction
 - Role: a cool, nocturnal electronic bed that holds back under the problem and drops in at the twist
 - Music: "Ethernight Club" by Kevin MacLeod (incompetech.com), CC BY 4.0, 117.6 BPM (synths, marimba, bells, percussion; "2am. It is raining…"). The credit must go wherever the video is posted (it's in `share-copy.txt`).
-- Music treatment: starts 8.92 s into the track, so its quiet, mysterious intro plays under the chat and its beat drops on "⚛️ A quantum computer joined the chat" (7.52 s, measured 7.51 s in the render); 0.7 s fade under the end card; final mix mastered to about −16 LUFS
-- Music cue guidance: kicks every 0.513 s from 7.52 s. Chat messages, the unlock, the chat stepping aside, every scene start, "You're connected!", the send and the CTA tap sit on (or within 0.07 s of) the beat; word reveals follow reading pace.
+- Music treatment: starts 6.356 s into the track, so its quiet, mysterious intro plays under the chat and its beat drops on "⚛️ Years later, a quantum computer joined the chat" (10.08 s, measured 10.07 s in the render); 0.7 s fade under the end card; final mix mastered to about −16 LUFS
+- Music cue guidance: kicks every 0.513 s from 10.08 s. Chat messages, the unlock, the chat stepping aside, every scene start, "You're connected!", the send and the CTA tap sit on (or within 0.07 s of) the beat; word reveals follow reading pace.
 - Audio-reactive treatment: subtle; the music's bass gives the Lasting locks a glow. No waveform or equalizer visuals.
 - SFX posture: moderate, motion-matched; soft drops for arriving messages, a short glitch when the quantum computer joins
 - Restraint rule: no stacked hits on a cut, no sound without a visible cause, keys thinned out under the music
 
 ## Storyboard
 
-### Scene 1 — Chat (the problem) — 0–17.26 s
-The chat window lands mid-frame (bob.eth, ⟠ on Ethereum). Alice: "Sent you 100 USDC, privately 🤫" (0.34). Bob: "Got it! My auditor needs the viewing key 🧾" (2.39). Alice types (4.7), then "🔑 viewing key: vk_7f3a…e1c9" with "🔒 ECDH-encrypted" (5.47). "⚛️ A quantum computer joined the chat" (7.52) as the beat drops in, the window jolts, the tag flips to "🔓 decrypted" (8.02). The chat steps right (10.08) and the captions build word by word: "Private payment viewing keys aren't post-quantum secure." (10.4–12.4), "One day, every auditor commitment becomes public." (12.9–14.9). Held to 16.9, out by 17.12.
-Audio: drops on each message (0.36, 2.41, 5.49), glitch 7.54, unlock click 8.05.
+### Scene 1 — Chat (the problem) — 0–21.37 s
+The chat window lands mid-frame (bob.eth, 🧾 auditor, ⟠ on Ethereum). Alice: "Paid my supplier 100 USDC, privately 🤫" (0.34). Bob: "Nice. For the audit, I need your viewing key 🧾" (2.9). Alice types (6.1), then "🔑 My viewing key, sealed to you on-chain" with "🔒 ECDH-encrypted" (7.0). "⚛️ Years later, a quantum computer joined the chat" (10.08) as the beat drops in, the window jolts, the tag flips to a larger, glowing "🔓 decrypted" (10.6). The chat steps right (13.16) and the captions build word by word: "Private payments are sealed with ECDH. Quantum computers break it." (13.5–16.4), "Recorded today, readable later: your payment history." (16.9–18.9). Held to 20.9, out by 21.12.
+Audio: drops on each message (0.36, 2.93, 7.03), glitch 10.1, unlock click 10.62.
 
-### Scene 2 — Title — 17.26–23.93 s
-Logo tile, the verbatim tagline word by word, perks 🔒 Post-quantum and ⟠ On Ethereum (20.78 / 21.08). Held 2 s, slides out left.
-Audio: warm accent on the logo 17.3.
+### Scene 2 — Title — 21.37–28.03 s
+Logo tile, the verbatim tagline word by word, perks 🔒 Post-quantum and ⟠ On Ethereum (24.88 / 25.18). Held 2 s, slides out left.
+Audio: warm accent on the logo 21.4.
 
-### Scene 3 — Say hi and send (the solution) — 23.93–39.63 s
-The pq app slides in, alice.eth in its header, on the Chat screen for bob.eth. "Say hi 👋" word by word; "Only they can read what you write." gets its reading time; the tap on 26.95. "Doing some secret math, right here in your browser…" word by word while Bob's face bounces on the beats; chips 🔒 Kyber512, post-quantum · 🧮 A zero-knowledge proof · 💻 Made in your browser. Confetti and "You're connected!" on 31.62. The caption becomes "🙈 The chain can't see who's talking." word by word as the app scrolls to "You said" and types "here's the viewing key 🔑" (62 → 35); send on 36.75. Held 2 s, out by 39.63.
-Audio: click 26.97, success bell 31.64, key ticks 35.53–36.33, click 36.77.
+### Scene 3 — Say hi and send (the solution) — 28.03–43.73 s
+The pq app slides in, alice.eth in its header, on the Chat screen for bob.eth. "Say hi 👋" word by word; "Only they can read what you write." gets its reading time; the tap on 31.05. "Doing some secret math, right here in your browser…" word by word while Bob's face bounces on the beats; chips 🔒 Kyber512, post-quantum · 🧮 A zero-knowledge proof · 💻 Made in your browser. Confetti and "You're connected!" on 35.72. The caption becomes "🙈 The chain can't see who's talking." word by word as the app scrolls to "You said" and types "here's my viewing key 🔑" (62 → 37); send on 40.85. Held 2 s, out by 43.73.
+Audio: click 31.07, success bell 35.74, key ticks 39.63–40.43, click 40.87.
 
-### Scene 4 — Lasting — 39.83–46.05 s
-White rises. "Lasting", then "Private now, and for years to come." word by word; three cobalt locks latch on 42.35 / 42.85 / 43.35 and stay closed. Held 2 s, out by 46.05.
-Audio: latches 42.37 / 42.87 / 43.37.
+### Scene 4 — Lasting — 43.93–50.15 s
+White rises. "Lasting", then "Private now, and for years to come." word by word; three cobalt locks latch on 46.45 / 46.95 / 47.45 and stay closed. Held 2 s, out by 50.15.
+Audio: latches 46.47 / 46.97 / 47.47.
 
-### Scene 5 — Your turn — 46.49–52.5 s
-Logo, "Your turn: say hi." word by word, ⟠ "It's live on Sepolia.", the CTA and pills, the tap and confetti on 50.01, then held still to the end.
-Audio: click 50.03, final bell 50.05, music fades under the end card.
+### Scene 5 — Your turn — 50.59–56.6 s
+Logo, "Your turn: say hi." word by word, ⟠ "It's live on Sepolia.", the CTA and pills, the tap and confetti on 54.11, then held still to the end.
+Audio: click 54.13, final bell 54.15, music fades under the end card.
 
 **Music mood for this video:** cool, nocturnal, mysterious
 **Audio summary:** a quiet, mysterious intro under the chat with soft drops as messages land, the beat dropping in with a glitch as the quantum computer joins, then a steady night-drive groove with clicks where the pq app is touched, latches for the closing locks, and bells on the two payoffs.
