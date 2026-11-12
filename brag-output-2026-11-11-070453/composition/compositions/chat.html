@@ -75,14 +75,14 @@
       // The chat arrives in the middle of the frame: the hook is the conversation itself.
       tl.fromTo("#chat-wrap", { x: -410, y: 60, opacity: 0 }, { x: -410, y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 0);
       // Each message gets its reading time (0.5 s + 0.3 s a word) before the next.
-      pop("#chat-m1", 0.42, "100% 100%");
-      pop("#chat-m2", 2.52, "0% 100%");
-      tl.fromTo("#chat-typing", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 4.75);
-      tl.fromTo(".chat-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.1 }, 4.75);
-      tl.to("#chat-typing", { opacity: 0, duration: 0.08 }, 5.5);
-      pop("#chat-m3", 5.52, "100% 100%");
+      pop("#chat-m1", 0.34, "100% 100%");
+      pop("#chat-m2", 2.39, "0% 100%");
+      tl.fromTo("#chat-typing", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 4.7);
+      tl.fromTo(".chat-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.1 }, 4.7);
+      tl.to("#chat-typing", { opacity: 0, duration: 0.08 }, 5.42);
+      pop("#chat-m3", 5.47, "100% 100%");
 
-      // The twist: a quantum computer joins, and the key's lock opens.
+      // The twist: a quantum computer joins, and the key's lock opens. beat-locked: 7.52, where the music's beat drops in.
       pop("#chat-sys", 7.52, "50% 50%");
       tl.to("#chat-frame", { keyframes: [{ x: -6, duration: 0.05 }, { x: 6, duration: 0.06 }, { x: -3, duration: 0.06 }, { x: 0, duration: 0.08 }], ease: "power2.out" }, 7.52);
       tl.to("#chat-lock", { opacity: 0, duration: 0.12 }, 8.02);
@@ -90,7 +90,7 @@
       tl.to("#chat-key", { keyframes: [{ rotation: -3, duration: 0.06 }, { rotation: 2, duration: 0.08 }, { rotation: 0, duration: 0.12 }], ease: "power2.out" }, 8.02);
 
       // Once the twist has been read, the chat steps aside for what it means.
-      tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 10.02);
+      tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 10.08);
       words("#chat-cap1 span", 10.4); // last word lands 12.4
       words("#chat-cap2 span", 12.9); // last word lands 14.9
       // Held 2 s after the last word, then out (16.9–17.12).
