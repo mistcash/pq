@@ -29,7 +29,7 @@
       tl.fromTo("#last-kicker", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, 0.1);
       // Words arrive at reading pace, 0.3 s apart (about 200 words a minute), and stay.
       tl.fromTo("#last-title span", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.3, ease: "power2.out" }, 0.3); // last lands 2.3
-      // locks 44.40 / 44.90 / 45.40 (global), within 0.07 s of the beat.
+      // locks 45.43 / 45.93 / 46.43 (global), within 0.07 s of the beat.
       tl.fromTo(".last-lock", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop", stagger: 0.5 }, 2.52);
       tl.fromTo("#last-dash", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 1, ease: "power2.inOut" }, 2.6);
       // Audio-reactive (subtle): the locks glow with the bass.
@@ -37,7 +37,7 @@
       BASS.forEach((v, i) =>
         tl.set(".last-dot", { boxShadow: `0 0 ${Math.round(6 + 30 * v)}px rgba(0, 82, 255, ${(0.15 + 0.4 * v).toFixed(2)})` }, i / 30),
       );
-      // Held 2 s after the last lock lands, then out (47.88–48.10 global), before the outro's ground rises.
+      // Held 2 s after the last lock lands, then out (48.91–49.13 global), before the outro's ground rises.
       tl.to("#last-content", { y: -30, opacity: 0, filter: "blur(6px)", duration: 0.22, ease: "power3.in" }, 6.0);
       window.__timelines["lasting"] = tl;
     })();
