@@ -7,7 +7,7 @@ Create a short launch-style brag video for pq.
 - Composition directory: `brag-output-2026-11-11-070453/composition/`
 - Rendered video: `brag-output-2026-11-11-070453/brag.mp4`
 - Format: landscape — 1920x1080, 30 fps
-- Duration: 55.58 s (the user asked for 30 s or more, with nothing rushed)
+- Duration: 55.62 s (the user asked for 30 s or more, with nothing rushed)
 
 ## Source Material
 - Project root: the repo root (`mistcash/pq`)
@@ -59,27 +59,27 @@ Use the storyboard in `brag-output-2026-11-11-070453/brag-plan.md` as the creati
 
 Scene summary:
 1. Chat — 0–20.3 s — alice.eth pays bob.eth privately and sends the claiming key and a viewing key for the auditor, both ECDH-encrypted; a quantum computer joins, says it broke ECDH, and both messages are decrypted; then "Private payment viewing keys aren't post-quantum secure." and "One day, every ECDH commitment becomes public." word by word
-2. Title — 20.3–27 s — logo tile + verbatim tagline word by word + two perks (Post-quantum, ⟠ On Ethereum)
-3. Say hi and send — 27–42.7 s — the pq app as alice.eth, Chat with bob.eth: tap, the secret-math line word by word, chips, "You're connected!", then "🙈 The chain can't see who's talking." word by word as "here's the viewing key 🔑" is sent
-4. Lasting — 42.9–49.1 s — "Private now, and for years to come." word by word + three locks that stay closed
-5. Your turn — 49.6–55.58 s — logo, "Your turn: say hi.", ⟠ "Live on Sepolia", CTA tap, pills
+2. Title — 20.3–27.4 s — logo tile + verbatim tagline word by word + two perks (Post-quantum, ⟠ On Ethereum)
+3. Say hi and send — 27.4–43.2 s — the pq app as alice.eth, Chat with bob.eth: tap, the secret-math line word by word, chips, "You're connected!", then "🙈 The chain can't see who's talking." word by word as "here's the viewing key 🔑" is sent
+4. Lasting — 43.3–49.7 s — "Private now, and for years to come." word by word + three locks that stay closed
+5. Your turn — 49.7–55.62 s — logo, "Your turn: say hi.", ⟠ "Live on Sepolia", CTA tap, pills
 
 ## Audio
 - Audio role: a dark cyberpunk bed with motion-matched UI accents
 - Audio arc: held low under the chat; the track breaks and comes back in full as the quantum computer joins (8.55 s); a steady groove through the fix; the track winds down under Lasting and the end card
 - Music: `assets/music/cyberpunk-by-poradovskyi.mp3` — "Cyberpunk" by Poradovskyi, supplied by the user (file name matches a Pixabay download); credit in `share-copy.txt`
 - Music treatment: two clips of the file, `data-media-start="10.306"` at volume 0.135 to 8.546 s, then `18.852` at 0.2 with a 0.7 s fade-out; final mix mastered to about −16 LUFS
-- Music cue guidance: beat grid measured from the track (every 0.588 s from 0.03 s, 102 BPM); beat-locked: the track's return on 8.55 s; the rest keeps its old timings
+- Music cue guidance: beat grid measured from the track (every 0.588 s from 0.03 s, 102 BPM); beat-locked: the track's return on 8.55 s; every scene starts on a beat and its pops, taps, confetti, chips, perks and locks land on beats
 - Audio-reactive treatment: subtle; bass breathes the Lasting locks' glow (`work/audio-data.json`, from the track at 10.306 s)
 - Audio-coupled moments:
-  - 0.36 / 2.92 / 4.46 / 6.51 / 9.08 — soft drops as each chat message arrives
-  - 8.57 — a short glitch as the quantum computer joins; 9.59 / 10.1 — an unlock click per decrypted message
-  - 20.38 — warm accent on the logo
-  - 30.05, 39.85, 53.11 — cursor clicks
-  - 34.72 — success bell with the confetti
-  - 38.61–39.41 — a few key ticks
-  - 45.45 / 45.95 / 46.45 — Lasting's lock latches
-  - 53.13 — final bell with the CTA confetti
+  - 0.33 / 2.68 / 4.45 / 6.8 / 9.16 — soft drops as each chat message arrives
+  - 8.57 — a short glitch as the quantum computer joins; 9.74 / 10.33 — an unlock click per decrypted message
+  - 20.35 — warm accent on the logo
+  - 30.33, 40.33, 53.27 — cursor clicks
+  - 35.04 — success bell with the confetti
+  - 39.13–39.93 — a few key ticks
+  - 45.62 / 46.21 / 46.8 — Lasting's lock latches
+  - 53.29 — final bell with the CTA confetti
 - SFX selection guidance: low high-frequency-risk Kenney files, rotate takes for repeats, SFX at 0.3–0.8 with repeats quieter
 - SFX analysis guidance: `.claude/skills/brag/assets/sfx/sfx-analysis.md`
 - Audio files: copied into `composition/assets/`
