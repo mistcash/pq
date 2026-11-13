@@ -81,34 +81,34 @@
       // The chat arrives in the middle of the frame: the hook is the conversation itself.
       tl.fromTo("#chat-wrap", { x: -410, y: 60, opacity: 0 }, { x: -410, y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 0);
       // Each message gets its reading time (0.5 s + 0.3 s a word) before the next.
-      // Each message gets its reading time before the next.
-      pop("#chat-m1", 0.34, "100% 100%");
-      tl.fromTo("#chat-typing", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 2.2);
-      tl.fromTo(".chat-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.1 }, 2.2);
-      tl.to("#chat-typing", { opacity: 0, duration: 0.08 }, 2.85);
-      pop("#chat-m2", 2.904, "100% 100%");
-      pop("#chat-m3", 4.443, "100% 100%");
-      pop("#chat-m4", 6.494, "0% 100%");
+      // Each message gets its reading time, then lands on the next beat (0.312 + n × 0.588).
+      pop("#chat-m1", 0.312, "100% 100%");
+      tl.fromTo("#chat-typing", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 2.076);
+      tl.fromTo(".chat-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.1 }, 2.076);
+      tl.to("#chat-typing", { opacity: 0, duration: 0.08 }, 2.6);
+      pop("#chat-m2", 2.664, "100% 100%");
+      pop("#chat-m3", 4.429, "100% 100%");
+      pop("#chat-m4", 6.782, "0% 100%");
 
       // The twist: a quantum computer joins. beat-locked: 8.546, where the music returns from its break.
       pop("#chat-sys", 8.546, "50% 50%");
       tl.to("#chat-frame", { keyframes: [{ x: -6, duration: 0.05 }, { x: 6, duration: 0.06 }, { x: -3, duration: 0.06 }, { x: 0, duration: 0.08 }], ease: "power2.out" }, 8.546);
-      // A beat later it speaks, then Alice's messages are decrypted, one a beat: 9.57 / 10.09.
-      pop("#chat-qc", 9.059, "0% 100%");
+      // A beat later it speaks, then Alice's messages are decrypted, one a beat: 9.72 / 10.31.
+      pop("#chat-qc", 9.135, "0% 100%");
       // The thread scrolls up to fit it (67 px, measured with fonts loaded).
-      tl.to("#chat-thread", { y: -67, duration: 0.35, ease: "power2.out" }, 9.059);
-      [["#chat-m2", 9.572], ["#chat-m3", 10.085]].forEach(([m, at]) => {
+      tl.to("#chat-thread", { y: -67, duration: 0.35, ease: "power2.out" }, 9.135);
+      [["#chat-m2", 9.723], ["#chat-m3", 10.311]].forEach(([m, at]) => {
         tl.to(`${m} .chat-lock`, { opacity: 0, duration: 0.12 }, at);
         tl.fromTo(`${m} .chat-open`, { opacity: 0, scale: 0.6, transformOrigin: "100% 50%" }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, at);
         tl.to(`${m} .chat-key`, { keyframes: [{ rotation: -3, duration: 0.06 }, { rotation: 2, duration: 0.08 }, { rotation: 0, duration: 0.12 }], ease: "power2.out" }, at);
       });
 
-      // Held 2 s once all of it is read, then the chat steps aside for what it means.
-      tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 13.161);
-      words("#chat-cap1 span", 13.476); // last word lands 15.48
-      words("#chat-cap2 span", 15.976); // last word lands 17.98
-      // Held 2 s after the last word, then out (19.98–20.2).
-      tl.to("#chat-content", { opacity: 0, filter: "blur(8px)", duration: 0.22, ease: "power3.in" }, 19.976);
+      // Once all of it is read, the chat steps aside on the downbeat for what it means.
+      tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 13.252);
+      words("#chat-cap1 span", 13.567); // last word lands 15.57
+      words("#chat-cap2 span", 16.067); // last word lands 18.07
+      // Held 2 s after the last word, then out (20.07–20.29), before the title's downbeat (20.31).
+      tl.to("#chat-content", { opacity: 0, filter: "blur(8px)", duration: 0.22, ease: "power3.in" }, 20.07);
       window.__timelines["chat"] = tl;
     })();
   </script>
