@@ -4,7 +4,7 @@
 pq is post-quantum messaging on Ethereum for private payments: keys travel with Kyber512 and a zero-knowledge proof made in your browser, so what you hand over stays private even once quantum computers arrive, and the chain can't see who's talking.
 
 ## The angle
-**Today's private payments have a quantum expiry date, told as a chat.** alice.eth pays bob.eth privately on a "⛓️ Chain with private payments", then sends him the claiming key and a viewing key for the auditor, each tagged "🔒 ECDH-encrypted". Then "⚛️ A quantum computer joined the chat", says "I broke ECDH 👀 Now I can read all your private messages", and both messages flip to "🔓 decrypted": private payment viewing keys aren't post-quantum secure, so one day every auditor commitment becomes public (README: "Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists"). pq is the fix: the same two people in the real pq Chat screen, the same viewing key, sent with its own cheerful "Doing some secret math, right here in your browser…", and the ending's locks stay closed for years.
+**Today's private payments have a quantum expiry date, told as a chat.** alice.eth pays bob.eth privately on a "⛓️ Chain with private payments", then sends him the claiming key and a viewing key for the auditor, each tagged "🔒 ECDH-encrypted". Then "⚛️ A quantum computer joined the chat", says "I broke ECDH 👀 Now I can read all your private messages", and both messages flip to "🔓 decrypted": private payment viewing keys aren't post-quantum secure, so one day every ECDH commitment becomes public (README: "Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists"). pq is the fix: the same two people in the real pq Chat screen, the same viewing key, sent with its own cheerful "Doing some secret math, right here in your browser…", and the ending's locks stay closed for years.
 
 ## People
 alice.eth and bob.eth, crypto's classic pair, drawn as people rather than bots: Notionists by Zoish (CC0 1.0, via DiceBear), Alice with long hair on the app's warm yellow `#FFCF72`, Bob with curly hair on misty `#ACC4D6`. They're fictional characters; no real person's name or likeness is used (the user's first idea, vitalik.eth with Vitalik's face, would imply he uses or endorses pq).
@@ -46,7 +46,7 @@ A chat window lands mid-frame with bob.eth and "⛓️ Chain with private paymen
 - Radii: field 1rem, box 1.5rem, selector 2rem (DaisyUI 5 light theme overrides in `styles/globals.css`)
 
 ## Share copy (draft)
-Private payment viewing keys aren't post-quantum secure: one day every auditor commitment becomes public. pq hands keys over with Kyber512 instead.
+Private payment viewing keys aren't post-quantum secure: one day every ECDH commitment becomes public. pq hands keys over with Kyber512 instead.
 
 ## Audio direction
 - Role: a dark cyberpunk bed that holds back under the problem and comes in full at the twist
@@ -60,7 +60,7 @@ Private payment viewing keys aren't post-quantum secure: one day every auditor c
 ## Storyboard
 
 ### Scene 1 — Chat (the problem) — 0–20.34 s
-The chat window lands mid-frame (bob.eth, "⛓️ Chain with private payments"). Alice: "Sent you 100 USDC, privately 🤫" (0.34). Alice types (2.2), then "🔑 Your claiming key" (2.9) and "🧾 Viewing key, for the auditor" (4.44), each with a green "🔒 ECDH-encrypted". Bob: "Got it, thanks 🙏" (6.49). "⚛️ A quantum computer joined the chat" (8.55) as the beat drops in, and the window jolts. A beat later (9.06) the quantum computer says "I broke ECDH 👀 Now I can read all your private messages." and the thread scrolls up; Alice's two messages flip to "🔓 decrypted" (9.57 / 10.09). The chat steps right (13.16) and the captions build word by word: "Private payment viewing keys aren't post-quantum secure." (13.48–15.48), "One day, every auditor commitment becomes public." (15.98–17.98). Held to 19.98, out by 20.2.
+The chat window lands mid-frame (bob.eth, "⛓️ Chain with private payments"). Alice: "Sent you 100 USDC, privately 🤫" (0.34). Alice types (2.2), then "🔑 Your claiming key" (2.9) and "🧾 Viewing key, for the auditor" (4.44), each with a green "🔒 ECDH-encrypted". Bob: "Got it, thanks 🙏" (6.49). "⚛️ A quantum computer joined the chat" (8.55) as the beat drops in, and the window jolts. A beat later (9.06) the quantum computer says "I broke ECDH 👀 Now I can read all your private messages." and the thread scrolls up; Alice's two messages flip to "🔓 decrypted" (9.57 / 10.09). The chat steps right (13.16) and the captions build word by word: "Private payment viewing keys aren't post-quantum secure." (13.48–15.48), "One day, every ECDH commitment becomes public." (15.98–17.98). Held to 19.98, out by 20.2.
 Audio: drops on each message (0.36, 2.92, 4.46, 6.51, 9.08), glitch 8.57, an unlock click per decrypted message (9.59 / 10.1).
 
 ### Scene 2 — Title — 20.34–27.01 s

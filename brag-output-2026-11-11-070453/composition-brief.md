@@ -17,7 +17,7 @@ Create a short launch-style brag video for pq.
 - Key UI or visual moment to recreate: the Chat screen's Say hi → "Doing some secret math, right here in your browser…" → "You're connected!" with confetti; the Landing's dashed Public card and hand-off row; the creature avatars
 - Copy that must appear verbatim (the first two lines are the user's own framing, grounded in the README's "Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists"):
   - Private payment viewing keys aren't post-quantum secure.
-  - One day, every auditor commitment becomes public.
+  - One day, every ECDH commitment becomes public.
   - Sent you 100 USDC, privately 🤫 / 🔑 Your claiming key / 🧾 Viewing key, for the auditor / Got it, thanks 🙏 / ⛓️ Chain with private payments / 🔒 ECDH-encrypted / ⚛️ A quantum computer joined the chat / I broke ECDH 👀 Now I can read all your private messages. / 🔓 decrypted (the hook chat, written for the video)
   - Scalable, post-quantum cryptographic messaging for private payments and peer coordination.
   - Only they can read what you write.
@@ -58,7 +58,7 @@ Create a short launch-style brag video for pq.
 Use the storyboard in `brag-output-2026-11-11-070453/brag-plan.md` as the creative contract.
 
 Scene summary:
-1. Chat — 0–20.3 s — alice.eth pays bob.eth privately and sends the claiming key and a viewing key for the auditor, both ECDH-encrypted; a quantum computer joins, says it broke ECDH, and both messages are decrypted; then "Private payment viewing keys aren't post-quantum secure." and "One day, every auditor commitment becomes public." word by word
+1. Chat — 0–20.3 s — alice.eth pays bob.eth privately and sends the claiming key and a viewing key for the auditor, both ECDH-encrypted; a quantum computer joins, says it broke ECDH, and both messages are decrypted; then "Private payment viewing keys aren't post-quantum secure." and "One day, every ECDH commitment becomes public." word by word
 2. Title — 20.3–27 s — logo tile + verbatim tagline word by word + two perks (Post-quantum, ⟠ On Ethereum)
 3. Say hi and send — 27–42.7 s — the pq app as alice.eth, Chat with bob.eth: tap, the secret-math line word by word, chips, "You're connected!", then "🙈 The chain can't see who's talking." word by word as "here's the viewing key 🔑" is sent
 4. Lasting — 42.9–49.1 s — "Private now, and for years to come." word by word + three locks that stay closed
