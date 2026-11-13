@@ -18,7 +18,7 @@
       <!-- A chat today: Alice hands Bob a viewing key over ECDH, and a quantum computer joins. -->
       <div id="chat-wrap">
         <div id="chat-frame" class="relative flex flex-col rounded-[2.5rem] overflow-hidden border border-base-300 bg-base-100 shadow-2xl" style="zoom: 1.75; width: 480px; height: 560px">
-          <div class="flex items-center gap-3 bg-base-200 border-b border-base-300 px-5 py-3" data-layout-allow-occlusion>
+          <div class="flex items-center gap-3 bg-base-200 border-b border-base-300 px-5 py-3">
             <img src="assets/img/bob.svg" width="48" height="48" class="rounded-full" alt="" />
             <div class="leading-tight">
               <b class="block text-lg">bob.eth</b>
@@ -26,7 +26,7 @@
             <span class="ml-auto rounded-full bg-base-100 border border-base-300 px-3 py-1 text-base font-semibold">⛓️ Chain with private payments</span>
           </div>
           <div class="flex-1 min-h-0 overflow-hidden px-3">
-          <div id="chat-thread" class="flex flex-col gap-1 pt-4" data-layout-allow-overflow>
+          <div id="chat-thread" class="flex flex-col gap-1 pt-4">
             <div id="chat-m1" class="chat chat-end">
               <div class="chat-image"><img src="assets/img/alice.svg" width="40" height="40" class="rounded-full" alt="" /></div>
               <div class="chat-bubble chat-bubble-primary text-lg">Sent you 100 USDC, privately 🤫</div>
@@ -48,16 +48,9 @@
               </div>
             </div>
             <div id="chat-sys" class="self-center mt-3 rounded-full bg-base-200 border border-base-300 px-4 py-1.5 text-base font-semibold">⚛️ A quantum computer joined the chat</div>
-            <!-- The quantum computer replies to Alice's key with what it now reads. -->
             <div id="chat-qc" class="chat chat-start mt-2">
-              <div class="chat-image"><span class="grid place-items-center size-10 rounded-full bg-neutral text-neutral-content text-xl">⚛️</span></div>
-              <div class="chat-bubble bg-neutral text-neutral-content text-lg">
-                <div class="rounded-xl border-l-4 border-primary bg-white/10 px-3 py-1 text-base text-white/80">🔑 viewing key: vk_7f3a…e1c9</div>
-                <div class="mt-2 font-bold text-error">🔓 Transaction details decrypted</div>
-                <div class="chat-leak">💸 100 USDC</div>
-                <div class="chat-leak">👥 alice.eth → bob.eth</div>
-                <div class="chat-leak">📝 Memo: March rent</div>
-              </div>
+              <div class="chat-image"><span class="grid place-items-center size-10 rounded-full bg-error text-xl">⚛️</span></div>
+              <div class="chat-bubble chat-bubble-secondary text-lg">I broke ECDH 👀 Now I can read all your private messages.</div>
             </div>
           </div>
           </div>
@@ -90,14 +83,11 @@
       // The twist: a quantum computer joins. beat-locked: 7.52, where the music's beat drops in.
       pop("#chat-sys", 7.52, "50% 50%");
       tl.to("#chat-frame", { keyframes: [{ x: -6, duration: 0.05 }, { x: 6, duration: 0.06 }, { x: -3, duration: 0.06 }, { x: 0, duration: 0.08 }], ease: "power2.out" }, 7.52);
-      // A beat later it replies to Alice's key, and the thread scrolls up to make room (84 px, measured with fonts loaded).
+      // A beat later it speaks, and Alice's key takes the hit.
       pop("#chat-qc", 8.033, "0% 100%");
-      tl.to("#chat-thread", { y: -84, duration: 0.35, ease: "power2.out" }, 8.033);
       tl.to("#chat-key", { keyframes: [{ rotation: -3, duration: 0.06 }, { rotation: 2, duration: 0.08 }, { rotation: 0, duration: 0.12 }], ease: "power2.out" }, 8.033);
-      // What leaked, one line a beat: 8.55 / 9.06 / 9.57.
-      tl.fromTo(".chat-leak", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.25, ease: "power2.out", stagger: 0.513 }, 8.546);
 
-      // Held 2 s once the leak is read, then the chat steps aside for what it means.
+      // Held 2 s once its line is read, then the chat steps aside for what it means.
       tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 12.135);
       words("#chat-cap1 span", 12.45); // last word lands 14.45
       words("#chat-cap2 span", 14.95); // last word lands 16.95
