@@ -28,8 +28,8 @@ Create a short launch-style brag video for pq.
   - 🔒 Post-quantum · 🌍 On Ethereum · 🙈 The chain can't see who's talking
   - Private now, and for years to come. / today · in 10 years · in 20 years
   - Kyber512 · zero-knowledge proofs · Poseidon2
-  - Your turn: say hi.
-  - GitHub mistcash/pq · MIST.cash private payments
+  - Put on the pq mask.
+  - 🎭 pq.mist.cash · by MIST.cash (wordmark from mist.cash/mist.cash.svg, also under the title's logo tile)
 
 ## Creative Direction
 - Tone preset: default
@@ -37,7 +37,7 @@ Create a short launch-style brag video for pq.
 - Interpretation: 5 scenes on light grounds; every headline, caption and key in-app line arrives word by word at 0.3 s a word (about 200 wpm) and holds 2 s after it lands before the scene changes; readable labels ≥ ~30 px on screen
 - Angle: today's private payments have a quantum expiry date. Their ECDH viewing keys aren't post-quantum, so auditor commitments go public one day; pq hands keys over with Kyber512 instead, and the ending's locks answer the opening's broken one.
 - Hook: a chat between alice.eth and bob.eth on a "⛓️ Chain with private payments": a private payment, its claiming key and a viewing key for the auditor, each "🔒 ECDH-encrypted", until "⚛️ A quantum computer joined the chat", says "I broke ECDH 👀 Now I can read all your private messages", and both messages flip to "🔓 decrypted"
-- Outro / punchline: "Your turn: say hi." with the CTA tapped on the strong cue
+- Outro / punchline: "Put on the pq mask." with the "🎭 pq.mist.cash" button tapped on the beat, signed by MIST.cash
 - Avoid:
   - Generic SaaS language
   - Abstract filler visuals
@@ -60,10 +60,10 @@ Use the storyboard in `brag-output-2026-11-11-070453/brag-plan.md` as the creati
 
 Scene summary:
 1. Chat — 0–20.3 s — alice.eth pays bob.eth privately and sends the claiming key and a viewing key for the auditor, both ECDH-encrypted; a quantum computer joins, says it broke ECDH, and both messages are decrypted; then "Private payment viewing keys aren't post-quantum secure." and "One day, every ECDH commitment becomes public." word by word
-2. Title — 20.3–27.4 s — logo tile + verbatim tagline word by word + two perks (Post-quantum, ⟠ On Ethereum)
+2. Title — 20.3–27.4 s — logo tile signed "by MIST.cash" + verbatim tagline word by word + two perks (Post-quantum, ⟠ On Ethereum)
 3. Say hi and send — 27.4–43.2 s — the pq app as alice.eth, Chat with bob.eth: tap, the secret-math line word by word, chips, "You're connected!", then "🙈 The chain can't see who's talking." word by word as "here's the viewing key 🔑" is sent
 4. Lasting — 43.3–49.7 s — "Private now, and for years to come." word by word + three locks that stay closed
-5. Your turn — 49.7–55.62 s — logo, "Your turn: say hi.", ⟠ "Live on Sepolia", CTA tap, pills
+5. Your turn — 49.7–55.62 s — logo, "Put on the pq mask.", ⟠ "Live on Sepolia", the pq.mist.cash button tapped, "by MIST.cash"
 
 ## Audio
 - Audio role: a dark cyberpunk bed with motion-matched UI accents

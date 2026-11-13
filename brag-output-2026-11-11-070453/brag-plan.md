@@ -26,7 +26,7 @@ A chat window lands mid-frame with bob.eth and "⛓️ Chain with private paymen
 - The Landing's three cobalt locks, all staying closed: today, in 10 years, in 20 years.
 
 ## Outro / punchline
-"Your turn: say hi." and "Live on Sepolia" beside the Ethereum diamond. The CTA button gets tapped and bursts the app's confetti. GitHub mistcash/pq and MIST.cash pills.
+"Put on the pq mask." and "Live on Sepolia" beside the Ethereum diamond. The "🎭 pq.mist.cash" button gets tapped and bursts the app's confetti, signed "by MIST.cash" with its wordmark.
 
 ## Tone
 - Preset: default
@@ -64,7 +64,7 @@ The chat window lands mid-frame (bob.eth, "⛓️ Chain with private payments").
 Audio: drops on each message (0.33, 2.68, 4.45, 6.8, 9.16), glitch 8.57, an unlock click per decrypted message (9.74 / 10.33).
 
 ### Scene 2 — Title — 20.31–27.37 s (starts on a downbeat)
-Logo tile, the verbatim tagline word by word, perks 🔒 Post-quantum and ⟠ On Ethereum one a beat (23.84 / 24.43). Held 2 s, slides out left (27.12).
+Logo tile with "by MIST.cash" and its wordmark under it a beat later, the verbatim tagline word by word, perks 🔒 Post-quantum and ⟠ On Ethereum one a beat (23.84 / 24.43). Held 2 s, slides out left (27.12).
 Audio: warm accent on the logo 20.35.
 
 ### Scene 3 — Say hi and send (the solution) — 27.37–43.25 s (starts on a downbeat)
@@ -76,7 +76,7 @@ White rises. "Lasting", then "Private now, and for years to come." word by word;
 Audio: latches 45.62 / 46.21 / 46.8.
 
 ### Scene 5 — Your turn — 49.72–55.62 s
-Logo, "Your turn: say hi." word by word, ⟠ "Live on Sepolia", the CTA on a beat (52.66) and pills, the tap and confetti on the next beat (53.25), then held still to the end.
+Logo, "Put on the pq mask." word by word, ⟠ "Live on Sepolia", the "🎭 pq.mist.cash" button on a beat (52.66) and "by MIST.cash" with its wordmark, the tap and confetti on the next beat (53.25), then held still to the end.
 Audio: click 53.27, final bell 53.29, the track winds down under the end card.
 
 **Music mood for this video:** dark, driving, cyberpunk
