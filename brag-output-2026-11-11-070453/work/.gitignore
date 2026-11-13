@@ -1,0 +1,8 @@
+check.json
+check.err
+audio-report.json
+final-strip.png
+render.mp4
+render.log
+.render.hf-transaction-*/
+work-*/

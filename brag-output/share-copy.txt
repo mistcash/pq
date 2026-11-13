@@ -1,0 +1,1 @@
+Every pq message sits on Ethereum for anyone to see, and only the two of you can read it. Keys travel with Kyber512, a zero-knowledge proof gets made right in your browser, and the chain can't tell who's talking. Say hi on Sepolia: github.com/mistcash/pq

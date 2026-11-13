@@ -1,0 +1,62 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #out-stage { position: absolute; inset: 0; background: #e3edf5; display: flex; align-items: center; justify-content: center; }
+    #out-title span, #out-sub span { display: inline-block; }
+    #out-cursor { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 30; pointer-events: none; }
+    #out-cursor svg { position: absolute; left: -2px; top: -1px; transform-origin: 2px 1px; filter: drop-shadow(0 3px 6px rgb(8 16 25 / 0.35)); }
+  </style>
+  <div id="root" data-composition-id="outro" data-width="1920" data-height="1080">
+    <!-- The Landing's "Try it" beat. -->
+    <div id="out-stage">
+      <div style="zoom: 1.9" class="flex flex-col items-center gap-7 text-center">
+        <div id="out-logo" class="size-24 rounded-[1.6rem] border-[4px] border-white overflow-hidden"><img src="assets/img/logo.svg" class="size-full block" alt="pq" /></div>
+        <div class="flex flex-col items-center gap-3">
+          <h2 id="out-title" class="text-6xl font-bold leading-[1.05] m-0"><span>Put</span> <span>on</span> <span>the</span> <span>pq</span> <span>mask.</span></h2>
+          <p id="out-sub" class="flex items-center gap-2 text-2xl text-base-content/70 m-0"><img id="out-eth" src="assets/img/ethereum.svg" width="15" height="24" alt="Ethereum" /><span>Live</span> <span>on</span> <span>Sepolia</span></p>
+        </div>
+        <div class="relative isolate">
+          <div id="out-confetti" class="confetti"></div>
+          <span id="out-cta" class="btn btn-primary btn-xl rounded-full px-8">🎭 pq.mist.cash <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" /></svg></span>
+          <div id="out-cursor"><svg width="24" height="30" viewBox="0 0 23 29"><path d="M1.5 1.5v22.2l6-5.6 3.8 8.9 4.2-1.8-3.8-8.7h8.3z" fill="#081019" stroke="#fff" stroke-width="2" stroke-linejoin="round" /></svg></div>
+        </div>
+        <!-- MIST.cash's wordmark, from mist.cash/mist.cash.svg. -->
+        <div class="out-pill flex items-center gap-3 text-2xl text-base-content/70">by <img src="assets/img/mist-cash.svg" width="191" height="32" style="width: 191px; height: 32px" alt="MIST.cash" /></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#out-stage", { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.32, ease: "power3.out" }, 0);
+      tl.fromTo("#out-logo", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, 0.02);
+      // Words arrive at reading pace, 0.3 s apart (about 200 words a minute), and stay.
+      const words = (sel, at) =>
+        tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.3, ease: "power2.out" }, at);
+      words("#out-title span", 0.3); // last lands 1.7
+      tl.fromTo("#out-eth", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, 1.8);
+      words("#out-sub span", 1.9); // last lands 2.7
+      tl.fromTo("#out-cta", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, 2.941);
+      tl.fromTo(".out-pill", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop", stagger: 0.15 }, 3.12);
+
+      // beat-grid: the button on beat 5, the tap and its confetti on beat 6 (53.25 global), then held still to the end.
+      const TAP = 3.529;
+      const cursor = document.getElementById("out-cursor");
+      tl.fromTo(cursor, { x: 130, y: 90, opacity: 0 }, { x: 8, y: 5, opacity: 1, duration: 0.42, ease: "power2.inOut" }, TAP - 0.45);
+      tl.fromTo(cursor.firstElementChild, { scale: 1 }, { scale: 0.82, duration: 0.05, ease: "power2.out" }, TAP);
+      tl.to(cursor.firstElementChild, { scale: 1, duration: 0.1, ease: "power2.out" }, TAP + 0.06);
+      tl.to(cursor, { opacity: 0, x: 40, y: 30, duration: 0.2, ease: "power3.in" }, TAP + 0.35);
+      tl.to("#out-cta", { scale: 0.95, duration: 0.05, ease: "power2.out" }, TAP);
+      tl.to("#out-cta", { scale: 1, duration: 0.12, ease: "power2.out" }, TAP + 0.06);
+      const box = document.getElementById("out-confetti");
+      box.innerHTML = "<i></i>".repeat(14);
+      [...box.children].forEach((el, i) => {
+        const turn = i / 14, far = (7 + (i % 4) * 1.5) * 16, a = turn * Math.PI * 2;
+        tl.set(el, { opacity: 1 }, TAP);
+        tl.fromTo(el, { x: 0, y: 0, rotation: turn * 360, scale: 1 }, { x: far * Math.sin(a), y: -far * Math.cos(a), rotation: turn * 360 + 360, scale: 0.6, duration: 1.1, ease: "burst" }, TAP);
+        tl.fromTo(el, { opacity: 1 }, { opacity: 0, duration: 0.33, ease: "burst", immediateRender: false }, TAP + 0.77);
+      });
+      window.__timelines["outro"] = tl;
+    })();
+  </script>
+</template>
