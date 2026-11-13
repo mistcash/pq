@@ -81,7 +81,7 @@
       // The chat arrives in the middle of the frame: the hook is the conversation itself.
       tl.fromTo("#chat-wrap", { x: -410, y: 60, opacity: 0 }, { x: -410, y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 0);
       // Each message gets its reading time (0.5 s + 0.3 s a word) before the next.
-      // beat-grid: every message lands on a kick of the track's quiet intro (0.34 + n × 0.513).
+      // Each message gets its reading time before the next.
       pop("#chat-m1", 0.34, "100% 100%");
       tl.fromTo("#chat-typing", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 2.2);
       tl.fromTo(".chat-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.1 }, 2.2);
@@ -90,7 +90,7 @@
       pop("#chat-m3", 4.443, "100% 100%");
       pop("#chat-m4", 6.494, "0% 100%");
 
-      // The twist: a quantum computer joins. beat-locked: 8.546, where the music's beat drops in.
+      // The twist: a quantum computer joins. beat-locked: 8.546, where the music returns from its break.
       pop("#chat-sys", 8.546, "50% 50%");
       tl.to("#chat-frame", { keyframes: [{ x: -6, duration: 0.05 }, { x: 6, duration: 0.06 }, { x: -3, duration: 0.06 }, { x: 0, duration: 0.08 }], ease: "power2.out" }, 8.546);
       // A beat later it speaks, then Alice's messages are decrypted, one a beat: 9.57 / 10.09.
