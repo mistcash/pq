@@ -50,6 +50,7 @@ Create a short launch-style brag video for pq.
 - Accent: `#0052FF`; `#FF8863` for what quantum computers break; confetti `#FFCF72`
 - Display font: Fredoka 700 (shipped as `assets/fonts/fredoka-*.ttf` with `@font-face`)
 - Ethereum: the classic grey diamond, `assets/img/ethereum.svg`
+- Screaming face over the hook's captions: "Face screaming in fear" from Fluent Emoji 3D, © Microsoft Corporation, MIT License (`assets/img/scream-3d.png`, license beside it)
 - People: alice.eth and bob.eth as Notionists faces by Zoish (CC0 1.0, via DiceBear), `assets/img/alice.svg` and `bob.svg`; fictional, no real person's name or likeness
 - Body font: Fredoka 400/500
 - Visual references from the project: DaisyUI 5 card/btn/chat/input with the app's light theme; Tailwind v4 classes copied from the JSX; keccak creature avatars (ported to `assets/avatar.js`); the app's `pop` curve `cubic-bezier(0.3, 1.6, 0.6, 1)` and confetti burst `cubic-bezier(0.1, 0.8, 0.3, 1)`; `public/logo.svg`
