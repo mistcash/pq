@@ -74,9 +74,10 @@
       const tl = gsap.timeline({ paused: true });
       const pop = (sel, at, origin) =>
         tl.fromTo(sel, { opacity: 0, scale: 0.5, transformOrigin: origin }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, at);
-      // Words arrive at reading pace, 0.3 s apart (about 200 words a minute), and stay.
+      // Words arrive at reading pace, 0.3 s apart (about 200 words a minute), and stay. Each fades and rises over 0.5 s,
+      // overlapping the next, so the line flows in rather than stepping.
       const words = (sel, at) =>
-        tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.3, ease: "power2.out" }, at);
+        tl.fromTo(sel, { opacity: 0, y: 14, filter: "blur(4px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: 0.3, ease: "power3.out" }, at);
 
       // The chat arrives in the middle of the frame: the hook is the conversation itself.
       tl.fromTo("#chat-wrap", { x: -410, y: 60, opacity: 0 }, { x: -410, y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 0);
@@ -105,10 +106,10 @@
 
       // Once all of it is read, the chat steps aside on the downbeat for what it means.
       tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 13.252);
-      words("#chat-cap1 span", 13.567); // last word lands 15.57
-      words("#chat-cap2 span", 16.067); // last word lands 18.07
-      // Held 2 s after the last word, then out (20.07–20.29), before the title's downbeat (20.31).
-      tl.to("#chat-content", { opacity: 0, filter: "blur(8px)", duration: 0.22, ease: "power3.in" }, 20.07);
+      words("#chat-cap1 span", 13.35); // last word lands 15.65
+      words("#chat-cap2 span", 15.75); // last word lands 18.05
+      // Held 2 s after the last word, then out (20.05–20.31), into the title's downbeat.
+      tl.to("#chat-content", { opacity: 0, filter: "blur(8px)", duration: 0.26, ease: "power2.in" }, 20.05);
       window.__timelines["chat"] = tl;
     })();
   </script>
