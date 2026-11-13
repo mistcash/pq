@@ -14,8 +14,13 @@
   <div id="root" data-composition-id="chat" data-width="1920" data-height="1080">
     <div id="chat-content">
       <div id="chat-left">
-        <!-- "Face screaming in fear", Fluent Emoji 3D © Microsoft Corporation, MIT License (assets/img/fluent-emoji-LICENSE.txt). -->
-        <img id="chat-scream" src="assets/img/scream-3d.png" width="220" height="220" class="block" alt="" />
+        <!-- Bob, shocked: his Notionists face with the open mouth (lips 15, enlarged) and raised brows (brows 11). The blue copy
+             fades in over it as the blood drains from his face; the sweat drop is drawn here so it can slide. -->
+        <div id="chat-scream" class="relative rounded-full" style="width: 240px; height: 240px; box-shadow: 0 0 0 8px #fff, 0 18px 40px rgb(8 16 25 / 0.18)">
+          <img src="assets/img/bob-shocked.svg" width="240" height="240" class="absolute inset-0" alt="" />
+          <img id="chat-scream-blue" src="assets/img/bob-shocked-blue.svg" width="240" height="240" class="absolute inset-0" alt="" />
+          <svg id="chat-sweat" viewBox="0 0 28 40" width="30" height="43" class="absolute" style="left: 161px; top: 60px"><path d="M14 1C14 1 2 17 2 26a12 12 0 0 0 24 0C26 17 14 1 14 1Z" fill="#8fd3ff" stroke="#081019" stroke-width="2.2" /><ellipse cx="9.5" cy="25" rx="3" ry="5" fill="#fff" opacity="0.85" /></svg>
+        </div>
         <h2 id="chat-cap1" class="font-bold m-0" style="font-size: 76px; line-height: 1.05"><span>Private</span> <span>payment</span> <span>viewing</span> <span>keys</span> <span>aren't</span> <span>post-quantum</span> <span>secure.</span></h2>
         <h2 id="chat-cap2" class="font-bold m-0 text-base-content/70" style="font-size: 60px; line-height: 1.1"><span>One</span> <span>day,</span> <span>every</span> <span>ECDH</span> <span>commitment</span> <span>becomes</span> <span>public.</span></h2>
       </div>
@@ -108,9 +113,12 @@
 
       // Once all of it is read, the chat steps aside on the downbeat for what it means.
       tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 13.252);
-      // A screaming face lands with the downbeat, then shudders.
-      tl.fromTo("#chat-scream", { opacity: 0, scale: 0.3, rotation: -12, transformOrigin: "30% 80%" }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "pop" }, 13.252);
+      // Shocked Bob lands with the downbeat, then shudders as the blood drains from his face; a beat later, the sweat.
+      tl.fromTo("#chat-scream", { opacity: 0, scale: 0.3, rotation: -12, transformOrigin: "50% 80%" }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "pop" }, 13.252);
       tl.to("#chat-scream", { keyframes: [{ rotation: -6, duration: 0.05 }, { rotation: 6, duration: 0.06 }, { rotation: -4, duration: 0.06 }, { rotation: 3, duration: 0.06 }, { rotation: 0, duration: 0.08 }], ease: "power2.out" }, 13.84);
+      tl.fromTo("#chat-scream-blue", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.inOut" }, 13.84);
+      tl.fromTo("#chat-sweat", { opacity: 0, y: -8, scale: 0.6, transformOrigin: "50% 0%" }, { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "pop" }, 14.428);
+      tl.fromTo("#chat-sweat", { y: 0 }, { y: 14, duration: 2.4, ease: "sine.in", immediateRender: false }, 14.8);
       words("#chat-cap1 span", 13.35); // last word lands 15.65
       words("#chat-cap2 span", 15.75); // last word lands 18.05
       // Held 2 s after the last word, then out (20.05–20.31), into the title's downbeat.

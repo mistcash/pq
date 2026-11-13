@@ -186,6 +186,9 @@
   .relative {
     position: relative;
   }
+  .inset-0 {
+    inset: calc(var(--spacing) * 0);
+  }
   .inset-x-10 {
     inset-inline: calc(var(--spacing) * 10);
   }
