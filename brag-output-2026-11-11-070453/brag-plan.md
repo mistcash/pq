@@ -4,7 +4,7 @@
 pq is post-quantum messaging on Ethereum for private payments: keys travel with Kyber512 and a zero-knowledge proof made in your browser, so what you hand over stays private even once quantum computers arrive, and the chain can't see who's talking.
 
 ## The angle
-**Today's private payments have a quantum expiry date, told as a chat.** alice.eth pays bob.eth privately and sends him the viewing key for his auditor over an ECDH-encrypted chat. The chat runs on a "⛓️ Public chain", and the key sits there "🔒 Encrypted on-chain". Then "⚛️ A quantum computer joined the chat", replies to the key, and reads out the payment: "🔓 Transaction details decrypted", 100 USDC, alice.eth → bob.eth, "Memo: March rent": private payment viewing keys aren't post-quantum secure, so one day every auditor commitment becomes public (README: "Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists"). pq is the fix: the same two people in the real pq Chat screen, the same viewing key, sent with its own cheerful "Doing some secret math, right here in your browser…", and the ending's locks stay closed for years.
+**Today's private payments have a quantum expiry date, told as a chat.** alice.eth pays bob.eth privately and sends him the viewing key for his auditor over an ECDH-encrypted chat. The chat runs on a "⛓️ Chain with private payments", and the key sits there "🔒 ECDH-encrypted". Then "⚛️ A quantum computer joined the chat", replies to the key, and reads out the payment: "🔓 Transaction details decrypted", 100 USDC, alice.eth → bob.eth, "Memo: March rent": private payment viewing keys aren't post-quantum secure, so one day every auditor commitment becomes public (README: "Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists"). pq is the fix: the same two people in the real pq Chat screen, the same viewing key, sent with its own cheerful "Doing some secret math, right here in your browser…", and the ending's locks stay closed for years.
 
 ## People
 alice.eth and bob.eth, crypto's classic pair, drawn as people rather than bots: Notionists by Zoish (CC0 1.0, via DiceBear), Alice with long hair on the app's warm yellow `#FFCF72`, Bob with curly hair on misty `#ACC4D6`. They're fictional characters; no real person's name or likeness is used (the user's first idea, vitalik.eth with Vitalik's face, would imply he uses or endorses pq).
@@ -17,7 +17,7 @@ alice.eth and bob.eth, crypto's classic pair, drawn as people rather than bots: 
 - The video runs as long as that takes: 54.55 s.
 
 ## Hook (first 2-3 seconds)
-A chat window lands mid-frame with bob.eth "on Ethereum" in its header, and Alice's first message pops in at 0.42 s: "Sent you 100 USDC, privately 🤫".
+A chat window lands mid-frame with bob.eth and "⛓️ Chain with private payments" in its header, and Alice's first message pops in at 0.42 s: "Sent you 100 USDC, privately 🤫".
 
 ## Key moments (the middle)
 - "⚛️ A quantum computer joined the chat", the window jolts, and the quantum computer (an ⚛️ avatar) replies to Alice's "🔑 viewing key" with an ink card: "🔓 Transaction details decrypted", then 100 USDC, alice.eth → bob.eth and "Memo: March rent", a line a beat.
@@ -41,7 +41,7 @@ A chat window lands mid-frame with bob.eth "on Ethereum" in its header, and Alic
 - Accent: `#0052FF` (primary, MIST cobalt); `#FF8863` (error) for what quantum computers break; confetti also `#FFCF72` (warning)
 - Text: `#081019` (base-content); muted copy is that at 70% opacity
 - Display font: Fredoka 700 (the app's `next/font` face); body Fredoka 400/500
-- Ethereum: the classic grey diamond (`assets/img/ethereum.svg`) in the hook chat's header, on the "On Ethereum" perk and beside "It's live on Sepolia."
+- Ethereum: the classic grey diamond (`assets/img/ethereum.svg`) on the "On Ethereum" perk and beside "It's live on Sepolia."
 - Strongest visual element: DaisyUI chat bubbles shared by the hook and the real app; the Landing's lock timeline (`app/_components/Landing.tsx`)
 - Radii: field 1rem, box 1.5rem, selector 2rem (DaisyUI 5 light theme overrides in `styles/globals.css`)
 
@@ -60,7 +60,7 @@ Private payment viewing keys aren't post-quantum secure: one day every auditor c
 ## Storyboard
 
 ### Scene 1 — Chat (the problem) — 0–19.31 s
-The chat window lands mid-frame (bob.eth, ⟠ on Ethereum, "⛓️ Public chain"). Alice: "Sent you 100 USDC, privately 🤫" (0.34). Bob: "Got it! My auditor needs the viewing key 🧾" (2.39). Alice types (4.7), then "🔑 viewing key: vk_7f3a…e1c9" with a green "🔒 Encrypted on-chain" (5.47). "⚛️ A quantum computer joined the chat" (7.52) as the beat drops in, and the window jolts. A beat later (8.03) the quantum computer replies to the key and the thread scrolls up: "🔓 Transaction details decrypted", then 100 USDC, alice.eth → bob.eth and "Memo: March rent" (8.55 / 9.06 / 9.57). The chat steps right (12.14) and the captions build word by word: "Private payment viewing keys aren't post-quantum secure." (12.45–14.45), "One day, every auditor commitment becomes public." (14.95–16.95). Held to 18.95, out by 19.17.
+The chat window lands mid-frame (bob.eth, "⛓️ Chain with private payments"). Alice: "Sent you 100 USDC, privately 🤫" (0.34). Bob: "Got it! My auditor needs the viewing key 🧾" (2.39). Alice types (4.7), then "🔑 viewing key: vk_7f3a…e1c9" with a green "🔒 ECDH-encrypted" (5.47). "⚛️ A quantum computer joined the chat" (7.52) as the beat drops in, and the window jolts. A beat later (8.03) the quantum computer replies to the key and the thread scrolls up: "🔓 Transaction details decrypted", then 100 USDC, alice.eth → bob.eth and "Memo: March rent" (8.55 / 9.06 / 9.57). The chat steps right (12.14) and the captions build word by word: "Private payment viewing keys aren't post-quantum secure." (12.45–14.45), "One day, every auditor commitment becomes public." (14.95–16.95). Held to 18.95, out by 19.17.
 Audio: drops on each message (0.36, 2.41, 5.49), glitch 7.54, unlock click 8.05 as the reply lands.
 
 ### Scene 2 — Title — 19.31–25.98 s

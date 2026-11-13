@@ -18,7 +18,7 @@ Create a short launch-style brag video for pq.
 - Copy that must appear verbatim (the first two lines are the user's own framing, grounded in the README's "Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists"):
   - Private payment viewing keys aren't post-quantum secure.
   - One day, every auditor commitment becomes public.
-  - Sent you 100 USDC, privately 🤫 / Got it! My auditor needs the viewing key 🧾 / 🔑 viewing key / ⛓️ Public chain / 🔒 Encrypted on-chain / ⚛️ A quantum computer joined the chat / 🔓 Transaction details decrypted / 💸 100 USDC / 👥 alice.eth → bob.eth / 📝 Memo: March rent (the hook chat, written for the video)
+  - Sent you 100 USDC, privately 🤫 / Got it! My auditor needs the viewing key 🧾 / 🔑 viewing key / ⛓️ Chain with private payments / 🔒 ECDH-encrypted / ⚛️ A quantum computer joined the chat / 🔓 Transaction details decrypted / 💸 100 USDC / 👥 alice.eth → bob.eth / 📝 Memo: March rent (the hook chat, written for the video)
   - Scalable, post-quantum cryptographic messaging for private payments and peer coordination.
   - Only they can read what you write.
   - Say hi 👋
@@ -36,7 +36,7 @@ Create a short launch-style brag video for pq.
 - Creative direction: a playful, polished launch built from the app's own cards, creatures and confetti
 - Interpretation: 5 scenes on light grounds; every headline, caption and key in-app line arrives word by word at 0.3 s a word (about 200 wpm) and holds 2 s after it lands before the scene changes; readable labels ≥ ~30 px on screen
 - Angle: today's private payments have a quantum expiry date. Their ECDH viewing keys aren't post-quantum, so auditor commitments go public one day; pq hands keys over with Kyber512 instead, and the ending's locks answer the opening's broken one.
-- Hook: a chat between alice.eth and bob.eth about a private payment and its viewing key, on a "⛓️ Public chain", until "⚛️ A quantum computer joined the chat" and replies to the key with "🔓 Transaction details decrypted": the amount, the parties and the memo
+- Hook: a chat between alice.eth and bob.eth about a private payment and its viewing key, on a "⛓️ Chain with private payments", until "⚛️ A quantum computer joined the chat" and replies to the key with "🔓 Transaction details decrypted": the amount, the parties and the memo
 - Outro / punchline: "Your turn: say hi." with the CTA tapped on the strong cue
 - Avoid:
   - Generic SaaS language
