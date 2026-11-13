@@ -65,12 +65,12 @@ Scene summary:
 5. Your turn — 49.6–55.58 s — logo, "Your turn: say hi.", ⟠ "It's live on Sepolia.", CTA tap, pills
 
 ## Audio
-- Audio role: a cool, nocturnal electronic bed with motion-matched UI accents
-- Audio arc: the track's quiet, mysterious intro under the chat; its beat drops as the quantum computer joins (8.55 s); a steady groove through the fix; fades under the end card
-- Music: `assets/music/ethernight-club-by-kevin-macleod.mp3` — "Ethernight Club" by Kevin MacLeod (incompetech.com), CC BY 4.0; credit in `share-copy.txt`
-- Music treatment: `data-media-start="7.894"`, volume 0.38, 0.7 s fade-out; final mix mastered to about −16 LUFS
-- Music cue guidance: kick grid measured from the track (first kick 16.44 s in the track, every 0.513 s, 117.6 BPM); beat-locked: the drop on 8.55 s; scene starts, chat messages, "You're connected!", the send and the CTA tap on the grid
-- Audio-reactive treatment: subtle; bass breathes the Lasting locks' glow (`work/audio-data.json`, from the track at 8.92 s; Lasting sits at the same point in the track as when it was extracted)
+- Audio role: a dark cyberpunk bed with motion-matched UI accents
+- Audio arc: held low under the chat; the track breaks and comes back in full as the quantum computer joins (8.55 s); a steady groove through the fix; the track winds down under Lasting and the end card
+- Music: `assets/music/cyberpunk-by-poradovskyi.mp3` — "Cyberpunk" by Poradovskyi, supplied by the user (file name matches a Pixabay download); credit in `share-copy.txt`
+- Music treatment: two clips of the file, `data-media-start="10.306"` at volume 0.135 to 8.546 s, then `18.852` at 0.2 with a 0.7 s fade-out; final mix mastered to about −16 LUFS
+- Music cue guidance: beat grid measured from the track (every 0.588 s from 0.03 s, 102 BPM); beat-locked: the track's return on 8.55 s; the rest keeps its old timings
+- Audio-reactive treatment: subtle; bass breathes the Lasting locks' glow (`work/audio-data.json`, from the track at 10.306 s)
 - Audio-coupled moments:
   - 0.36 / 2.92 / 4.46 / 6.51 / 9.08 — soft drops as each chat message arrives
   - 8.57 — a short glitch as the quantum computer joins; 9.59 / 10.1 — an unlock click per decrypted message

@@ -49,10 +49,10 @@ A chat window lands mid-frame with bob.eth and "⛓️ Chain with private paymen
 Private payment viewing keys aren't post-quantum secure: one day every auditor commitment becomes public. pq hands keys over with Kyber512 instead.
 
 ## Audio direction
-- Role: a cool, nocturnal electronic bed that holds back under the problem and drops in at the twist
-- Music: "Ethernight Club" by Kevin MacLeod (incompetech.com), CC BY 4.0, 117.6 BPM (synths, marimba, bells, percussion; "2am. It is raining…"). The credit must go wherever the video is posted (it's in `share-copy.txt`).
-- Music treatment: starts 7.89 s into the track, so its quiet, mysterious intro plays under the chat and its beat drops on "⚛️ A quantum computer joined the chat" (8.55 s); 0.7 s fade under the end card; final mix mastered to about −16 LUFS
-- Music cue guidance: kicks every 0.513 s from 0.34 s; the drop on 8.55 s. Chat messages, the unlock, the chat stepping aside, every scene start, "You're connected!", the send and the CTA tap sit on (or within 0.07 s of) the beat; word reveals follow reading pace.
+- Role: a dark cyberpunk bed that holds back under the problem and comes in full at the twist
+- Music: "Cyberpunk" by Poradovskyi, supplied by the user (the file name matches a Pixabay download), 102 BPM, 65.9 s, in 8-bar sections at 0.03 / 18.85 / 37.68 / 56.5 s, each after a short break; it winds down from 56.5 s.
+- Music treatment: starts 10.306 s into the track, so its break at 18.26 s falls just before "⚛️ A quantum computer joined the chat" and its return (18.85 s) lands on it (8.55 s); its own wind-down plays under Lasting and the end card. Two clips of the file: 0.135 under the chat, 0.2 from the twist (the same +3.4 dB step the old track had), 0.7 s fade at the end; final mix mastered to about −16 LUFS
+- Music cue guidance: the twist is locked to the track's return (8.55 s). Everything else keeps the timings built on the old 117.6 BPM grid, so it is no longer on this track's 102 BPM beat; word reveals follow reading pace.
 - Audio-reactive treatment: subtle; the music's bass gives the Lasting locks a glow. No waveform or equalizer visuals.
 - SFX posture: moderate, motion-matched; soft drops for arriving messages, a short glitch when the quantum computer joins
 - Restraint rule: no stacked hits on a cut, no sound without a visible cause, keys thinned out under the music
