@@ -62,7 +62,7 @@ Scene summary:
 2. Title — 20.3–27 s — logo tile + verbatim tagline word by word + two perks (Post-quantum, ⟠ On Ethereum)
 3. Say hi and send — 27–42.7 s — the pq app as alice.eth, Chat with bob.eth: tap, the secret-math line word by word, chips, "You're connected!", then "🙈 The chain can't see who's talking." word by word as "here's the viewing key 🔑" is sent
 4. Lasting — 42.9–49.1 s — "Private now, and for years to come." word by word + three locks that stay closed
-5. Your turn — 49.6–55.58 s — logo, "Your turn: say hi.", ⟠ "It's live on Sepolia.", CTA tap, pills
+5. Your turn — 49.6–55.58 s — logo, "Your turn: say hi.", ⟠ "Live on Sepolia", CTA tap, pills
 
 ## Audio
 - Audio role: a dark cyberpunk bed with motion-matched UI accents

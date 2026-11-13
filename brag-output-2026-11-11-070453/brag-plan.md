@@ -26,7 +26,7 @@ A chat window lands mid-frame with bob.eth and "⛓️ Chain with private paymen
 - The Landing's three cobalt locks, all staying closed: today, in 10 years, in 20 years.
 
 ## Outro / punchline
-"Your turn: say hi." and "It's live on Sepolia." beside the Ethereum diamond. The CTA button gets tapped and bursts the app's confetti. GitHub mistcash/pq and MIST.cash pills.
+"Your turn: say hi." and "Live on Sepolia" beside the Ethereum diamond. The CTA button gets tapped and bursts the app's confetti. GitHub mistcash/pq and MIST.cash pills.
 
 ## Tone
 - Preset: default
@@ -41,7 +41,7 @@ A chat window lands mid-frame with bob.eth and "⛓️ Chain with private paymen
 - Accent: `#0052FF` (primary, MIST cobalt); `#FF8863` (error) for what quantum computers break; confetti also `#FFCF72` (warning)
 - Text: `#081019` (base-content); muted copy is that at 70% opacity
 - Display font: Fredoka 700 (the app's `next/font` face); body Fredoka 400/500
-- Ethereum: the classic grey diamond (`assets/img/ethereum.svg`) on the "On Ethereum" perk and beside "It's live on Sepolia."
+- Ethereum: the classic grey diamond (`assets/img/ethereum.svg`) on the "On Ethereum" perk and beside "Live on Sepolia"
 - Strongest visual element: DaisyUI chat bubbles shared by the hook and the real app; the Landing's lock timeline (`app/_components/Landing.tsx`)
 - Radii: field 1rem, box 1.5rem, selector 2rem (DaisyUI 5 light theme overrides in `styles/globals.css`)
 
@@ -76,7 +76,7 @@ White rises. "Lasting", then "Private now, and for years to come." word by word;
 Audio: latches 45.45 / 45.95 / 46.45.
 
 ### Scene 5 — Your turn — 49.57–55.58 s
-Logo, "Your turn: say hi." word by word, ⟠ "It's live on Sepolia.", the CTA and pills, the tap and confetti on 53.09, then held still to the end.
+Logo, "Your turn: say hi." word by word, ⟠ "Live on Sepolia", the CTA and pills, the tap and confetti on 53.09, then held still to the end.
 Audio: click 53.11, final bell 53.13, music fades under the end card.
 
 **Music mood for this video:** cool, nocturnal, mysterious
