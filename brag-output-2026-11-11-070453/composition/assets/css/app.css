@@ -248,10 +248,6 @@
     width: calc(var(--spacing) * 10);
     height: calc(var(--spacing) * 10);
   }
-  .size-11 {
-    width: calc(var(--spacing) * 11);
-    height: calc(var(--spacing) * 11);
-  }
   .size-20 {
     width: calc(var(--spacing) * 20);
     height: calc(var(--spacing) * 20);
@@ -346,11 +342,17 @@
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
+  .gap-2\.5 {
+    gap: calc(var(--spacing) * 2.5);
+  }
   .gap-3 {
     gap: calc(var(--spacing) * 3);
   }
   .gap-4 {
     gap: calc(var(--spacing) * 4);
+  }
+  .gap-5 {
+    gap: calc(var(--spacing) * 5);
   }
   .gap-6 {
     gap: calc(var(--spacing) * 6);
@@ -435,9 +437,6 @@
   .p-0 {
     padding: calc(var(--spacing) * 0);
   }
-  .p-2\.5 {
-    padding: calc(var(--spacing) * 2.5);
-  }
   .p-4 {
     padding: calc(var(--spacing) * 4);
   }
@@ -489,20 +488,11 @@
   .pr-3 {
     padding-right: calc(var(--spacing) * 3);
   }
-  .pr-5 {
-    padding-right: calc(var(--spacing) * 5);
-  }
   .pl-1 {
     padding-left: calc(var(--spacing) * 1);
   }
-  .pl-2 {
-    padding-left: calc(var(--spacing) * 2);
-  }
   .text-center {
     text-align: center;
-  }
-  .text-left {
-    text-align: left;
   }
   .text-2xl {
     font-size: var(--text-2xl);
