@@ -65,7 +65,7 @@
                 <div class="chat-bubble bg-transparent border-2 border-dashed border-base-300 text-base-content/70">Nothing yet. Say hi!</div>
               </div>
               <div id="app-sent" class="chat chat-end" style="display: none">
-                <div id="app-sent-bubble" class="chat-bubble break-words chat-bubble-primary text-lg">here's my viewing key 🔑</div>
+                <div id="app-sent-bubble" class="chat-bubble break-words chat-bubble-primary text-lg">here's the viewing key 🔑</div>
                 <span class="chat-footer link link-hover inline-flex items-center gap-1 text-sm text-base-content/70">See it on Etherscan <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg></span>
               </div>
               <div class="bg-base-100 py-3 mt-3">
@@ -122,22 +122,22 @@
       tl.fromTo("#app-wrap", { x: 160, opacity: 0, filter: "blur(10px)" }, { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0);
       words("#app-left4 h2 span", 0.3);
 
-      // "Only they can read what you write." gets its reading time, then Say hi is tapped on 31.05 (global, on the beat).
+      // "Only they can read what you write." gets its reading time, then Say hi is tapped on 26.95 (global, on the beat).
       tapAt($("app-cursor-1"), [150, 150], 3.02);
       tl.to("#app-sayhi", { scale: 0.96, duration: 0.05, ease: "power2.out" }, 3.02);
       tl.set("#app-pre", { display: "none" }, 3.07);
       tl.set("#app-busy", { display: "contents" }, 3.07);
       words("#app-math span", 3.2); // last word lands 5.8
       tl.fromTo(".app-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.36, ease: "sine.inOut", yoyo: true, repeat: 12, stagger: 0.12 }, 3.07);
-      // The avatar bounces, landing on every other beat: 32.65, 33.67, 34.7 and 35.72 (global).
+      // The avatar bounces, landing on every other beat: 28.55, 29.57, 30.6 and 31.62 (global).
       for (const [up, down] of [[3.07, 4.1], [4.615, 5.128], [5.641, 6.154], [6.667, 7.18]]) {
         tl.fromTo("#app-bouncer", { y: 0 }, { y: -32, duration: down - up, ease: "power3.out" }, up);
         tl.fromTo("#app-bouncer", { y: -32 }, { y: 0, duration: 0.513, ease: "power3.in", immediateRender: false }, down);
       }
-      // beat-grid: chips 34.19 / 34.7 / 35.21 (global), after the secret-math line is read, then held.
+      // beat-grid: chips 30.08 / 30.6 / 31.11 (global), after the secret-math line is read, then held.
       tl.fromTo(".app-chip", { opacity: 0, scale: 0.5, transformOrigin: "0% 50%" }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop", stagger: 0.513 }, 6.154);
 
-      // 35.72 (beat): connected, with time to read "They'll find your chat…".
+      // 31.62 (beat): connected, with time to read "They'll find your chat…".
       tl.set("#app-busy", { display: "none" }, 7.69);
       tl.set("#app-post", { display: "contents" }, 7.69);
       tl.set("#app-msgs", { display: "flex" }, 7.69);
@@ -145,13 +145,13 @@
       pop("#app-connected", 7.69);
       tl.fromTo("#app-find", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 7.97);
 
-      // 38.83: the caption changes, the app scrolls to the composer.
+      // 34.73: the caption changes, the app scrolls to the composer.
       tl.to("#app-left4", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 10.8);
       words("#app-left5 h2 span", 11.2); // last word lands 13.2
       tl.fromTo("#app-scroll", { y: 0 }, { y: -scrollA, duration: 0.45, ease: "power2.inOut" }, 11.02);
 
-      // Typing 39.63–40.63, the counter counting down, then sent on the beat at 40.85 (global).
-      const typed = [..."here's my viewing key 🔑"];
+      // Typing 35.53–36.53, the counter counting down, then sent on the beat at 36.75 (global).
+      const typed = [..."here's the viewing key 🔑"];
       const input = $("app-input"), left = $("app-left"), send = $("app-send");
       const typing = { p: 0 };
       tl.fromTo(
@@ -180,7 +180,7 @@
       pop("#app-sent-bubble", 12.82, "100% 100%");
       tl.to("#app-scroll", { y: -scrollB, duration: 0.2, ease: "power2.inOut" }, 12.82);
 
-      // Held 2 s after the bubble lands, then out (43.48–43.73 global): the app leaves right, the caption blurs away.
+      // Held 2 s after the bubble lands, then out (39.38–39.63 global): the app leaves right, the caption blurs away.
       tl.to("#app-wrap", { x: 140, opacity: 0, filter: "blur(10px)", duration: 0.25, ease: "power3.in" }, 15.45);
       tl.to("#app-left5", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 15.47);
       window.__timelines["app"] = tl;

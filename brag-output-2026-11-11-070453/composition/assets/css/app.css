@@ -553,9 +553,6 @@
   .break-words {
     overflow-wrap: break-word;
   }
-  .whitespace-nowrap {
-    white-space: nowrap;
-  }
   .shadow-2xl {
     --tw-shadow: 0 25px 50px -12px var(--tw-shadow-color, rgb(0 0 0 / 0.25));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);

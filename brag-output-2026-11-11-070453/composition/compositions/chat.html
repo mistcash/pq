@@ -14,29 +14,28 @@
   <div id="root" data-composition-id="chat" data-width="1920" data-height="1080">
     <div id="chat-content">
       <div id="chat-left">
-        <h2 id="chat-cap1" class="font-bold m-0" style="font-size: 76px; line-height: 1.05"><span>Private</span> <span>payments</span> <span>are</span> <span>sealed</span> <span>with</span> <span>ECDH.</span> <span>Quantum</span> <span>computers</span> <span>break</span> <span>it.</span></h2>
-        <h2 id="chat-cap2" class="font-bold m-0 text-base-content/70" style="font-size: 60px; line-height: 1.1"><span>Recorded</span> <span>today,</span> <span>readable</span> <span>later:</span> <span>your</span> <span>payment</span> <span>history.</span></h2>
+        <h2 id="chat-cap1" class="font-bold m-0" style="font-size: 76px; line-height: 1.05"><span>Private</span> <span>payment</span> <span>viewing</span> <span>keys</span> <span>aren't</span> <span>post-quantum</span> <span>secure.</span></h2>
+        <h2 id="chat-cap2" class="font-bold m-0 text-base-content/70" style="font-size: 60px; line-height: 1.1"><span>One</span> <span>day,</span> <span>every</span> <span>auditor</span> <span>commitment</span> <span>becomes</span> <span>public.</span></h2>
       </div>
 
-      <!-- A chat today: Alice's auditor, Bob, gets her viewing key sealed to him on-chain with ECDH (as STRK20 escrows it), and a quantum computer joins.
-           Sources: docs/research/viewing-keys.md. -->
+      <!-- A chat today: Alice hands Bob a viewing key over ECDH, and a quantum computer joins. -->
       <div id="chat-wrap">
         <div id="chat-frame" class="relative flex flex-col rounded-[2.5rem] overflow-hidden border border-base-300 bg-base-100 shadow-2xl" style="zoom: 1.75; width: 480px; height: 560px">
           <div class="flex items-center gap-3 bg-base-200 border-b border-base-300 px-5 py-3">
             <img src="assets/img/bob.svg" width="48" height="48" class="rounded-full" alt="" />
             <div class="leading-tight">
-              <span class="flex items-center gap-2"><b class="text-lg">bob.eth</b><span class="rounded-full bg-base-100 border border-base-300 px-2 py-0.5 text-base font-semibold">🧾 auditor</span></span>
+              <b class="block text-lg">bob.eth</b>
               <span class="flex items-center gap-1.5 text-base text-base-content/70"><img src="assets/img/ethereum.svg" width="10" height="16" alt="" />on Ethereum</span>
             </div>
           </div>
           <div class="flex-1 flex flex-col gap-1 px-3 pt-4">
             <div id="chat-m1" class="chat chat-end">
               <div class="chat-image"><img src="assets/img/alice.svg" width="40" height="40" class="rounded-full" alt="" /></div>
-              <div class="chat-bubble chat-bubble-primary text-lg">Paid my supplier 100 USDC, privately 🤫</div>
+              <div class="chat-bubble chat-bubble-primary text-lg">Sent you 100 USDC, privately 🤫</div>
             </div>
             <div id="chat-m2" class="chat chat-start">
               <div class="chat-image"><img src="assets/img/bob.svg" width="40" height="40" class="rounded-full" alt="" /></div>
-              <div class="chat-bubble chat-bubble-secondary text-lg">Nice. For the audit, I need your viewing key 🧾</div>
+              <div class="chat-bubble chat-bubble-secondary text-lg">Got it! My auditor needs the viewing key 🧾</div>
             </div>
             <!-- Alice's typing dots and her key share one slot, so nothing shifts when the key lands. -->
             <div id="chat-slot">
@@ -46,7 +45,7 @@
               </div>
               <div id="chat-m3" class="chat chat-end">
                 <div class="chat-image"><img src="assets/img/alice.svg" width="40" height="40" class="rounded-full" alt="" /></div>
-                <div id="chat-key" class="chat-bubble chat-bubble-primary text-lg">🔑 My viewing key, sealed to you <span class="whitespace-nowrap">on-chain</span></div>
+                <div id="chat-key" class="chat-bubble chat-bubble-primary text-lg">🔑 viewing key: vk_7f3a…e1c9</div>
                 <div class="chat-footer mt-1">
                   <span id="chat-tags">
                     <span id="chat-lock" class="rounded-full bg-base-100 border border-base-300 px-2.5 py-0.5 text-base">🔒 ECDH-encrypted</span>
@@ -55,7 +54,7 @@
                 </div>
               </div>
             </div>
-            <div id="chat-sys" class="self-center mt-3 rounded-full bg-base-200 border border-base-300 px-4 py-1.5 text-base font-semibold">⚛️ Years later, a quantum computer joined the chat</div>
+            <div id="chat-sys" class="self-center mt-3 rounded-full bg-base-200 border border-base-300 px-4 py-1.5 text-base font-semibold">⚛️ A quantum computer joined the chat</div>
           </div>
           <div class="bg-base-200 border-t border-base-300 px-4 py-3">
             <div class="input input-lg w-full bg-base-100 text-base-content/60">Message</div>
@@ -77,25 +76,25 @@
       tl.fromTo("#chat-wrap", { x: -410, y: 60, opacity: 0 }, { x: -410, y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 0);
       // Each message gets its reading time (0.5 s + 0.3 s a word) before the next.
       pop("#chat-m1", 0.34, "100% 100%");
-      pop("#chat-m2", 2.905, "0% 100%");
-      tl.fromTo("#chat-typing", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 6.1);
-      tl.fromTo(".chat-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.1 }, 6.1);
-      tl.to("#chat-typing", { opacity: 0, duration: 0.08 }, 6.93);
-      pop("#chat-m3", 7.007, "100% 100%");
+      pop("#chat-m2", 2.39, "0% 100%");
+      tl.fromTo("#chat-typing", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 4.7);
+      tl.fromTo(".chat-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.1 }, 4.7);
+      tl.to("#chat-typing", { opacity: 0, duration: 0.08 }, 5.42);
+      pop("#chat-m3", 5.47, "100% 100%");
 
-      // The twist: a quantum computer joins, and the key's lock opens. beat-locked: 10.08, where the music's beat drops in.
-      pop("#chat-sys", 10.084, "50% 50%");
-      tl.to("#chat-frame", { keyframes: [{ x: -6, duration: 0.05 }, { x: 6, duration: 0.06 }, { x: -3, duration: 0.06 }, { x: 0, duration: 0.08 }], ease: "power2.out" }, 10.084);
-      tl.to("#chat-lock", { opacity: 0, duration: 0.12 }, 10.597);
-      tl.fromTo("#chat-open", { opacity: 0, scale: 0.6, transformOrigin: "100% 50%" }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, 10.597);
-      tl.to("#chat-key", { keyframes: [{ rotation: -3, duration: 0.06 }, { rotation: 2, duration: 0.08 }, { rotation: 0, duration: 0.12 }], ease: "power2.out" }, 10.597);
+      // The twist: a quantum computer joins, and the key's lock opens. beat-locked: 7.52, where the music's beat drops in.
+      pop("#chat-sys", 7.52, "50% 50%");
+      tl.to("#chat-frame", { keyframes: [{ x: -6, duration: 0.05 }, { x: 6, duration: 0.06 }, { x: -3, duration: 0.06 }, { x: 0, duration: 0.08 }], ease: "power2.out" }, 7.52);
+      tl.to("#chat-lock", { opacity: 0, duration: 0.12 }, 8.02);
+      tl.fromTo("#chat-open", { opacity: 0, scale: 0.6, transformOrigin: "100% 50%" }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, 8.02);
+      tl.to("#chat-key", { keyframes: [{ rotation: -3, duration: 0.06 }, { rotation: 2, duration: 0.08 }, { rotation: 0, duration: 0.12 }], ease: "power2.out" }, 8.02);
 
       // Once the twist has been read, the chat steps aside for what it means.
-      tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 13.161);
-      words("#chat-cap1 span", 13.5); // last word lands 16.4
-      words("#chat-cap2 span", 16.9); // last word lands 18.9
-      // Held 2 s after the last word, then out (20.9–21.12).
-      tl.to("#chat-content", { opacity: 0, filter: "blur(8px)", duration: 0.22, ease: "power3.in" }, 20.9);
+      tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 10.08);
+      words("#chat-cap1 span", 10.4); // last word lands 12.4
+      words("#chat-cap2 span", 12.9); // last word lands 14.9
+      // Held 2 s after the last word, then out (16.9–17.12).
+      tl.to("#chat-content", { opacity: 0, filter: "blur(8px)", duration: 0.22, ease: "power3.in" }, 16.9);
       window.__timelines["chat"] = tl;
     })();
   </script>
