@@ -7,7 +7,7 @@ Create a short launch-style brag video for pq.
 - Composition directory: `brag-output-2026-11-11-070453/composition/`
 - Rendered video: `brag-output-2026-11-11-070453/brag.mp4`
 - Format: landscape — 1920x1080, 30 fps
-- Duration: 52.5 s (the user asked for 30 s or more, with nothing rushed)
+- Duration: 54.55 s (the user asked for 30 s or more, with nothing rushed)
 
 ## Source Material
 - Project root: the repo root (`mistcash/pq`)
@@ -18,7 +18,7 @@ Create a short launch-style brag video for pq.
 - Copy that must appear verbatim (the first two lines are the user's own framing, grounded in the README's "Messages encrypted to today's elliptic-curve keys can be harvested now and decrypted once a large quantum computer exists"):
   - Private payment viewing keys aren't post-quantum secure.
   - One day, every auditor commitment becomes public.
-  - Sent you 100 USDC, privately 🤫 / Got it! My auditor needs the viewing key 🧾 / 🔑 viewing key / 🔒 ECDH-encrypted / 🔓 decrypted / ⚛️ A quantum computer joined the chat (the hook chat, written for the video)
+  - Sent you 100 USDC, privately 🤫 / Got it! My auditor needs the viewing key 🧾 / 🔑 viewing key / ⛓️ Public chain / 🔒 Encrypted on-chain / ⚛️ A quantum computer joined the chat / 🔓 Transaction details decrypted / 💸 100 USDC / 👥 alice.eth → bob.eth / 📝 Memo: March rent (the hook chat, written for the video)
   - Scalable, post-quantum cryptographic messaging for private payments and peer coordination.
   - Only they can read what you write.
   - Say hi 👋
@@ -36,7 +36,7 @@ Create a short launch-style brag video for pq.
 - Creative direction: a playful, polished launch built from the app's own cards, creatures and confetti
 - Interpretation: 5 scenes on light grounds; every headline, caption and key in-app line arrives word by word at 0.3 s a word (about 200 wpm) and holds 2 s after it lands before the scene changes; readable labels ≥ ~30 px on screen
 - Angle: today's private payments have a quantum expiry date. Their ECDH viewing keys aren't post-quantum, so auditor commitments go public one day; pq hands keys over with Kyber512 instead, and the ending's locks answer the opening's broken one.
-- Hook: a chat between alice.eth and bob.eth about a private payment and its viewing key, until "⚛️ A quantum computer joined the chat" and the key flips to "🔓 decrypted"
+- Hook: a chat between alice.eth and bob.eth about a private payment and its viewing key, on a "⛓️ Public chain", until "⚛️ A quantum computer joined the chat" and replies to the key with "🔓 Transaction details decrypted": the amount, the parties and the memo
 - Outro / punchline: "Your turn: say hi." with the CTA tapped on the strong cue
 - Avoid:
   - Generic SaaS language
@@ -58,11 +58,11 @@ Create a short launch-style brag video for pq.
 Use the storyboard in `brag-output-2026-11-11-070453/brag-plan.md` as the creative contract.
 
 Scene summary:
-1. Chat — 0–17.5 s — alice.eth and bob.eth chat about a private payment; Alice sends the viewing key over ECDH; a quantum computer joins and it's decrypted; then "Private payment viewing keys aren't post-quantum secure." and "One day, every auditor commitment becomes public." word by word
-2. Title — 17.5–24 s — logo tile + verbatim tagline word by word + two perks (Post-quantum, ⟠ On Ethereum)
-3. Say hi and send — 24–39.7 s — the pq app as alice.eth, Chat with bob.eth: tap, the secret-math line word by word, chips, "You're connected!", then "🙈 The chain can't see who's talking." word by word as "here's the viewing key 🔑" is sent
-4. Lasting — 40–46.2 s — "Private now, and for years to come." word by word + three locks that stay closed
-5. Your turn — 46.5–52.5 s — logo, "Your turn: say hi.", ⟠ "It's live on Sepolia.", CTA tap, pills
+1. Chat — 0–19.3 s — alice.eth and bob.eth chat about a private payment on a public chain; Alice sends the viewing key, encrypted on-chain; a quantum computer joins, quotes the key and shows the decrypted payment; then "Private payment viewing keys aren't post-quantum secure." and "One day, every auditor commitment becomes public." word by word
+2. Title — 19.3–26 s — logo tile + verbatim tagline word by word + two perks (Post-quantum, ⟠ On Ethereum)
+3. Say hi and send — 26–41.7 s — the pq app as alice.eth, Chat with bob.eth: tap, the secret-math line word by word, chips, "You're connected!", then "🙈 The chain can't see who's talking." word by word as "here's the viewing key 🔑" is sent
+4. Lasting — 41.9–48.1 s — "Private now, and for years to come." word by word + three locks that stay closed
+5. Your turn — 48.5–54.55 s — logo, "Your turn: say hi.", ⟠ "It's live on Sepolia.", CTA tap, pills
 
 ## Audio
 - Audio role: a cool, nocturnal electronic bed with motion-matched UI accents
@@ -74,12 +74,12 @@ Scene summary:
 - Audio-coupled moments:
   - 0.36 / 2.41 / 5.49 — soft drops as each chat message arrives
   - 7.54 — a short glitch as the quantum computer joins; 8.05 — the unlock click
-  - 17.3 — warm accent on the logo
-  - 26.97, 36.77, 50.03 — cursor clicks
-  - 31.64 — success bell with the confetti
-  - 35.53–36.33 — a few key ticks
-  - 42.37 / 42.87 / 43.37 — Lasting's lock latches
-  - 50.05 — final bell with the CTA confetti
+  - 19.35 — warm accent on the logo
+  - 29.02, 38.82, 52.08 — cursor clicks
+  - 33.69 — success bell with the confetti
+  - 37.58–38.38 — a few key ticks
+  - 44.42 / 44.92 / 45.42 — Lasting's lock latches
+  - 52.1 — final bell with the CTA confetti
 - SFX selection guidance: low high-frequency-risk Kenney files, rotate takes for repeats, SFX at 0.3–0.8 with repeats quieter
 - SFX analysis guidance: `.claude/skills/brag/assets/sfx/sfx-analysis.md`
 - Audio files: copied into `composition/assets/`
