@@ -1,0 +1,539 @@
+<!doctype html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/daisyui.css">
+<script src="assets/tailwind.js"></script>
+<script src="avatar.js"></script>
+<style type="text/tailwindcss">
+@theme { --font-sans: "Fredoka", "Noto Color Emoji", ui-sans-serif, sans-serif; }
+</style>
+<style>
+@font-face { font-family: Fredoka; src: url(assets/fredoka-400.ttf); font-weight: 400; }
+@font-face { font-family: Fredoka; src: url(assets/fredoka-500.ttf); font-weight: 500; }
+@font-face { font-family: Fredoka; src: url(assets/fredoka-600.ttf); font-weight: 600; }
+@font-face { font-family: Fredoka; src: url(assets/fredoka-700.ttf); font-weight: 700; }
+/* The app's theme, from packages/nextjs/styles/globals.css. */
+[data-theme=light] {
+  --color-primary: #0052ff; --color-primary-content: #ffffff;
+  --color-secondary: #e3edf5; --color-secondary-content: #081019;
+  --color-accent: #0052ff; --color-accent-content: #ffffff;
+  --color-neutral: #081019; --color-neutral-content: #ffffff;
+  --color-base-100: #ffffff; --color-base-200: #e3edf5; --color-base-300: #acc4d6; --color-base-content: #081019;
+  --color-info: #0052ff; --color-success: #34eeb6; --color-warning: #ffcf72; --color-error: #ff8863;
+  --radius-field: 1rem; --radius-box: 1.5rem; --radius-selector: 2rem;
+}
+@layer base { *, ::after, ::before { border-color: var(--color-base-300, currentColor); } }
+*, ::after, ::before { transition: none !important; animation: none !important; }
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #081019; }
+body { font-family: Fredoka, "Noto Color Emoji", sans-serif; color: var(--color-base-content); -webkit-font-smoothing: antialiased; }
+.btn { box-shadow: none; }
+.abs { position: absolute; }
+.full { position: absolute; inset: 0; }
+.cx { position: absolute; left: 0; right: 0; display: flex; justify-content: center; }
+.confetti { position: absolute; inset: 50%; z-index: -1; pointer-events: none; }
+.confetti i { position: absolute; width: .875rem; height: .875rem; margin: -.4375rem; border-radius: 9999px; background: var(--color-primary); opacity: 0; }
+.confetti i:nth-child(3n) { background: var(--color-warning); border-radius: .2rem; }
+.confetti i:nth-child(3n + 1) { background: var(--color-neutral); height: .4rem; }
+.dots { display: inline-flex; gap: 18%; align-items: center; justify-content: center; }
+.dots i { display: block; width: 26%; aspect-ratio: 1; border-radius: 9999px; background: currentColor; }
+/* Hook: the same Public card, on the dark chain. */
+#s1 .public { border-color: rgb(172 196 214 / .55); color: #fff; }
+#s1 .hex { background: #0052ff; color: #fff; }
+#hex { font-family: "DejaVu Sans Mono", ui-monospace, monospace; font-size: 22px; line-height: 38px; color: #acc4d6; white-space: pre; }
+#hex .col { position: absolute; top: 0; width: 120px; text-align: center; }
+#hex b { color: #4d86ff; font-weight: 400; }
+h1, h2 { margin: 0; }
+</style>
+</head>
+<body>
+
+<!-- ============ 1 · Hook: public, forever ============ -->
+<div id="ink" class="full" style="background:#081019"></div>
+<div id="hex" class="full"></div>
+<div id="vignette" class="full" style="background: radial-gradient(ellipse 60% 55% at 50% 52%, #081019 35%, rgb(8 16 25 / .55) 70%, rgb(8 16 25 / 0) 100%)"></div>
+<div id="s1" class="full">
+  <div class="cx" style="top:250px"><h1 class="font-bold text-white" style="font-size:150px;line-height:1"><span id="w1" class="inline-block">Public.</span> <span id="w2" class="inline-block">Forever.</span></h1></div>
+  <div class="row-wrap"></div>
+</div>
+
+<!-- ============ 2–5 · The light app world ============ -->
+<div id="light" class="full" style="background:var(--color-base-200)">
+  <!-- 2 · Reveal -->
+  <div id="s2" class="full">
+    <div class="cx" style="top:286px"><h2 id="head2" class="font-bold" style="font-size:88px;line-height:1">Only the two of you can read it.</h2></div>
+    <div class="row-wrap"></div>
+  </div>
+
+  <!-- 3 · Title, laid out like public/thumbnail.jpg -->
+  <div id="s3" class="full flex items-center justify-center">
+    <div style="zoom:1.6" class="flex items-center gap-14 w-[1060px]">
+      <div id="tile" class="shrink-0 size-[300px] rounded-[64px] border-[8px] border-white overflow-hidden"><img src="assets/logo.svg" class="size-full block"></div>
+      <div class="flex flex-col gap-6">
+        <h1 id="tagline" class="text-[44px] font-bold leading-[1.12]">Scalable, post-quantum cryptographic messaging for private payments and peer coordination.</h1>
+        <ul class="flex flex-wrap gap-2 m-0 p-0 list-none text-lg">
+          <li class="perk rounded-full bg-base-100 px-4 py-1.5">🔒 Post-quantum</li>
+          <li class="perk rounded-full bg-base-100 px-4 py-1.5">🌍 On Ethereum</li>
+          <li class="perk rounded-full bg-base-100 px-4 py-1.5">🙈 The chain can't see who's talking</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4–5 · The app in use: captions left, app right -->
+  <div id="s45" class="full">
+    <div id="left4" class="abs flex flex-col gap-8" style="left:150px; top:0; height:1080px; width:760px; justify-content:center">
+      <h2 id="head4" class="font-bold" style="font-size:150px;line-height:1">Say hi 👋</h2>
+      <ul class="flex flex-col items-start gap-4 m-0 p-0 list-none" style="font-size:34px">
+        <li class="chip4 rounded-full bg-base-100 px-6 py-2">🔒 Kyber512, post-quantum</li>
+        <li class="chip4 rounded-full bg-base-100 px-6 py-2">🧮 A zero-knowledge proof</li>
+        <li class="chip4 rounded-full bg-base-100 px-6 py-2">💻 Made in your browser</li>
+      </ul>
+    </div>
+    <div id="left5" class="abs flex flex-col" style="left:150px; top:0; height:1080px; width:760px; justify-content:center">
+      <h2 id="head5" class="font-bold text-balance" style="font-size:104px;line-height:1.05">🙈 The chain can't see who's talking.</h2>
+    </div>
+
+    <div id="appwrap" class="abs" style="left:1012px; top:70px">
+      <div id="app" class="relative rounded-[2.5rem] overflow-hidden border border-base-300 bg-base-200 shadow-2xl" style="zoom:1.6; width:480px; height:587px">
+        <div class="navbar bg-base-100 min-h-16 justify-between border-b border-base-300 px-4 relative z-10">
+          <img src="assets/logo.svg" width="40" height="40" class="rounded-xl">
+          <div class="flex items-center gap-1">
+            <span class="btn btn-sm px-2 btn-ghost">🤿 <span>Deep dive</span></span>
+            <span class="btn btn-sm rounded-full pl-1 pr-3 bg-base-100 border-base-300 gap-2"><span class="me24"></span>0x3A9f…c21E</span>
+          </div>
+        </div>
+        <div id="scroll" class="px-4 py-8">
+          <div class="flex flex-col gap-6">
+            <span class="btn btn-ghost btn-lg self-start -ml-3 px-3"><i class="ico h-5 w-5" data-i="arrow-left"></i> People</span>
+            <div class="flex flex-col items-center text-center gap-3">
+              <div id="bouncer" class="relative isolate"><div class="confetti" id="conf1"></div><span class="other128"></span></div>
+              <h1 class="text-3xl font-bold m-0">0x7A3f…9C2e</h1>
+            </div>
+            <div class="card bg-base-100 border border-base-300 p-6 items-center text-center gap-4">
+              <div id="pre" style="display:contents">
+                <p class="text-base-content/70 m-0">Only they can read what you write.</p>
+                <span id="sayhi" class="btn btn-primary btn-lg btn-block">Say hi 👋</span>
+              </div>
+              <div id="busy" style="display:none">
+                <span class="dots text-primary" style="width:2.5rem;height:2.5rem"><i></i><i></i><i></i></span>
+                <p class="m-0">Doing some secret math, right here in your browser…</p>
+              </div>
+              <div id="post" style="display:none">
+                <h2 id="connected" class="text-2xl font-bold m-0">You're connected!</h2>
+                <p class="text-base-content/70 m-0">They'll find your chat when they tap “Find my chats”.</p>
+                <span class="link link-hover inline-flex items-center gap-1 text-sm text-base-content/70">See it on Etherscan <i class="ico h-4 w-4" data-i="arrow-top-right-on-square"></i></span>
+              </div>
+            </div>
+            <div id="msgs" class="card bg-base-100 border border-base-300 p-4 gap-1" style="display:none">
+              <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold m-0 pl-1">You said</h2>
+                <span class="btn btn-ghost btn-circle btn-lg -mr-2"><i class="ico h-5 w-5" data-i="arrow-path"></i></span>
+              </div>
+              <div id="empty" class="chat chat-end">
+                <div class="chat-bubble bg-transparent border-2 border-dashed border-base-300 text-base-content/70">Nothing yet. Say hi!</div>
+              </div>
+              <div id="sent" class="chat chat-end" style="display:none">
+                <div id="sentBubble" class="chat-bubble break-words chat-bubble-primary" style="transform-origin:bottom right">here's the claiming key 🔑</div>
+                <span class="chat-footer link link-hover inline-flex items-center gap-1 text-sm text-base-content/70">See it on Etherscan <i class="ico h-4 w-4" data-i="arrow-top-right-on-square"></i></span>
+              </div>
+              <div class="bg-base-100 py-3 mt-3">
+                <form class="flex items-center gap-2" onsubmit="return false">
+                  <input id="input" class="input input-lg flex-1 min-w-0" placeholder="Say something" style="caret-color:transparent">
+                  <span id="left" class="w-7 text-center font-semibold text-base-content/70">62</span>
+                  <div class="relative isolate">
+                    <div class="confetti" id="conf2"></div>
+                    <button id="send" class="btn btn-primary btn-lg btn-circle" disabled><i class="ico h-6 w-6" data-i="paper-airplane"></i></button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 6 · Lasting (Landing beat 3) ============ -->
+<div id="s6" class="full bg-base-100 flex items-center justify-center">
+  <div style="zoom:1.6" class="flex flex-col items-center justify-center gap-10 text-center">
+    <div class="flex flex-col items-center gap-4 max-w-5xl">
+      <span id="kick6" class="font-semibold tracking-wide text-primary">Lasting</span>
+      <h2 id="head6" class="text-6xl font-bold leading-[1.05] text-balance m-0">Private now, and for years to come.</h2>
+    </div>
+    <ol class="relative isolate w-fit mx-auto m-0 p-0 flex gap-16 list-none">
+      <span id="dash6" class="absolute inset-x-10 top-10 -z-10 border-t-2 border-dashed" style="transform-origin:left"></span>
+      <li class="lock flex flex-col items-center gap-2"><span class="grid place-items-center size-20 rounded-full bg-primary text-primary-content"><i class="ico size-10" data-i="lock-closed"></i></span>today</li>
+      <li class="lock flex flex-col items-center gap-2"><span class="grid place-items-center size-20 rounded-full bg-primary text-primary-content"><i class="ico size-10" data-i="lock-closed"></i></span>in 10 years</li>
+      <li class="lock flex flex-col items-center gap-2"><span class="grid place-items-center size-20 rounded-full bg-primary text-primary-content"><i class="ico size-10" data-i="lock-closed"></i></span>in 20 years</li>
+    </ol>
+    <ul class="flex flex-wrap justify-center gap-2 m-0 p-0 list-none">
+      <li class="tag6 rounded-full border border-current/20 px-3 py-1 text-sm opacity-70">Kyber512</li>
+      <li class="tag6 rounded-full border border-current/20 px-3 py-1 text-sm opacity-70">zero-knowledge proofs</li>
+      <li class="tag6 rounded-full border border-current/20 px-3 py-1 text-sm opacity-70">Poseidon2</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 7 · Your turn (Landing beat 4) ============ -->
+<div id="s7" class="full bg-base-200 flex items-center justify-center">
+  <div style="zoom:1.9" class="flex flex-col items-center gap-7 text-center">
+    <div id="logo7" class="size-24 rounded-[1.6rem] border-[4px] border-white overflow-hidden"><img src="assets/logo.svg" class="size-full block"></div>
+    <div class="flex flex-col items-center gap-3">
+      <h2 id="head7" class="text-6xl font-bold leading-[1.05] m-0">Your turn: say hi.</h2>
+      <p id="sub7" class="text-2xl opacity-70 m-0">It's live on Sepolia.</p>
+    </div>
+    <div class="relative isolate">
+      <div class="confetti" id="conf3"></div>
+      <span id="cta" class="btn btn-primary btn-xl rounded-full px-8">Say hi 👋 <i class="ico size-5" data-i="arrow-up"></i></span>
+    </div>
+    <div class="flex flex-wrap justify-center gap-3">
+      <span class="pill7 flex items-center gap-3 rounded-full border-2 bg-base-100 py-2 pl-2 pr-5 text-left leading-tight"><i class="ico size-11 rounded-full bg-neutral p-2.5 text-neutral-content" data-i="code-bracket"></i><span><b class="block">GitHub</b><span class="text-sm opacity-70">mistcash/pq</span></span></span>
+      <span class="pill7 flex items-center gap-3 rounded-full border-2 bg-base-100 py-2 pl-2 pr-5 text-left leading-tight"><i class="ico size-11 rounded-full bg-neutral p-2.5 text-neutral-content" data-i="banknotes"></i><span><b class="block">MIST.cash</b><span class="text-sm opacity-70">private payments</span></span></span>
+    </div>
+  </div>
+</div>
+
+<!-- Cursor -->
+<div id="cursor" class="abs" style="left:0;top:0;width:0;height:0;z-index:50">
+  <span id="ripple" class="abs rounded-full" style="left:-40px;top:-40px;width:80px;height:80px;border:5px solid #0052ff"></span>
+  <svg id="arrow" width="46" height="58" viewBox="0 0 23 29" class="abs" style="left:-3px;top:-2px;transform-origin:3px 2px;filter:drop-shadow(0 4px 8px rgb(8 16 25 / .35))">
+    <path d="M1.5 1.5v22.2l6-5.6 3.8 8.9 4.2-1.8-3.8-8.7h8.3z" fill="#081019" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+<script>
+// ---------- Static content ----------
+const ICONS = {};
+const ALICE = "0x01".padEnd(42, "0"), BOB = "0x05".padEnd(42, "0");
+const ME = "0x3A9f5e0c1b7d2a4e8f6c9b0d3e5a7c1f2b4dc21E", OTHER = "0x7A3f8b2c4d6e1f0a9b8c7d6e5f4a3b2c1d0e9C2e";
+
+const icon = name => `<i class="ico" data-i="${name}"></i>`;
+const row = dark => `
+<div class="flex flex-row items-center justify-center gap-6">
+  <div class="person alice flex flex-col items-center gap-3">
+    <span class="av">${avatar(ALICE, 80)}</span>
+    <p class="bubble m-0 rounded-3xl px-4 py-2 text-lg bg-primary text-primary-content whitespace-nowrap">🔑 claiming key</p>
+  </div>
+  <span class="arrow arrowL">${icon("arrow-right")}</span>
+  <div class="public flex flex-col items-center gap-2 rounded-3xl border-2 border-dashed p-5">
+    <span class="flex items-center gap-2 opacity-70">${icon("eye")} On-chain, for all to see</span>
+    <code class="hex rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">0x4be1…a07c</code>
+    <code class="hex rounded-full bg-primary/10 text-primary px-3 py-1 text-sm whitespace-nowrap">0x09a7…77e2</code>
+    <span class="opacity-70">from ? to ?</span>
+  </div>
+  <span class="arrow arrowR">${icon("arrow-right")}</span>
+  <div class="person bob flex flex-col items-center gap-3">
+    <span class="av">${avatar(BOB, 80)}</span>
+    <p class="bubble m-0 rounded-3xl px-4 py-2 text-lg bg-base-100 border-2 whitespace-nowrap">got the key! 🎉</p>
+  </div>
+</div>`;
+for (const [i, w] of [["s1", 1], ["s2", 0]]) {
+  const el = document.querySelector(`#${i} .row-wrap`);
+  el.className = "row-wrap abs";
+  el.style.cssText = "left:0;right:0;top:690px;height:0;display:flex;justify-content:center;align-items:center";
+  el.innerHTML = `<div class="rowzoom" style="zoom:1.9">${row()}</div>`;
+}
+document.querySelectorAll("#s1 .person, #s1 .arrow").forEach(e => (e.style.visibility = "hidden"));
+document.querySelectorAll(".arrow i").forEach(i => (i.className = "ico block size-8 opacity-60"));
+document.querySelectorAll(".public .ico").forEach(i => (i.className = "ico block size-5"));
+document.querySelector(".other128").outerHTML = avatar(OTHER, 128);
+document.querySelector(".me24").outerHTML = avatar(ME, 24);
+document.querySelectorAll(".confetti").forEach(c => {
+  c.innerHTML = Array.from({ length: 14 }, (_, i) => `<i data-turn="${i / 14}" data-far="${7 + (i % 4) * 1.5}"></i>`).join("");
+});
+
+// Drifting columns of on-chain ciphertext.
+let seed = 7;
+const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+const HEXC = "0123456789abcdef";
+const hexCols = [];
+for (let c = 0; c < 15; c++) {
+  const lines = [];
+  for (let r = 0; r < 60; r++) {
+    let s = "";
+    for (let k = 0; k < 6; k++) s += HEXC[Math.floor(rnd() * 16)];
+    lines.push(rnd() < 0.12 ? `<b>${s}</b>` : s);
+  }
+  const col = document.createElement("div");
+  col.className = "col";
+  col.style.left = `${36 + c * 128}px`;
+  col.innerHTML = lines.join("\n");
+  document.getElementById("hex").appendChild(col);
+  hexCols.push({ el: col, speed: 40 + rnd() * 50, off: rnd() * 400, op: 0.22 + rnd() * 0.25 });
+}
+
+// ---------- Timing helpers ----------
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = x => 1 - Math.pow(1 - x, 3);
+const eIn = x => x * x * x;
+const eIO = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const bez = (x1, y1, x2, y2) => x => {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+  let lo = 0, hi = 1, s = 0.5;
+  for (let i = 0; i < 40; i++) {
+    s = (lo + hi) / 2;
+    const bx = 3 * (1 - s) * (1 - s) * s * x1 + 3 * (1 - s) * s * s * x2 + s * s * s;
+    bx < x ? (lo = s) : (hi = s);
+  }
+  return 3 * (1 - s) * (1 - s) * s * y1 + 3 * (1 - s) * s * s * y2 + s * s * s;
+};
+const popE = bez(0.3, 1.6, 0.6, 1); // the app's --animate-pop curve
+const burstE = bez(0.1, 0.8, 0.3, 1); // the app's confetti burst
+const bIn = bez(0.8, 0, 1, 1), bOut = bez(0, 0, 0.2, 1); // Tailwind's animate-bounce
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const put = (el, { o = 1, x = 0, y = 0, s = 1, r = 0 } = {}) => {
+  el.style.opacity = o;
+  el.style.transform = `translate(${x}px, ${y}px) scale(${s}) rotate(${r}deg)`;
+};
+// The app's pop: from opacity 0 and scale .5, on its springy curve.
+const pop = (t, t0, d = 0.4) => {
+  const p = lin(t, t0, t0 + d), e = popE(p);
+  return { o: p <= 0 ? 0 : clamp(e), s: 0.5 + 0.5 * e };
+};
+const rise = (t, t0, d = 0.3, dy = 40) => {
+  const e = eOut(lin(t, t0, t0 + d));
+  return { o: e, y: (1 - e) * dy };
+};
+const outQ = (t, t1, d = 0.25) => eIn(lin(t, t1, t1 + d));
+const confetti = (el, t, t0) => {
+  const p = lin(t, t0, t0 + 1.1), e = burstE(p);
+  for (const i of el.children) {
+    if (p <= 0 || p >= 1) { i.style.opacity = 0; continue; }
+    const far = +i.dataset.far * 16;
+    i.style.opacity = p < 0.7 ? 1 : 1 - burstE((p - 0.7) / 0.3);
+    i.style.transform = `rotate(${i.dataset.turn}turn) translateY(${-far * e}px) rotate(${e}turn) scale(${1 - 0.4 * e})`;
+  }
+};
+const dots = (el, t) => {
+  [...el.children].forEach((d, k) => {
+    const ph = ((t * 1.4 - k * 0.18) % 1 + 1) % 1;
+    const v = Math.max(0, Math.sin(ph * Math.PI));
+    d.style.opacity = 0.35 + 0.65 * v;
+    d.style.transform = `scale(${0.7 + 0.3 * v})`;
+  });
+};
+const center = el => {
+  const r = el.getBoundingClientRect();
+  return [r.left + r.width / 2, r.top + r.height / 2];
+};
+// A cursor that glides in, taps at tap, and leaves.
+const cursorAt = (t, from, el, t0, tap, gone) => {
+  const [tx, ty] = center(el);
+  const k = eIO(lin(t, t0, tap - 0.06));
+  const x = from[0] + (tx + 18 - from[0]) * k, y = from[1] + (ty + 10 - from[1]) * k;
+  const press = t >= tap && t < tap + 0.12 ? 0.82 : 1;
+  const o = lin(t, t0, t0 + 0.15) * (1 - lin(t, gone, gone + 0.2));
+  return { x, y, o, press, ripple: lin(t, tap, tap + 0.4) };
+};
+
+// ---------- Layout, measured once ----------
+let scrollA = 0, scrollB = 0;
+const VIEW = 587; // the frame's height; offsets below already include the navbar and top padding
+const bottomOf = () => {
+  const m = $("#msgs");
+  return m.offsetTop + m.offsetHeight;
+};
+function measure() {
+  $("#pre").style.display = "none";
+  $("#post").style.display = "contents";
+  $("#msgs").style.display = "flex";
+  scrollA = bottomOf() + 16 - VIEW;
+  $("#empty").style.display = "none";
+  $("#sent").style.display = "grid";
+  scrollB = bottomOf() + 16 - VIEW;
+  $("#empty").style.display = "";
+  $("#sent").style.display = "none";
+}
+
+// ---------- The film ----------
+const TYPED = "here's the claiming key 🔑";
+const typed = [...TYPED];
+function seek(t) {
+  // 1 · Hook (0–2)
+  for (const c of hexCols) {
+    c.el.style.transform = `translateY(${-(c.off + t * c.speed)}px)`;
+    c.el.style.opacity = c.op;
+  }
+  const s1 = $("#s1");
+  put($("#s1 .public"), pop(t, 0.0, 0.45));
+  put($("#w1"), pop(t, 0.25));
+  put($("#w2"), pop(t, 0.75));
+
+  // 2 · Reveal: a circle of light grows from the card (2.0–2.45)
+  const light = $("#light");
+  const w = eOut(lin(t, 2.0, 2.45));
+  light.style.visibility = t >= 2.0 ? "visible" : "hidden";
+  light.style.clipPath = w < 1 ? `circle(${w * 1250}px at 960px 690px)` : "none";
+  ["#ink", "#hex", "#vignette", "#s1"].forEach(s => ($(s).style.visibility = t < 2.5 ? "visible" : "hidden"));
+
+  const s2 = $("#s2");
+  s2.style.visibility = t < 5.0 ? "visible" : "hidden";
+  const o2 = outQ(t, 4.75);
+  s2.style.opacity = 1 - o2;
+  s2.style.transform = `scale(${1 - 0.04 * o2})`;
+  put($("#head2"), rise(t, 2.1, 0.3));
+  const [aAv, aBub] = [$("#s2 .alice .av"), $("#s2 .alice .bubble")];
+  const [bAv, bBub] = [$("#s2 .bob .av"), $("#s2 .bob .bubble")];
+  put(aAv, pop(t, 2.5));
+  put(aBub, { ...pop(t, 2.6), x: 0 });
+  aBub.style.transformOrigin = "top center";
+  const aL = eOut(lin(t, 2.65, 2.9)), aR = eOut(lin(t, 3.0, 3.25));
+  put($("#s2 .arrowL"), { o: aL, x: -20 * (1 - aL) });
+  put($("#s2 .arrowR"), { o: aR, x: -20 * (1 - aR) });
+  put(bAv, pop(t, 3.0));
+  put(bBub, pop(t, 3.1));
+  bBub.style.transformOrigin = "top center";
+  // The ciphertext on-chain churns as Alice's message lands.
+  const hexes = $$("#s2 .hex");
+  const churn = t >= 2.6 && t < 2.95;
+  ["0x4be1…a07c", "0x09a7…77e2"].forEach((v, k) => {
+    if (!churn) return void (hexes[k].textContent = v);
+    const f = Math.floor(t * 30);
+    hexes[k].textContent = v.replace(/[0-9a-f](?!x)/g, (ch, i) => HEXC[(f * 7 + i * 13 + k * 5) % 16]);
+  });
+
+  // 3 · Title (5.0–8.5)
+  const s3 = $("#s3");
+  s3.style.visibility = t >= 5.0 && t < 8.5 ? "visible" : "hidden";
+  const o3 = outQ(t, 8.25);
+  s3.style.opacity = 1 - o3;
+  s3.style.transform = `translateX(${-80 * o3}px)`;
+  put($("#tile"), pop(t, 5.0, 0.45));
+  put($("#tagline"), rise(t, 5.05, 0.3, 30));
+  $$(".perk").forEach((p, k) => put(p, pop(t, 6.0 + 0.5 * k)));
+
+  // 4–5 · The app (8.5–16.0)
+  const s45 = $("#s45");
+  s45.style.visibility = t >= 8.5 && t < 16.0 ? "visible" : "hidden";
+  const o45 = outQ(t, 15.75);
+  const inApp = eOut(lin(t, 8.5, 8.9));
+  put($("#appwrap"), { o: inApp * (1 - o45), x: 140 * (1 - inApp) + 120 * o45 });
+  const o4 = outQ(t, 12.75, 0.25);
+  const r4 = rise(t, 8.55, 0.3);
+  put($("#left4"), { o: r4.o * (1 - o4), y: r4.y - 30 * o4 });
+  $("#left4").style.visibility = t < 13.0 ? "visible" : "hidden";
+  $$(".chip4").forEach((c, k) => {
+    const p = pop(t, 9.5 + 0.5 * k);
+    put(c, p);
+    c.style.transformOrigin = "left center";
+  });
+  const r5 = rise(t, 13.0, 0.3);
+  put($("#left5"), { o: r5.o * (1 - o45), y: r5.y - 30 * o45 });
+  $("#left5").style.visibility = t >= 13.0 ? "visible" : "hidden";
+
+  // Chat states: idle → busy (9.05) → connected (12.0)
+  const busy = t >= 9.05 && t < 12.0, after = t >= 12.0;
+  $("#pre").style.display = busy || after ? "none" : "contents";
+  $("#busy").style.display = busy ? "contents" : "none";
+  $("#post").style.display = after ? "contents" : "none";
+  $("#msgs").style.display = after ? "flex" : "none";
+  put($("#sayhi"), { s: t >= 9.0 && t < 9.05 ? 0.96 : 1 });
+  dots($("#busy .dots"), t);
+  // Bounce while busy, landing on the beats at 10, 11 and 12.
+  let by = 0;
+  if (busy) {
+    const ph = (t - 8.5) % 1;
+    by = ph < 0.5 ? -0.25 * (1 - bIn(ph / 0.5)) : -0.25 * bOut((ph - 0.5) / 0.5);
+    by *= Math.min(1, (t - 9.05) / 0.2);
+  }
+  $("#bouncer").style.transform = `translateY(${by * 128}px)`;
+  confetti($("#conf1"), t, 12.0);
+  put($("#connected"), pop(t, 12.0));
+  // Scroll down to the composer, then a touch more for the new bubble.
+  const sy = scrollA * eIO(lin(t, 13.0, 13.45)) + (scrollB - scrollA) * eIO(lin(t, 14.5, 14.7));
+  $("#scroll").style.transform = `translateY(${-sy}px)`;
+  // Typing (13.35–14.25), then send on 14.5.
+  const n = Math.floor(clamp((t - 13.35) / 0.9) * typed.length);
+  const text = t < 14.5 ? typed.slice(0, n).join("") : "";
+  $("#input").value = text;
+  $("#left").textContent = 62 - new TextEncoder().encode(text).length;
+  $("#send").disabled = !text;
+  put($("#send"), { s: t >= 14.5 && t < 14.56 ? 0.92 : 1 });
+  confetti($("#conf2"), t, 14.5);
+  const sent = t >= 14.5;
+  $("#empty").style.display = sent ? "none" : "";
+  $("#sent").style.display = sent ? "grid" : "none";
+  put($("#sentBubble"), pop(t, 14.5));
+
+  // 6 · Lasting (16.0–19.0)
+  const s6 = $("#s6");
+  s6.style.visibility = t >= 16.0 && t < 19.35 ? "visible" : "hidden";
+  s6.style.clipPath = `inset(${(1 - eOut(lin(t, 16.0, 16.3))) * 100}% 0 0 0)`;
+  const o6 = outQ(t, 18.75);
+  const c6 = s6.firstElementChild;
+  c6.style.opacity = 1 - o6;
+  c6.style.transform = `translateY(${-30 * o6}px)`;
+  put($("#kick6"), rise(t, 16.05, 0.3, 20));
+  put($("#head6"), rise(t, 16.05, 0.3, 30));
+  $$(".lock").forEach((l, k) => put(l, pop(t, 16.0 + 0.5 * k, 0.45)));
+  const d6 = eIO(lin(t, 16.1, 17.1));
+  $("#dash6").style.transform = `scaleX(${d6})`;
+  $$(".tag6").forEach((g, k) => put(g, { ...pop(t, 17.5 + 0.12 * k), o: 0.7 * pop(t, 17.5 + 0.12 * k).o }));
+
+  // 7 · Your turn (19.0–22.0)
+  const s7 = $("#s7");
+  s7.style.visibility = t >= 19.0 ? "visible" : "hidden";
+  s7.style.clipPath = `inset(${(1 - eOut(lin(t, 19.0, 19.3))) * 100}% 0 0 0)`;
+  put($("#logo7"), pop(t, 19.0, 0.45));
+  put($("#head7"), rise(t, 19.1, 0.3, 30));
+  const r7 = rise(t, 19.25, 0.3, 20);
+  put($("#sub7"), { ...r7, o: 0.7 * r7.o });
+  put($("#cta"), { ...pop(t, 19.5), s: pop(t, 19.5).s * (t >= 20.0 && t < 20.08 ? 0.95 : 1) });
+  $$(".pill7").forEach((p, k) => put(p, pop(t, 19.75 + 0.15 * k)));
+  confetti($("#conf3"), t, 20.0);
+
+  // Cursor taps: Say hi (9.0), send (14.5), the CTA (20.0)
+  let cur = null;
+  if (t >= 8.6 && t < 9.6) cur = cursorAt(t, [1700, 1040], $("#sayhi"), 8.6, 9.0, 9.25);
+  else if (t >= 13.95 && t < 15.0) cur = cursorAt(t, [1450, 1050], $("#send"), 13.95, 14.5, 14.75);
+  else if (t >= 19.45 && t < 21.0) cur = cursorAt(t, [1350, 1060], $("#cta"), 19.45, 20.0, 20.45);
+  const cursor = $("#cursor");
+  cursor.style.visibility = cur ? "visible" : "hidden";
+  if (cur) {
+    cursor.style.transform = `translate(${cur.x}px, ${cur.y}px)`;
+    cursor.style.opacity = cur.o;
+    $("#arrow").style.transform = `scale(${cur.press})`;
+    const rp = cur.ripple;
+    $("#ripple").style.opacity = rp > 0 && rp < 1 ? 0.6 * (1 - rp) : 0;
+    $("#ripple").style.transform = `scale(${0.3 + 0.9 * eOut(rp)})`;
+  }
+}
+window.seek = seek;
+
+// ---------- Boot ----------
+(async () => {
+  await Promise.all(
+    [...new Set($$(".ico").map(i => i.dataset.i))].map(async n => {
+      ICONS[n] = await (await fetch(`assets/${n}.svg`)).text();
+    }),
+  ).catch(() => {});
+  $$(".ico").forEach(i => {
+    const svg = ICONS[i.dataset.i] || "";
+    i.innerHTML = svg.replace("<svg ", '<svg width="100%" height="100%" ');
+    i.style.display = i.style.display || "inline-block";
+  });
+  await document.fonts.load("700 40px Fredoka");
+  await document.fonts.load("400 40px Fredoka");
+  await document.fonts.load("500 40px Fredoka");
+  await document.fonts.load("600 40px Fredoka");
+  await document.fonts.ready;
+  await Promise.all([...document.images].map(i => (i.complete ? 0 : new Promise(r => (i.onload = i.onerror = r)))));
+  // Wait for Tailwind to have built the utilities.
+  for (let k = 0; k < 200; k++) {
+    if (getComputedStyle($(".public")).borderRadius === "24px") break;
+    await new Promise(r => setTimeout(r, 25));
+  }
+  await new Promise(r => setTimeout(r, 200));
+  measure();
+  seek(0);
+  window.ready = true;
+})();
+</script>
+</body>
+</html>

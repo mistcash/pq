@@ -1,0 +1,43 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #e3edf5; overflow: hidden; }
+    #title-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    #title-tagline span { display: inline-block; }
+  </style>
+  <div id="root" data-composition-id="title" data-width="1920" data-height="1080">
+    <!-- Laid out like packages/nextjs/public/thumbnail.jpg. -->
+    <div id="title-wrap">
+      <div style="zoom: 1.6" class="flex items-center gap-14 w-[1060px]">
+        <div class="shrink-0 flex flex-col items-center gap-5">
+          <div id="title-tile" class="size-[300px] rounded-[64px] border-[8px] border-white overflow-hidden">
+            <img src="assets/img/logo.svg" class="size-full block" alt="pq" />
+          </div>
+          <!-- MIST.cash's wordmark, from mist.cash/mist.cash.svg. -->
+          <div id="title-mist" class="flex items-center gap-2.5 text-2xl text-base-content/70">by <img src="assets/img/mist-cash.svg" width="167" height="28" style="width: 167px; height: 28px" alt="MIST.cash" /></div>
+        </div>
+        <div class="flex flex-col gap-6">
+          <h1 id="title-tagline" class="text-[44px] font-bold leading-[1.12] m-0"><span>Scalable,</span> <span>post-quantum</span> <span>cryptographic</span> <span>messaging</span> <span>for</span> <span>private</span> <span>payments</span> <span>and</span> <span>peer</span> <span>coordination.</span></h1>
+          <ul class="flex flex-wrap gap-3 m-0 p-0 list-none text-2xl">
+            <li class="title-perk rounded-full bg-base-100 px-4 py-1.5">🔒 Post-quantum</li>
+            <li class="title-perk flex items-center gap-2 rounded-full bg-base-100 px-4 py-1.5"><img src="assets/img/ethereum.svg" width="15" height="24" alt="" />On Ethereum</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#title-tile", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, 0.02);
+      // A beat later, "by MIST.cash" under the tile.
+      tl.fromTo("#title-mist", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.588);
+      // Words arrive at reading pace, 0.3 s apart (about 200 words a minute), and stay.
+      tl.fromTo("#title-tagline span", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.3, ease: "power2.out" }, 0.3); // last lands 3.2
+      // perks on beats 6 and 7 (23.84 / 24.43 global), once the tagline is read.
+      tl.fromTo(".title-perk", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop", stagger: 0.588 }, 3.529);
+      // Held 2 s, then out to the left, done as the app comes in from the right on the downbeat (27.37 global).
+      tl.to("#title-wrap", { x: -90, opacity: 0, filter: "blur(6px)", duration: 0.25, ease: "power3.in" }, 6.808);
+      window.__timelines["title"] = tl;
+    })();
+  </script>
+</template>

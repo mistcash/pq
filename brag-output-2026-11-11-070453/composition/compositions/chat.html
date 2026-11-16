@@ -1,0 +1,129 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #e3edf5; overflow: hidden; }
+    #chat-content { position: absolute; inset: 0; }
+    #chat-left { position: absolute; left: 130px; top: 0; height: 1080px; width: 760px; display: flex; flex-direction: column; justify-content: center; gap: 48px; }
+    #chat-left span { display: inline-block; }
+    #chat-wrap { position: absolute; left: 950px; top: 50px; }
+    #chat-slot { display: grid; }
+    #chat-slot > * { grid-area: 1 / 1; }
+    .chat-tags { display: grid; justify-items: end; align-items: center; }
+    .chat-tags > * { grid-area: 1 / 1; }
+    .chat-open { background: #ff8863; color: #081019; box-shadow: 0 6px 18px rgb(255 136 99 / 0.45); }
+  </style>
+  <div id="root" data-composition-id="chat" data-width="1920" data-height="1080">
+    <div id="chat-content">
+      <div id="chat-left">
+        <!-- Bob, shocked: his Notionists face with the open mouth (lips 15, enlarged) and raised brows (brows 11). The blue copy
+             fades in over it as the blood drains from his face; the sweat drop is drawn here so it can slide. -->
+        <div id="chat-scream" class="relative rounded-full" style="width: 240px; height: 240px; box-shadow: 0 0 0 8px #fff, 0 18px 40px rgb(8 16 25 / 0.18)">
+          <img src="assets/img/bob-shocked.svg" width="240" height="240" class="absolute inset-0" alt="" />
+          <img id="chat-scream-blue" src="assets/img/bob-shocked-blue.svg" width="240" height="240" class="absolute inset-0" alt="" />
+          <svg id="chat-sweat" viewBox="0 0 28 40" width="30" height="43" class="absolute" style="left: 161px; top: 60px"><path d="M14 1C14 1 2 17 2 26a12 12 0 0 0 24 0C26 17 14 1 14 1Z" fill="#8fd3ff" stroke="#081019" stroke-width="2.2" /><ellipse cx="9.5" cy="25" rx="3" ry="5" fill="#fff" opacity="0.85" /></svg>
+        </div>
+        <h2 id="chat-cap1" class="font-bold m-0" style="font-size: 76px; line-height: 1.05"><span>Private</span> <span>payment</span> <span>viewing</span> <span>keys</span> <span>aren't</span> <span>post-quantum</span> <span>secure.</span></h2>
+        <h2 id="chat-cap2" class="font-bold m-0 text-base-content/70" style="font-size: 60px; line-height: 1.1"><span>One</span> <span>day,</span> <span>every</span> <span>ECDH</span> <span>commitment</span> <span>becomes</span> <span>public.</span></h2>
+      </div>
+
+      <!-- A chat today: Alice hands Bob a viewing key over ECDH, and a quantum computer joins. -->
+      <div id="chat-wrap">
+        <div id="chat-frame" class="relative flex flex-col rounded-[2.5rem] overflow-hidden border border-base-300 bg-base-100 shadow-2xl" style="zoom: 1.75; width: 480px; height: 560px">
+          <div class="flex items-center gap-3 bg-base-200 border-b border-base-300 px-5 py-3" data-layout-allow-occlusion>
+            <img src="assets/img/bob.svg" width="48" height="48" class="rounded-full" alt="" />
+            <div class="leading-tight">
+              <b class="block text-lg">bob</b>
+            </div>
+            <span class="ml-auto rounded-full bg-base-100 border border-base-300 px-3 py-1 text-base font-semibold">⛓️ Chain with private payments</span>
+          </div>
+          <div class="flex-1 min-h-0 overflow-hidden px-3">
+          <div id="chat-thread" class="flex flex-col gap-1 pt-4" data-layout-allow-overflow>
+            <div id="chat-m1" class="chat chat-end">
+              <div class="chat-image"><img src="assets/img/alice.svg" width="40" height="40" class="rounded-full" alt="" /></div>
+              <div class="chat-bubble chat-bubble-primary text-lg">Sent you 100 USDC, privately 🤫</div>
+            </div>
+            <!-- Alice's typing dots and her first key share one slot, so nothing shifts when the key lands. -->
+            <div id="chat-slot">
+              <div id="chat-typing" class="chat chat-end">
+                <div class="chat-image"><img src="assets/img/alice.svg" width="40" height="40" class="rounded-full" alt="" /></div>
+                <div class="chat-bubble chat-bubble-primary"><span class="dots" style="width: 2.25rem; height: 1.25rem"><i class="chat-dot"></i><i class="chat-dot"></i><i class="chat-dot"></i></span></div>
+              </div>
+              <div id="chat-m2" class="chat chat-end">
+                <div class="chat-image"><img src="assets/img/alice.svg" width="40" height="40" class="rounded-full" alt="" /></div>
+                <div class="chat-key chat-bubble chat-bubble-primary text-lg">🔑 Your claiming key</div>
+                <div class="chat-footer mt-1"><span class="chat-tags"><span class="chat-lock rounded-full bg-success/25 border border-success px-2.5 py-0.5 text-base">🔒 ECDH-encrypted</span><span class="chat-open rounded-full px-4 py-1.5 text-xl font-bold">🔓 decrypted</span></span></div>
+              </div>
+            </div>
+            <div id="chat-m3" class="chat chat-end">
+              <div class="chat-image"><img src="assets/img/alice.svg" width="40" height="40" class="rounded-full" alt="" /></div>
+              <div class="chat-key chat-bubble chat-bubble-primary text-lg">🧾 Viewing key, for the auditor</div>
+              <div class="chat-footer mt-1"><span class="chat-tags"><span class="chat-lock rounded-full bg-success/25 border border-success px-2.5 py-0.5 text-base">🔒 ECDH-encrypted</span><span class="chat-open rounded-full px-4 py-1.5 text-xl font-bold">🔓 decrypted</span></span></div>
+            </div>
+            <div id="chat-m4" class="chat chat-start">
+              <div class="chat-image"><img src="assets/img/bob.svg" width="40" height="40" class="rounded-full" alt="" /></div>
+              <div class="chat-bubble chat-bubble-secondary text-lg">Got it, thanks 🙏</div>
+            </div>
+            <div id="chat-sys" class="self-center mt-3 rounded-full bg-base-200 border border-base-300 px-4 py-1.5 text-base font-semibold">⚛️ A quantum computer joined the chat</div>
+            <div id="chat-qc" class="chat chat-start mt-2">
+              <div class="chat-image"><span class="grid place-items-center size-10 rounded-full bg-error text-xl">⚛️</span></div>
+              <div class="chat-bubble chat-bubble-secondary text-lg">I broke ECDH 👀 Now I can read all your private messages.</div>
+            </div>
+          </div>
+          </div>
+          <div class="bg-base-200 border-t border-base-300 px-4 py-3">
+            <div class="input input-lg w-full bg-base-100 text-base-content/60">Message</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      const pop = (sel, at, origin) =>
+        tl.fromTo(sel, { opacity: 0, scale: 0.5, transformOrigin: origin }, { opacity: 1, scale: 1, duration: 0.4, ease: "pop" }, at);
+      // Words arrive at reading pace, 0.3 s apart (about 200 words a minute), and stay. Each fades and rises over 0.5 s,
+      // overlapping the next, so the line flows in rather than stepping.
+      const words = (sel, at) =>
+        tl.fromTo(sel, { opacity: 0, y: 14, filter: "blur(4px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: 0.3, ease: "power3.out" }, at);
+
+      // The chat arrives in the middle of the frame: the hook is the conversation itself.
+      tl.fromTo("#chat-wrap", { x: -410, y: 60, opacity: 0 }, { x: -410, y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 0);
+      // Each message gets its reading time (0.5 s + 0.3 s a word) before the next.
+      // Each message gets its reading time, then lands on the next beat (0.312 + n × 0.588).
+      pop("#chat-m1", 0.312, "100% 100%");
+      tl.fromTo("#chat-typing", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 2.076);
+      tl.fromTo(".chat-dot", { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.1 }, 2.076);
+      tl.to("#chat-typing", { opacity: 0, duration: 0.08 }, 2.6);
+      pop("#chat-m2", 2.664, "100% 100%");
+      pop("#chat-m3", 4.429, "100% 100%");
+      pop("#chat-m4", 6.782, "0% 100%");
+
+      // The twist: a quantum computer joins. beat-locked: 8.546, where the music returns from its break.
+      pop("#chat-sys", 8.546, "50% 50%");
+      tl.to("#chat-frame", { keyframes: [{ x: -6, duration: 0.05 }, { x: 6, duration: 0.06 }, { x: -3, duration: 0.06 }, { x: 0, duration: 0.08 }], ease: "power2.out" }, 8.546);
+      // A beat later it speaks, then Alice's messages are decrypted, one a beat: 9.72 / 10.31.
+      pop("#chat-qc", 9.135, "0% 100%");
+      // The thread scrolls up to fit it (67 px, measured with fonts loaded).
+      tl.to("#chat-thread", { y: -67, duration: 0.35, ease: "power2.out" }, 9.135);
+      [["#chat-m2", 9.723], ["#chat-m3", 10.311]].forEach(([m, at]) => {
+        tl.to(`${m} .chat-lock`, { opacity: 0, duration: 0.12 }, at);
+        tl.fromTo(`${m} .chat-open`, { opacity: 0, scale: 0.6, transformOrigin: "100% 50%" }, { opacity: 1, scale: 1, duration: 0.45, ease: "pop" }, at);
+        tl.to(`${m} .chat-key`, { keyframes: [{ rotation: -3, duration: 0.06 }, { rotation: 2, duration: 0.08 }, { rotation: 0, duration: 0.12 }], ease: "power2.out" }, at);
+      });
+
+      // Once all of it is read, the chat steps aside on the downbeat for what it means.
+      tl.to("#chat-wrap", { x: 0, duration: 0.6, ease: "power2.inOut" }, 13.252);
+      // Shocked Bob lands with the downbeat, then shudders as the blood drains from his face; a beat later, the sweat.
+      tl.fromTo("#chat-scream", { opacity: 0, scale: 0.3, rotation: -12, transformOrigin: "50% 80%" }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "pop" }, 13.252);
+      tl.to("#chat-scream", { keyframes: [{ rotation: -6, duration: 0.05 }, { rotation: 6, duration: 0.06 }, { rotation: -4, duration: 0.06 }, { rotation: 3, duration: 0.06 }, { rotation: 0, duration: 0.08 }], ease: "power2.out" }, 13.84);
+      tl.fromTo("#chat-scream-blue", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.inOut" }, 13.84);
+      tl.fromTo("#chat-sweat", { opacity: 0, y: -8, scale: 0.6, transformOrigin: "50% 0%" }, { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "pop" }, 14.428);
+      tl.fromTo("#chat-sweat", { y: 0 }, { y: 14, duration: 2.4, ease: "sine.in", immediateRender: false }, 14.8);
+      words("#chat-cap1 span", 13.35); // last word lands 15.65
+      words("#chat-cap2 span", 15.75); // last word lands 18.05
+      // Held 2 s after the last word, then out (20.05–20.31), into the title's downbeat.
+      tl.to("#chat-content", { opacity: 0, filter: "blur(8px)", duration: 0.26, ease: "power2.in" }, 20.05);
+      window.__timelines["chat"] = tl;
+    })();
+  </script>
+</template>

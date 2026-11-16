@@ -1,0 +1,138 @@
+<!doctype html>
+<html
+  lang="en"
+  data-theme="light"
+  data-composition-variables='[
+    {"id":"color-ground","type":"color","label":"Background","default":"#e3edf5"},
+    {"id":"color-ink","type":"color","label":"Text","default":"#081019"},
+    {"id":"color-accent","type":"color","label":"Accent","default":"#0052ff"},
+    {"id":"font-display","type":"string","label":"Display font","default":"Fredoka"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <!-- The app's own DaisyUI 5 build, then its Tailwind v4 classes compiled to static CSS (work/build-css.mjs). -->
+    <link rel="stylesheet" href="assets/css/daisyui.css" />
+    <link rel="stylesheet" href="assets/css/app.css" />
+    <script src="assets/lib/gsap.min.js"></script>
+    <script src="assets/lib/CustomEase.min.js"></script>
+    <script>
+      gsap.registerPlugin(CustomEase);
+      // The app's --animate-pop curve and its confetti burst (packages/nextjs/styles/globals.css).
+      CustomEase.create("pop", "M0,0 C0.3,1.6 0.6,1 1,1");
+      CustomEase.create("burst", "M0,0 C0.1,0.8 0.3,1 1,1");
+    </script>
+    <style>
+      @font-face { font-family: "Fredoka"; src: url("assets/fonts/fredoka-400.ttf"); font-weight: 400; }
+      @font-face { font-family: "Fredoka"; src: url("assets/fonts/fredoka-500.ttf"); font-weight: 500; }
+      @font-face { font-family: "Fredoka"; src: url("assets/fonts/fredoka-600.ttf"); font-weight: 600; }
+      @font-face { font-family: "Fredoka"; src: url("assets/fonts/fredoka-700.ttf"); font-weight: 700; }
+      /* The app's light theme (packages/nextjs/styles/globals.css). */
+      [data-theme="light"] {
+        --color-primary: var(--color-accent, #0052ff);
+        --color-primary-content: #ffffff;
+        --color-secondary: #e3edf5;
+        --color-secondary-content: #081019;
+        --color-accent: #0052ff;
+        --color-accent-content: #ffffff;
+        --color-neutral: #081019;
+        --color-neutral-content: #ffffff;
+        --color-base-100: #ffffff;
+        --color-base-200: var(--color-ground, #e3edf5);
+        --color-base-300: #acc4d6;
+        --color-base-content: var(--color-ink, #081019);
+        --color-info: #0052ff;
+        --color-success: #34eeb6;
+        --color-warning: #ffcf72;
+        --color-error: #ff8863;
+        --radius-field: 1rem;
+        --radius-box: 1.5rem;
+        --radius-selector: 2rem;
+      }
+      @layer base {
+        *, ::after, ::before { border-color: var(--color-base-300, currentColor); }
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #e3edf5;
+      }
+      body {
+        font-family: var(--font-display, "Fredoka"), "Fredoka", sans-serif;
+        color: #081019;
+        -webkit-font-smoothing: antialiased;
+      }
+      .btn { box-shadow: none; }
+      /* The app's confetti, burst by each scene's timeline instead of a CSS animation. */
+      .confetti { position: absolute; inset: 50%; z-index: -1; pointer-events: none; }
+      .confetti i { position: absolute; width: 0.875rem; height: 0.875rem; margin: -0.4375rem; border-radius: 9999px; background: #0052ff; opacity: 0; }
+      .confetti i:nth-child(3n) { background: #ffcf72; border-radius: 0.2rem; }
+      .confetti i:nth-child(3n + 1) { background: #081019; height: 0.4rem; }
+      .dots { display: inline-flex; gap: 18%; align-items: center; justify-content: center; }
+      .dots i { display: block; width: 26%; aspect-ratio: 1; border-radius: 9999px; background: currentColor; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="55.62"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="chat" class="clip" data-composition-id="chat" data-composition-src="compositions/chat.html" data-start="0" data-duration="20.31" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080" style="z-index: 1"></div>
+      <div id="title" class="clip" data-composition-id="title" data-composition-src="compositions/title.html" data-start="20.31" data-duration="7.059" data-track-index="3" data-track-kind="graphics" data-width="1920" data-height="1080" style="z-index: 3"></div>
+      <div id="app" class="clip" data-composition-id="app" data-composition-src="compositions/app.html" data-start="27.369" data-duration="15.881" data-track-index="4" data-track-kind="graphics" data-width="1920" data-height="1080" style="z-index: 4"></div>
+      <div id="lasting" class="clip" data-composition-id="lasting" data-composition-src="compositions/lasting.html" data-start="43.25" data-duration="6.47" data-track-index="5" data-track-kind="graphics" data-width="1920" data-height="1080" style="z-index: 5"></div>
+      <div id="outro" class="clip" data-composition-id="outro" data-composition-src="compositions/outro.html" data-start="49.72" data-duration="5.9" data-track-index="6" data-track-kind="graphics" data-width="1920" data-height="1080" style="z-index: 6"></div>
+
+      <!-- Music: "Cyberpunk" by Poradovskyi (Pixabay), 102 BPM. From 10.306 s in, so the track's break-and-return lands as the quantum computer joins (8.546 s) and its own ending closes the film.
+           Two clips of the same file: held low under the chat, full from the twist (the old track's intro-to-drop step), faded under the end card. -->
+      <audio id="music-hook" class="clip" data-start="0" data-duration="8.546" data-track-index="10" data-media-start="10.306" data-volume="0.135" src="assets/music/cyberpunk-by-poradovskyi.mp3"></audio>
+      <audio
+        id="music"
+        class="clip"
+        data-start="8.546"
+        data-duration="47.074"
+        data-track-index="10"
+        data-media-start="18.852"
+        data-volume="0.2"
+        data-fade-out="0.7"
+        src="assets/music/cyberpunk-by-poradovskyi.mp3"
+      ></audio>
+
+      <!-- Effects, each on its own lane, landing with the picture. -->
+      <audio id="sfx-msg-1" class="clip" data-start="0.33" data-duration="0.11" data-track-index="11" data-volume="0.45" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-msg-2" class="clip" data-start="2.68" data-duration="0.19" data-track-index="12" data-volume="0.45" src="assets/sfx/interface/drop_002.ogg"></audio>
+      <audio id="sfx-msg-3" class="clip" data-start="4.45" data-duration="0.19" data-track-index="13" data-volume="0.45" src="assets/sfx/interface/drop_003.ogg"></audio>
+      <audio id="sfx-quantum" class="clip" data-start="8.566" data-duration="0.03" data-track-index="14" data-volume="0.7" src="assets/sfx/interface/glitch_002.ogg"></audio>
+      <audio id="sfx-unlock" class="clip" data-start="9.743" data-duration="0.62" data-track-index="15" data-volume="0.55" src="assets/sfx/interface/switch_006.ogg"></audio>
+      <audio id="sfx-logo" class="clip" data-start="20.347" data-duration="0.12" data-track-index="16" data-volume="0.55" src="assets/sfx/interface/bong_001.ogg"></audio>
+      <audio id="sfx-tap-sayhi" class="clip" data-start="30.33" data-duration="0.01" data-track-index="17" data-volume="0.8" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-connected" class="clip" data-start="35.036" data-duration="1.5" data-track-index="18" data-volume="0.5" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio>
+      <audio id="sfx-key-1" class="clip" data-start="39.134" data-duration="0.25" data-track-index="19" data-volume="0.3" src="assets/sfx/keyboard/keypress-003.wav"></audio>
+      <audio id="sfx-key-2" class="clip" data-start="39.334" data-duration="0.25" data-track-index="20" data-volume="0.3" src="assets/sfx/keyboard/keypress-011.wav"></audio>
+      <audio id="sfx-key-3" class="clip" data-start="39.534" data-duration="0.25" data-track-index="21" data-volume="0.3" src="assets/sfx/keyboard/keypress-019.wav"></audio>
+      <audio id="sfx-key-4" class="clip" data-start="39.734" data-duration="0.25" data-track-index="22" data-volume="0.3" src="assets/sfx/keyboard/keypress-027.wav"></audio>
+      <audio id="sfx-key-5" class="clip" data-start="39.934" data-duration="0.25" data-track-index="23" data-volume="0.3" src="assets/sfx/keyboard/keypress-003.wav"></audio>
+      <audio id="sfx-tap-send" class="clip" data-start="40.33" data-duration="0.01" data-track-index="24" data-volume="0.8" src="assets/sfx/interface/click_002.ogg"></audio>
+      <audio id="sfx-lock-1" class="clip" data-start="45.623" data-duration="0.62" data-track-index="25" data-volume="0.5" src="assets/sfx/interface/switch_005.ogg"></audio>
+      <audio id="sfx-lock-2" class="clip" data-start="46.211" data-duration="0.62" data-track-index="26" data-volume="0.5" src="assets/sfx/interface/switch_006.ogg"></audio>
+      <audio id="sfx-lock-3" class="clip" data-start="46.799" data-duration="0.62" data-track-index="27" data-volume="0.5" src="assets/sfx/interface/switch_007.ogg"></audio>
+      <audio id="sfx-tap-cta" class="clip" data-start="53.269" data-duration="0.01" data-track-index="28" data-volume="0.8" src="assets/sfx/interface/click_005.ogg"></audio>
+      <audio id="sfx-final" class="clip" data-start="53.289" data-duration="0.7" data-track-index="29" data-volume="0.55" src="assets/sfx/impact/impactBell_heavy_003.ogg"></audio>
+      <audio id="sfx-msg-4" class="clip" data-start="6.8" data-duration="0.11" data-track-index="30" data-volume="0.4" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-qc" class="clip" data-start="9.155" data-duration="0.19" data-track-index="31" data-volume="0.4" src="assets/sfx/interface/drop_002.ogg"></audio>
+      <audio id="sfx-unlock-2" class="clip" data-start="10.331" data-duration="0.62" data-track-index="32" data-volume="0.5" src="assets/sfx/interface/switch_007.ogg"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>
