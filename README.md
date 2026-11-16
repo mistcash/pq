@@ -35,7 +35,7 @@ Deep dive mode (🤿 in the header) explains each step as it happens: what ran i
 | 📦 Encrypted Channel Key | 37 field elements, packing 768 uncompressed Kyber coefficients |
 | 🧮 Opening circuit | 49,223 R1CS constraints, 38 public inputs |
 | 🧾 Opening proof | 384 bytes, Groth16 on BN254 |
-| ⏱️ Proving | about 0.5 s on the GPU through WebGPU, 5 s on the CPU, in the browser on an M3 Pro (`PROVING.md`) |
+| ⏱️ Proving | about 0.5 s on the GPU through WebGPU, 5 s on the CPU, in the browser on an M3 Pro |
 | ⛽ Gas | joining 0.36M, opening a Channel 0.83M, a message about 240k (`docs/gas.md`) |
 | 🚀 Deploy | 22.6M gas on Sepolia: Verifier 18.1M, PqMsg 4.5M |
 | 📥 One-time download | 42 MB: `pqmsg.wasm` 15 MB, proving key 22 MB, constraint system 5 MB |
