@@ -6,7 +6,7 @@ const bytes = async path => new Uint8Array(await (await fetch(path)).arrayBuffer
 
 const ready = (async () => {
   // gnark's WebGPU bridge, when this browser has WebGPU; pqmsg.wasm then proves on the GPU. A GPU that needs
-  // over 10 s to set up is unlikely to beat the CPU's ~8 s proof.
+  // over 10 s to set up is unlikely to beat the CPU's ~5 s proof.
   const webgpu = Promise.race([
     import("./gnark-webgpu.js").then(m => m.install()),
     new Promise((_, reject) => setTimeout(() => reject(new Error("timed out")), 10_000)),
