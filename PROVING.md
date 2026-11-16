@@ -8,11 +8,22 @@ Opening a Channel takes one Groth16 proof, made in the browser. On page load, th
 
 Each step falls back to the CPU, so every browser can open a Channel:
 
-- No WebGPU, or GPU setup over 10 s: the CPU proves. A CPU proof takes about 8 s, so a slower setup isn't worth the wait.
+- No WebGPU, or GPU setup over 10 s: the CPU proves. A CPU proof takes about 5 s, so a slower setup isn't worth the wait.
 - `webgpu.Prepare` fails: the CPU proves.
 - A GPU proof fails: the worker frees the GPU and proves on the CPU from then on.
 
 The console says which it uses, `pqmsg prover on the GPU` or `on the CPU`, after `pqmsg prover: no WebGPU, <reason>`. On the GPU, the witness, including the secret Channel Key and noise, sits in GPU memory.
+
+## Numbers
+
+MacBook Pro, Apple M3 Pro (18-core GPU), Chrome 157, commit 4db74cd:
+
+| | GPU | CPU |
+| --- | --- | --- |
+| `pqmsg load` | 3.1 s | 0.3 s |
+| `pqmsg prove` | 0.46 to 0.55 s | 4.9 to 5.0 s |
+
+Loading on the GPU includes uploading the proving key, once per page load. The first GPU proof took 0.55 s, later ones 0.46 s.
 
 ## Demo with DevTools profiling
 
